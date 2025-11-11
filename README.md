@@ -52,17 +52,18 @@ HTTP 封装基于 Axios，默认 15 秒超时并自动携带 `Authorization` 头
 
 | 语言        | 仓库地址                                                     |
 |-------------|--------------------------------------------------------------|
-| Go          | https://github.com/AxT-Team/uapi-go-sdk                      |
-| Python      | https://github.com/AxT-Team/uapi-python-sdk                  |
-| TypeScript（当前）| https://github.com/AxT-Team/uapi-typescript-sdk           |
+| Go          | https://github.com/AxT-Team/uapi-sdk-go                      |
+| Python      | https://github.com/AxT-Team/uapi-sdk-python                  |
+| TypeScript（当前）| https://github.com/AxT-Team/uapi-sdk-typescript           |
 | Browser (TypeScript/JavaScript)| https://github.com/AxT-Team/uapi-browser-sdk        |
-| Java        | https://github.com/AxT-Team/uapi-java-sdk                    |
-| PHP         | https://github.com/AxT-Team/uapi-php-sdk                     |
-| C#          | https://github.com/AxT-Team/uapi-csharp-sdk                  |
-| C++         | https://github.com/AxT-Team/uapi-cpp-sdk                     |
-| Rust        | https://github.com/AxT-Team/uapi-rust-sdk                    |
+| Java        | https://github.com/AxT-Team/uapi-sdk-java                    |
+| PHP         | https://github.com/AxT-Team/uapi-sdk-php                     |
+| C#          | https://github.com/AxT-Team/uapi-sdk-csharp                  |
+| C++         | https://github.com/AxT-Team/uapi-sdk-cpp                     |
+| Rust        | https://github.com/AxT-Team/uapi-sdk-rust                    |
 
 ## 文档
 
 访问 [UApi文档首页](https://uapis.cn/docs/introduction) 并选择任意接口，向下滚动到 **快速启动** 区块即可看到最新的 TypeScript 示例代码。
+
 
