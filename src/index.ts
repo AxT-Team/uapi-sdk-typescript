@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios'
-import { UapiError, mapError } from './errors'
+import { UapiError, mapError } from './errors.js'
 
 type Config = { baseURL: string; token?: string; timeout?: number }
 
