@@ -1,9 +1,10 @@
 # uapi-sdk-typescript
 
-![Banner](./banner.png)
+![Banner](https://raw.githubusercontent.com/AxT-Team/uapi-sdk-typescript/main/banner.png)
 
 [![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![Docs](https://img.shields.io/badge/Docs-uapis.cn-2EAE5D?style=flat-square)](https://uapis.cn/)
+[![npm](https://img.shields.io/npm/v/uapi-sdk-typescript?style=flat-square&logo=npm&logoColor=white)](https://www.npmjs.com/package/uapi-sdk-typescript)
 
 > [!NOTE]
 > 所有接口的 Node.js (TypeScript) 示例都可以在 [UApi](https://uapis.cn/docs/introduction) 的接口文档页面，向下滚动至 **快速启动** 区块后直接复制。
@@ -64,3 +65,4 @@ HTTP 封装基于 Axios，默认 15 秒超时并自动携带 `Authorization` 头
 ## 文档
 
 访问 [UApi文档首页](https://uapis.cn/docs/introduction) 并选择任意接口，向下滚动到 **快速启动** 区块即可看到最新的 TypeScript 示例代码。
+
