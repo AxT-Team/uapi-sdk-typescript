@@ -631,6 +631,12 @@ class TranslateApi {
     let path = '/ai/translate'
     return await this.http.request('POST', path, params)
   }
+  /** 流式翻译（中英互译） */
+  async postTranslateStream(args: any = {}): Promise<any> {
+    const params:any = {}
+    let path = '/translate/stream'
+    return await this.http.request('POST', path, params)
+  }
   /** 多语言文本翻译 */
   async postTranslateText(args: any = {}): Promise<any> {
     const params:any = {}

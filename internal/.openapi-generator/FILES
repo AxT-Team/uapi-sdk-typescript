@@ -266,6 +266,9 @@ docs/PostTextMd5Request.md
 docs/PostTextMd5Verify200Response.md
 docs/PostTextMd5Verify400Response.md
 docs/PostTextMd5VerifyRequest.md
+docs/PostTranslateStream400Response.md
+docs/PostTranslateStream500Response.md
+docs/PostTranslateStreamRequest.md
 docs/PostTranslateText200Response.md
 docs/PostTranslateText400Response.md
 docs/PostTranslateText500Response.md

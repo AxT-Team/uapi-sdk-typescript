@@ -2366,6 +2366,65 @@ export interface PostTextMd5VerifyRequest {
     'hash': string;
     'text': string;
 }
+export interface PostTranslateStream400Response {
+    /**
+     * 错误描述
+     */
+    'error'?: string;
+    /**
+     * 错误码
+     */
+    'code'?: PostTranslateStream400ResponseCodeEnum;
+}
+
+export const PostTranslateStream400ResponseCodeEnum = {
+    InvalidRequest: 'INVALID_REQUEST',
+    MissingQuery: 'MISSING_QUERY',
+    MissingTargetLang: 'MISSING_TARGET_LANG'
+} as const;
+
+export type PostTranslateStream400ResponseCodeEnum = typeof PostTranslateStream400ResponseCodeEnum[keyof typeof PostTranslateStream400ResponseCodeEnum];
+
+export interface PostTranslateStream500Response {
+    /**
+     * 错误描述
+     */
+    'error'?: string;
+    'code'?: string;
+}
+export interface PostTranslateStreamRequest {
+    /**
+     * 待翻译的文本内容
+     */
+    'query': string;
+    /**
+     * 目标语言，支持：中文、英文
+     */
+    'to_lang': PostTranslateStreamRequestToLangEnum;
+    /**
+     * 源语言，支持：中文、英文、auto（自动检测）。默认为auto
+     */
+    'from_lang'?: PostTranslateStreamRequestFromLangEnum;
+    /**
+     * 语气参数，可选
+     */
+    'tone'?: string;
+}
+
+export const PostTranslateStreamRequestToLangEnum = {
+    : '中文',
+    2: '英文'
+} as const;
+
+export type PostTranslateStreamRequestToLangEnum = typeof PostTranslateStreamRequestToLangEnum[keyof typeof PostTranslateStreamRequestToLangEnum];
+export const PostTranslateStreamRequestFromLangEnum = {
+    : '中文',
+    2: '英文',
+    Auto: 'auto'
+} as const;
+
+export type PostTranslateStreamRequestFromLangEnum = typeof PostTranslateStreamRequestFromLangEnum[keyof typeof PostTranslateStreamRequestFromLangEnum];
+
 export interface PostTranslateText200Response {
     /**
      * The source language detected.
@@ -8292,6 +8351,42 @@ export const TranslateApiAxiosParamCreator = function (configuration?: Configura
             };
         },
         /**
+         * 想让翻译结果像打字机一样逐字显示出来？这个流式翻译接口能实现这种效果。  ## 功能概述 不同于传统翻译API一次性返回完整结果，这个接口会实时地、一个字一个字地把翻译内容推给你（就像ChatGPT回复消息那样），非常适合用在聊天应用、直播字幕等需要即时反馈的场景。  ## 它能做什么 - **中英互译**：支持中文和英文之间的双向翻译 - **自动识别**：不确定源语言？设置为 `auto` 让我们自动检测 - **逐字返回**：翻译结果会像打字机一样逐字流式返回，用户体验更流畅 - **音频朗读**：部分翻译结果会附带音频链接，方便朗读  ## 支持的语言 目前专注于中英互译，支持以下选项： - `中文`（简体/繁体） - `英文` - `auto`（自动检测）
+         * @summary 流式翻译（中英互译）
+         * @param {PostTranslateStreamRequest} postTranslateStreamRequest 包含翻译参数的JSON对象
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postTranslateStream: async (postTranslateStreamRequest: PostTranslateStreamRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'postTranslateStreamRequest' is not null or undefined
+            assertParamExists('postTranslateStream', 'postTranslateStreamRequest', postTranslateStreamRequest)
+            const localVarPath = `/translate/stream`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postTranslateStreamRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * 需要跨越语言的鸿沟进行交流？这个翻译接口是你可靠的\'同声传译\'。  ## 功能概述 你可以将一段源语言文本（我们能自动检测源语言）翻译成你指定的任何目标语言。无论是中译英、日译法，都不在话下。  ## 支持的语言 我们支持超过100种语言的互译，包括但不限于：中文（简体/繁体）、英语、日语、韩语、法语、德语、西班牙语、俄语、阿拉伯语等主流语言，以及各种小语种。详见下方参数列表。
          * @summary 多语言文本翻译
          * @param {PostTranslateTextToLangEnum} toLang 目标语言代码。请从支持的语言列表中选择一个语言代码。
@@ -8370,6 +8465,19 @@ export const TranslateApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
+         * 想让翻译结果像打字机一样逐字显示出来？这个流式翻译接口能实现这种效果。  ## 功能概述 不同于传统翻译API一次性返回完整结果，这个接口会实时地、一个字一个字地把翻译内容推给你（就像ChatGPT回复消息那样），非常适合用在聊天应用、直播字幕等需要即时反馈的场景。  ## 它能做什么 - **中英互译**：支持中文和英文之间的双向翻译 - **自动识别**：不确定源语言？设置为 `auto` 让我们自动检测 - **逐字返回**：翻译结果会像打字机一样逐字流式返回，用户体验更流畅 - **音频朗读**：部分翻译结果会附带音频链接，方便朗读  ## 支持的语言 目前专注于中英互译，支持以下选项： - `中文`（简体/繁体） - `英文` - `auto`（自动检测）
+         * @summary 流式翻译（中英互译）
+         * @param {PostTranslateStreamRequest} postTranslateStreamRequest 包含翻译参数的JSON对象
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postTranslateStream(postTranslateStreamRequest: PostTranslateStreamRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<string>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postTranslateStream(postTranslateStreamRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TranslateApi.postTranslateStream']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
          * 需要跨越语言的鸿沟进行交流？这个翻译接口是你可靠的\'同声传译\'。  ## 功能概述 你可以将一段源语言文本（我们能自动检测源语言）翻译成你指定的任何目标语言。无论是中译英、日译法，都不在话下。  ## 支持的语言 我们支持超过100种语言的互译，包括但不限于：中文（简体/繁体）、英语、日语、韩语、法语、德语、西班牙语、俄语、阿拉伯语等主流语言，以及各种小语种。详见下方参数列表。
          * @summary 多语言文本翻译
          * @param {PostTranslateTextToLangEnum} toLang 目标语言代码。请从支持的语言列表中选择一个语言代码。
@@ -8413,6 +8521,16 @@ export const TranslateApiFactory = function (configuration?: Configuration, base
             return localVarFp.postAiTranslate(targetLang, postAiTranslateRequest, options).then((request) => request(axios, basePath));
         },
         /**
+         * 想让翻译结果像打字机一样逐字显示出来？这个流式翻译接口能实现这种效果。  ## 功能概述 不同于传统翻译API一次性返回完整结果，这个接口会实时地、一个字一个字地把翻译内容推给你（就像ChatGPT回复消息那样），非常适合用在聊天应用、直播字幕等需要即时反馈的场景。  ## 它能做什么 - **中英互译**：支持中文和英文之间的双向翻译 - **自动识别**：不确定源语言？设置为 `auto` 让我们自动检测 - **逐字返回**：翻译结果会像打字机一样逐字流式返回，用户体验更流畅 - **音频朗读**：部分翻译结果会附带音频链接，方便朗读  ## 支持的语言 目前专注于中英互译，支持以下选项： - `中文`（简体/繁体） - `英文` - `auto`（自动检测）
+         * @summary 流式翻译（中英互译）
+         * @param {PostTranslateStreamRequest} postTranslateStreamRequest 包含翻译参数的JSON对象
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postTranslateStream(postTranslateStreamRequest: PostTranslateStreamRequest, options?: RawAxiosRequestConfig): AxiosPromise<string> {
+            return localVarFp.postTranslateStream(postTranslateStreamRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
          * 需要跨越语言的鸿沟进行交流？这个翻译接口是你可靠的\'同声传译\'。  ## 功能概述 你可以将一段源语言文本（我们能自动检测源语言）翻译成你指定的任何目标语言。无论是中译英、日译法，都不在话下。  ## 支持的语言 我们支持超过100种语言的互译，包括但不限于：中文（简体/繁体）、英语、日语、韩语、法语、德语、西班牙语、俄语、阿拉伯语等主流语言，以及各种小语种。详见下方参数列表。
          * @summary 多语言文本翻译
          * @param {PostTranslateTextToLangEnum} toLang 目标语言代码。请从支持的语言列表中选择一个语言代码。
@@ -8450,6 +8568,17 @@ export class TranslateApi extends BaseAPI {
      */
     public postAiTranslate(targetLang: PostAiTranslateTargetLangEnum, postAiTranslateRequest: PostAiTranslateRequest, options?: RawAxiosRequestConfig) {
         return TranslateApiFp(this.configuration).postAiTranslate(targetLang, postAiTranslateRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 想让翻译结果像打字机一样逐字显示出来？这个流式翻译接口能实现这种效果。  ## 功能概述 不同于传统翻译API一次性返回完整结果，这个接口会实时地、一个字一个字地把翻译内容推给你（就像ChatGPT回复消息那样），非常适合用在聊天应用、直播字幕等需要即时反馈的场景。  ## 它能做什么 - **中英互译**：支持中文和英文之间的双向翻译 - **自动识别**：不确定源语言？设置为 `auto` 让我们自动检测 - **逐字返回**：翻译结果会像打字机一样逐字流式返回，用户体验更流畅 - **音频朗读**：部分翻译结果会附带音频链接，方便朗读  ## 支持的语言 目前专注于中英互译，支持以下选项： - `中文`（简体/繁体） - `英文` - `auto`（自动检测）
+     * @summary 流式翻译（中英互译）
+     * @param {PostTranslateStreamRequest} postTranslateStreamRequest 包含翻译参数的JSON对象
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public postTranslateStream(postTranslateStreamRequest: PostTranslateStreamRequest, options?: RawAxiosRequestConfig) {
+        return TranslateApiFp(this.configuration).postTranslateStream(postTranslateStreamRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

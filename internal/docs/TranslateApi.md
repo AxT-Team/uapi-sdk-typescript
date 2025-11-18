@@ -6,6 +6,7 @@ All URIs are relative to *https://uapis.cn/api/v1*
 |------------- | ------------- | -------------|
 |[**getAiTranslateLanguages**](#getaitranslatelanguages) | **GET** /ai/translate/languages | 获取AI翻译支持的语言和配置|
 |[**postAiTranslate**](#postaitranslate) | **POST** /ai/translate | AI智能翻译|
+|[**postTranslateStream**](#posttranslatestream) | **POST** /translate/stream | 流式翻译（中英互译）|
 |[**postTranslateText**](#posttranslatetext) | **POST** /translate/text | 多语言文本翻译|
 
 # **getAiTranslateLanguages**
@@ -108,6 +109,60 @@ No authorization required
 |**401** | 认证失败。请检查API密钥是否有效。 |  -  |
 |**429** | 请求频率过高。请稍后重试。 |  -  |
 |**500** | 翻译服务内部错误。请稍后重试或联系技术支持。 |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **postTranslateStream**
+> string postTranslateStream(postTranslateStreamRequest)
+
+想让翻译结果像打字机一样逐字显示出来？这个流式翻译接口能实现这种效果。  ## 功能概述 不同于传统翻译API一次性返回完整结果，这个接口会实时地、一个字一个字地把翻译内容推给你（就像ChatGPT回复消息那样），非常适合用在聊天应用、直播字幕等需要即时反馈的场景。  ## 它能做什么 - **中英互译**：支持中文和英文之间的双向翻译 - **自动识别**：不确定源语言？设置为 `auto` 让我们自动检测 - **逐字返回**：翻译结果会像打字机一样逐字流式返回，用户体验更流畅 - **音频朗读**：部分翻译结果会附带音频链接，方便朗读  ## 支持的语言 目前专注于中英互译，支持以下选项： - `中文`（简体/繁体） - `英文` - `auto`（自动检测）
+
+### Example
+
+```typescript
+import {
+    TranslateApi,
+    Configuration,
+    PostTranslateStreamRequest
+} from 'uapi-sdk-typescript';
+
+const configuration = new Configuration();
+const apiInstance = new TranslateApi(configuration);
+
+let postTranslateStreamRequest: PostTranslateStreamRequest; //包含翻译参数的JSON对象
+
+const { status, data } = await apiInstance.postTranslateStream(
+    postTranslateStreamRequest
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **postTranslateStreamRequest** | **PostTranslateStreamRequest**| 包含翻译参数的JSON对象 | |
+
+
+### Return type
+
+**string**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: text/event-stream, application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | SSE流式响应。Content-Type为text/event-stream |  -  |
+|**400** | 请求参数错误 |  -  |
+|**500** | 翻译服务错误 |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
