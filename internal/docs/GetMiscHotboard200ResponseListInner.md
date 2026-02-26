@@ -10,6 +10,7 @@ Name | Type | Description | Notes
 **index** | **number** |  | [optional] [default to undefined]
 **title** | **string** |  | [optional] [default to undefined]
 **url** | **string** |  | [optional] [default to undefined]
+**cover** | **string** | 封面图 URL，音乐类热榜返回专辑封面，其他平台无此字段。 | [optional] [default to undefined]
 
 ## Example
 
@@ -22,6 +23,7 @@ const instance: GetMiscHotboard200ResponseListInner = {
     index,
     title,
     url,
+    cover,
 };
 ```
 

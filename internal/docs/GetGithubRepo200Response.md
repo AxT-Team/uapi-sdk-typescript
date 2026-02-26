@@ -28,6 +28,7 @@ Name | Type | Description | Notes
 **languages** | **{ [key: string]: number; }** |  | [optional] [default to undefined]
 **collaborators** | [**Array&lt;GetGithubRepo200ResponseCollaboratorsInner&gt;**](GetGithubRepo200ResponseCollaboratorsInner.md) |  | [optional] [default to undefined]
 **maintainers** | [**Array&lt;GetGithubRepo200ResponseCollaboratorsInner&gt;**](GetGithubRepo200ResponseCollaboratorsInner.md) |  | [optional] [default to undefined]
+**latest_release** | [**GetGithubRepo200ResponseLatestRelease**](GetGithubRepo200ResponseLatestRelease.md) |  | [optional] [default to undefined]
 
 ## Example
 
@@ -58,6 +59,7 @@ const instance: GetGithubRepo200Response = {
     languages,
     collaborators,
     maintainers,
+    latest_release,
 };
 ```
 

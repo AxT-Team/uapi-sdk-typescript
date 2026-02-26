@@ -5,8 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**code** | **number** |  | [optional] [default to undefined]
-**status** | **number** | HTTP响应状态码 | [optional] [default to undefined]
+**status** | **number** | 目标不可达或请求失败时固定为 0。 | [optional] [default to undefined]
 **url** | **string** |  | [optional] [default to undefined]
 
 ## Example
@@ -15,7 +14,6 @@ Name | Type | Description | Notes
 import { GetNetworkUrlstatus200Response } from 'uapi-sdk-typescript';
 
 const instance: GetNetworkUrlstatus200Response = {
-    code,
     status,
     url,
 };

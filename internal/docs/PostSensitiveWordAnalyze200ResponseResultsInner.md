@@ -6,11 +6,9 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **k** | **string** |  | [optional] [default to undefined]
-**r** | **string** |  | [optional] [default to undefined]
-**s** | **Array&lt;number&gt;** |  | [optional] [default to undefined]
-**v** | **Array&lt;string&gt;** |  | [optional] [default to undefined]
-**t** | **Array&lt;string&gt;** |  | [optional] [default to undefined]
-**d** | **string** |  | [optional] [default to undefined]
+**label** | **string** |  | [optional] [default to undefined]
+**category** | **string** |  | [optional] [default to undefined]
+**confidence** | **number** |  | [optional] [default to undefined]
 
 ## Example
 
@@ -19,11 +17,9 @@ import { PostSensitiveWordAnalyze200ResponseResultsInner } from 'uapi-sdk-typesc
 
 const instance: PostSensitiveWordAnalyze200ResponseResultsInner = {
     k,
-    r,
-    s,
-    v,
-    t,
-    d,
+    label,
+    category,
+    confidence,
 };
 ```
 

@@ -5,7 +5,6 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**code** | **number** |  | [optional] [default to undefined]
 **message** | **string** |  | [optional] [default to undefined]
 **date** | **string** |  | [optional] [default to undefined]
 **events** | [**Array&lt;GetHistoryProgrammerToday200ResponseEventsInner&gt;**](GetHistoryProgrammerToday200ResponseEventsInner.md) |  | [optional] [default to undefined]
@@ -16,7 +15,6 @@ Name | Type | Description | Notes
 import { GetHistoryProgrammerToday200Response } from 'uapi-sdk-typescript';
 
 const instance: GetHistoryProgrammerToday200Response = {
-    code,
     message,
     date,
     events,

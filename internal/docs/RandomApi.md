@@ -4,10 +4,10 @@ All URIs are relative to *https://uapis.cn/api/v1*
 
 |Method | HTTP request | Description|
 |------------- | ------------- | -------------|
-|[**getAnswerbookAsk**](#getanswerbookask) | **GET** /answerbook/ask | 获取答案之书的神秘答案 (GET)|
-|[**getRandomImage**](#getrandomimage) | **GET** /random/image | 随机二次元、风景、动漫图片壁纸|
-|[**getRandomString**](#getrandomstring) | **GET** /random/string | 生成高度可定制的随机字符串|
-|[**postAnswerbookAsk**](#postanswerbookask) | **POST** /answerbook/ask | 获取答案之书的神秘答案 (POST)|
+|[**getAnswerbookAsk**](#getanswerbookask) | **GET** /answerbook/ask | 答案之书|
+|[**getRandomImage**](#getrandomimage) | **GET** /random/image | 随机图片|
+|[**getRandomString**](#getrandomstring) | **GET** /random/string | 随机字符串|
+|[**postAnswerbookAsk**](#postanswerbookask) | **POST** /answerbook/ask | 答案之书 (POST)|
 
 # **getAnswerbookAsk**
 > GetAnswerbookAsk200Response getAnswerbookAsk()
@@ -65,7 +65,7 @@ No authorization required
 # **getRandomImage**
 > File getRandomImage()
 
-需要一张随机图片作为占位符或者背景吗？这个接口是你的不二之选。  ## 功能概述 这是一个非常简单的接口，它会从我们庞大的图库和精选外部图床中随机挑选一张图片，然后通过 302 重定向让你直接访问到它。这使得它可以非常方便地直接用在 HTML 的 `<img>` 标签中。  你可以通过 `/api/v1/random/image?category=acg&type=4k` 这样的请求获取由UapiPro服务器提供的图片，也可以通过 `/api/v1/random/image?category=ai_drawing` 获取由外部图床精选的图片。  如果你不提供任何 category 参数，程序会从所有图片（包括本地的和URL的）中随机抽取一张（**全局随机图片不包含ikun和AI绘画**）。  > [!TIP] > 如果你需要更精确地控制图片类型，请使用 `/image/random/{category}/{type}` 接口。  ### 支持的主类别与子类别 - **UapiPro服务器图片**   - **furry**（福瑞）     - z4k     - szs8k     - s4k     - 4k   - **bq**（表情包/趣图）     - youshou     - xiongmao     - waiguoren     - maomao     - ikun     - eciyuan   - **acg**（二次元动漫）     - pc     - mb - **外部图床精选图片**   - **ai_drawing**: AI绘画。   - **general_anime**: 动漫图。   - **landscape**: 风景图。   - **mobile_wallpaper**: 手机壁纸。   - **pc_wallpaper**: 电脑壁纸。 - **混合动漫**   - **anime**: 混合了UapiPro服务器的acg和外部图床的general_anime分类下的图片。  > [!NOTE] > 默认全局随机（未指定category参数）时，不会包含ikun和AI绘画（ai_drawing）类别的图片。 
+需要一张随机图片作为占位符或者背景吗？这个接口是你的不二之选。  ## 功能概述 这是一个非常简单的接口，它会从我们庞大的图库和精选外部图床中随机挑选一张图片，然后通过 302 重定向让你直接访问到它。这使得它可以非常方便地直接用在 HTML 的 `<img>` 标签中。  你可以通过 `/api/v1/random/image?category=acg&type=4k` 这样的请求获取由UapiPro服务器提供的图片，也可以通过 `/api/v1/random/image?category=ai_drawing` 获取由外部图床精选的图片。  如果你不提供任何 category 参数，程序会从所有图片（包括本地的和URL的）中随机抽取一张（**全局随机图片不包含ikun和AI绘画**）。  > [!TIP] > 如果你需要更精确地控制图片类型，请使用 `/image/random/{category}/{type}` 接口。  ### 支持的主类别与子类别 - **acg**（二次元动漫）     - pc     - mb - **外部图床精选/混合动漫**   - **landscape**: 风景图。   - **anime**: 混合了UapiPro服务器的acg和外部图床的general_anime分类下的图片。   - **pc_wallpaper**: 电脑壁纸。   - **mobile_wallpaper**: 手机壁纸。   - **general_anime**: 动漫图。   - **ai_drawing**: AI绘画。 - **其他分类**   - **bq**（表情包/趣图）     - eciyuan     - ikun     - xiongmao     - waiguoren     - maomao   - **furry**（福瑞）     - z4k     - szs8k     - s4k     - 4k  > [!NOTE] > 默认全局随机（未指定category参数）时，不会包含ikun和AI绘画（ai_drawing）类别的图片。 
 
 ### Example
 
@@ -78,8 +78,8 @@ import {
 const configuration = new Configuration();
 const apiInstance = new RandomApi(configuration);
 
-let category: 'furry' | 'bq' | 'acg' | 'ai_drawing' | 'general_anime' | 'landscape' | 'mobile_wallpaper' | 'pc_wallpaper' | 'anime'; //（可选）指定图片主类别。  **支持的主类别：** - `furry`（福瑞，UapiPro服务器） - `bq`（表情包/趣图，UapiPro服务器） - `acg`（二次元动漫，UapiPro服务器） - `ai_drawing`（AI绘画，外部图床） - `general_anime`（动漫图，外部图床） - `landscape`（风景图，外部图床） - `mobile_wallpaper`（手机壁纸，外部图床） - `pc_wallpaper`（电脑壁纸，外部图床） - `anime`（混合动漫，UapiPro服务器acg + 外部图床general_anime）  > [!TIP] > 如果不指定，将从所有图片中随机抽取（不包含 `ikun` 和 `ai_drawing`）。  (optional) (default to undefined)
-let type: 'z4k' | 'szs8k' | 's4k' | '4k' | 'youshou' | 'xiongmao' | 'waiguoren' | 'maomao' | 'ikun' | 'eciyuan' | 'pc' | 'mb'; //（可选，仅UapiPro服务器图片支持）指定图片子类别。  - **furry**: `z4k`, `szs8k`, `s4k`, `4k` - **bq**: `youshou`, `xiongmao`, `waiguoren`, `maomao`, `ikun`, `eciyuan` - **acg**: `pc`, `mb`  > [!TIP] > 外部图床类别和 `anime` 混合类别不支持 `type` 参数。  (optional) (default to undefined)
+let category: 'acg' | 'landscape' | 'anime' | 'pc_wallpaper' | 'mobile_wallpaper' | 'general_anime' | 'ai_drawing' | 'bq' | 'furry'; //（可选）指定图片主类别。  **支持的主类别：** - `acg`（二次元动漫，UapiPro服务器） - `landscape`（风景图，外部图床） - `anime`（混合动漫） - `pc_wallpaper`（电脑壁纸，外部图床） - `mobile_wallpaper`（手机壁纸，外部图床） - `general_anime`（动漫图，外部图床） - `ai_drawing`（AI绘画，外部图床） - `bq`（表情包/趣图，UapiPro服务器） - `furry`（福瑞，UapiPro服务器）  > [!TIP] > 如果不指定，将从所有图片中随机抽取（不包含 `ikun` 和 `ai_drawing`）。  (optional) (default to undefined)
+let type: 'pc' | 'mb' | 'eciyuan' | 'ikun' | '4k' | 's4k' | 'z4k' | 'szs8k' | 'xiongmao' | 'maomao' | 'waiguoren'; //（可选，仅UapiPro服务器图片支持）指定图片子类别。  - **bq**: `xiongmao`, `waiguoren`, `maomao`, `ikun`, `eciyuan` - **acg**: `pc`, `mb` - **furry**: `z4k`, `szs8k`, `s4k`, `4k`  > [!TIP] > 外部图床类别和 `anime` 混合类别不支持 `type` 参数。  (optional) (default to undefined)
 
 const { status, data } = await apiInstance.getRandomImage(
     category,
@@ -91,8 +91,8 @@ const { status, data } = await apiInstance.getRandomImage(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **category** | [**&#39;furry&#39; | &#39;bq&#39; | &#39;acg&#39; | &#39;ai_drawing&#39; | &#39;general_anime&#39; | &#39;landscape&#39; | &#39;mobile_wallpaper&#39; | &#39;pc_wallpaper&#39; | &#39;anime&#39;**]**Array<&#39;furry&#39; &#124; &#39;bq&#39; &#124; &#39;acg&#39; &#124; &#39;ai_drawing&#39; &#124; &#39;general_anime&#39; &#124; &#39;landscape&#39; &#124; &#39;mobile_wallpaper&#39; &#124; &#39;pc_wallpaper&#39; &#124; &#39;anime&#39;>** | （可选）指定图片主类别。  **支持的主类别：** - &#x60;furry&#x60;（福瑞，UapiPro服务器） - &#x60;bq&#x60;（表情包/趣图，UapiPro服务器） - &#x60;acg&#x60;（二次元动漫，UapiPro服务器） - &#x60;ai_drawing&#x60;（AI绘画，外部图床） - &#x60;general_anime&#x60;（动漫图，外部图床） - &#x60;landscape&#x60;（风景图，外部图床） - &#x60;mobile_wallpaper&#x60;（手机壁纸，外部图床） - &#x60;pc_wallpaper&#x60;（电脑壁纸，外部图床） - &#x60;anime&#x60;（混合动漫，UapiPro服务器acg + 外部图床general_anime）  &gt; [!TIP] &gt; 如果不指定，将从所有图片中随机抽取（不包含 &#x60;ikun&#x60; 和 &#x60;ai_drawing&#x60;）。  | (optional) defaults to undefined|
-| **type** | [**&#39;z4k&#39; | &#39;szs8k&#39; | &#39;s4k&#39; | &#39;4k&#39; | &#39;youshou&#39; | &#39;xiongmao&#39; | &#39;waiguoren&#39; | &#39;maomao&#39; | &#39;ikun&#39; | &#39;eciyuan&#39; | &#39;pc&#39; | &#39;mb&#39;**]**Array<&#39;z4k&#39; &#124; &#39;szs8k&#39; &#124; &#39;s4k&#39; &#124; &#39;4k&#39; &#124; &#39;youshou&#39; &#124; &#39;xiongmao&#39; &#124; &#39;waiguoren&#39; &#124; &#39;maomao&#39; &#124; &#39;ikun&#39; &#124; &#39;eciyuan&#39; &#124; &#39;pc&#39; &#124; &#39;mb&#39;>** | （可选，仅UapiPro服务器图片支持）指定图片子类别。  - **furry**: &#x60;z4k&#x60;, &#x60;szs8k&#x60;, &#x60;s4k&#x60;, &#x60;4k&#x60; - **bq**: &#x60;youshou&#x60;, &#x60;xiongmao&#x60;, &#x60;waiguoren&#x60;, &#x60;maomao&#x60;, &#x60;ikun&#x60;, &#x60;eciyuan&#x60; - **acg**: &#x60;pc&#x60;, &#x60;mb&#x60;  &gt; [!TIP] &gt; 外部图床类别和 &#x60;anime&#x60; 混合类别不支持 &#x60;type&#x60; 参数。  | (optional) defaults to undefined|
+| **category** | [**&#39;acg&#39; | &#39;landscape&#39; | &#39;anime&#39; | &#39;pc_wallpaper&#39; | &#39;mobile_wallpaper&#39; | &#39;general_anime&#39; | &#39;ai_drawing&#39; | &#39;bq&#39; | &#39;furry&#39;**]**Array<&#39;acg&#39; &#124; &#39;landscape&#39; &#124; &#39;anime&#39; &#124; &#39;pc_wallpaper&#39; &#124; &#39;mobile_wallpaper&#39; &#124; &#39;general_anime&#39; &#124; &#39;ai_drawing&#39; &#124; &#39;bq&#39; &#124; &#39;furry&#39;>** | （可选）指定图片主类别。  **支持的主类别：** - &#x60;acg&#x60;（二次元动漫，UapiPro服务器） - &#x60;landscape&#x60;（风景图，外部图床） - &#x60;anime&#x60;（混合动漫） - &#x60;pc_wallpaper&#x60;（电脑壁纸，外部图床） - &#x60;mobile_wallpaper&#x60;（手机壁纸，外部图床） - &#x60;general_anime&#x60;（动漫图，外部图床） - &#x60;ai_drawing&#x60;（AI绘画，外部图床） - &#x60;bq&#x60;（表情包/趣图，UapiPro服务器） - &#x60;furry&#x60;（福瑞，UapiPro服务器）  &gt; [!TIP] &gt; 如果不指定，将从所有图片中随机抽取（不包含 &#x60;ikun&#x60; 和 &#x60;ai_drawing&#x60;）。  | (optional) defaults to undefined|
+| **type** | [**&#39;pc&#39; | &#39;mb&#39; | &#39;eciyuan&#39; | &#39;ikun&#39; | &#39;4k&#39; | &#39;s4k&#39; | &#39;z4k&#39; | &#39;szs8k&#39; | &#39;xiongmao&#39; | &#39;maomao&#39; | &#39;waiguoren&#39;**]**Array<&#39;pc&#39; &#124; &#39;mb&#39; &#124; &#39;eciyuan&#39; &#124; &#39;ikun&#39; &#124; &#39;4k&#39; &#124; &#39;s4k&#39; &#124; &#39;z4k&#39; &#124; &#39;szs8k&#39; &#124; &#39;xiongmao&#39; &#124; &#39;maomao&#39; &#124; &#39;waiguoren&#39;>** | （可选，仅UapiPro服务器图片支持）指定图片子类别。  - **bq**: &#x60;xiongmao&#x60;, &#x60;waiguoren&#x60;, &#x60;maomao&#x60;, &#x60;ikun&#x60;, &#x60;eciyuan&#x60; - **acg**: &#x60;pc&#x60;, &#x60;mb&#x60; - **furry**: &#x60;z4k&#x60;, &#x60;szs8k&#x60;, &#x60;s4k&#x60;, &#x60;4k&#x60;  &gt; [!TIP] &gt; 外部图床类别和 &#x60;anime&#x60; 混合类别不支持 &#x60;type&#x60; 参数。  | (optional) defaults to undefined|
 
 
 ### Return type
@@ -112,8 +112,7 @@ No authorization required
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-|**200** | �ɹ����ʣ�ֱ�ӷ��� JPEG ��ʽ��ͼƬ���������ݣ�Ĭ�� Content-Type Ϊ image/jpeg�� |  -  |
-|**302** | 成功！你的客户端将会被重定向到一张随机图片的URL。 |  -  |
+|**200** | 成功！将随机图片以图片二进制 (image/jpeg) 直接返回给客户端，可直接在 &lt;img&gt; 标签中使用。 |  -  |
 |**404** | 未找到指定类别的图片。 |  -  |
 |**500** | 服务器内部错误。 |  -  |
 

@@ -5,7 +5,6 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**code** | **number** |  | [optional] [default to undefined]
 **text** | **string** |  | [optional] [default to undefined]
 
 ## Example
@@ -14,7 +13,6 @@ Name | Type | Description | Notes
 import { GetRandomString200Response } from 'uapi-sdk-typescript';
 
 const instance: GetRandomString200Response = {
-    code,
     text,
 };
 ```

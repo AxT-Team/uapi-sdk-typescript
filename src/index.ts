@@ -232,7 +232,7 @@ class ImageApi {
     let path = '/api/v1/image/bing-daily'
     return await this.http.request('GET', path, params, Object.keys(body).length > 0 ? body : undefined)
   }
-  /** 摸头 GIF */
+  /** 生成摸摸头GIF (QQ号) */
   async getImageMotou(args: any = {}): Promise<any> {
     const params:any = {}
     const body:any = {}
@@ -248,6 +248,9 @@ class ImageApi {
     if (args["text"] !== undefined) params["text"] = args["text"]
     if (args["size"] !== undefined) params["size"] = args["size"]
     if (args["format"] !== undefined) params["format"] = args["format"]
+    if (args["transparent"] !== undefined) params["transparent"] = args["transparent"]
+    if (args["fgcolor"] !== undefined) params["fgcolor"] = args["fgcolor"]
+    if (args["bgcolor"] !== undefined) params["bgcolor"] = args["bgcolor"]
     let path = '/api/v1/image/qrcode'
     return await this.http.request('GET', path, params, Object.keys(body).length > 0 ? body : undefined)
   }
@@ -277,7 +280,7 @@ class ImageApi {
     let path = '/api/v1/image/frombase64'
     return await this.http.request('POST', path, params, Object.keys(body).length > 0 ? body : undefined)
   }
-  /** 摸头 GIF (上传) */
+  /** 生成摸摸头GIF */
   async postImageMotou(args: any = {}): Promise<any> {
     const params:any = {}
     const body:any = {}
@@ -285,6 +288,15 @@ class ImageApi {
     if (args["file"] !== undefined) body["file"] = args["file"]
     if (args["image_url"] !== undefined) body["image_url"] = args["image_url"]
     let path = '/api/v1/image/motou'
+    return await this.http.request('POST', path, params, Object.keys(body).length > 0 ? body : undefined)
+  }
+  /** 图片敏感检测 */
+  async postImageNsfw(args: any = {}): Promise<any> {
+    const params:any = {}
+    const body:any = {}
+    if (args["file"] !== undefined) body["file"] = args["file"]
+    if (args["url"] !== undefined) body["url"] = args["url"]
+    let path = '/api/v1/image/nsfw'
     return await this.http.request('POST', path, params, Object.keys(body).length > 0 ? body : undefined)
   }
   /** 生成你们怎么不说话了表情包 */
@@ -327,12 +339,55 @@ class MiscApi {
     let path = '/api/v1/history/programmer/today'
     return await this.http.request('GET', path, params, Object.keys(body).length > 0 ? body : undefined)
   }
+  /** Adcode 国内外行政区域查询 */
+  async getMiscDistrict(args: any = {}): Promise<any> {
+    const params:any = {}
+    const body:any = {}
+    if (args["keywords"] !== undefined) params["keywords"] = args["keywords"]
+    if (args["adcode"] !== undefined) params["adcode"] = args["adcode"]
+    if (args["lat"] !== undefined) params["lat"] = args["lat"]
+    if (args["lng"] !== undefined) params["lng"] = args["lng"]
+    if (args["level"] !== undefined) params["level"] = args["level"]
+    if (args["country"] !== undefined) params["country"] = args["country"]
+    if (args["limit"] !== undefined) params["limit"] = args["limit"]
+    let path = '/api/v1/misc/district'
+    return await this.http.request('GET', path, params, Object.keys(body).length > 0 ? body : undefined)
+  }
+  /** 查询节假日与万年历 */
+  async getMiscHolidayCalendar(args: any = {}): Promise<any> {
+    const params:any = {}
+    const body:any = {}
+    if (args["date"] !== undefined) params["date"] = args["date"]
+    if (args["month"] !== undefined) params["month"] = args["month"]
+    if (args["year"] !== undefined) params["year"] = args["year"]
+    if (args["timezone"] !== undefined) params["timezone"] = args["timezone"]
+    if (args["holiday_type"] !== undefined) params["holiday_type"] = args["holiday_type"]
+    if (args["include_nearby"] !== undefined) params["include_nearby"] = args["include_nearby"]
+    if (args["nearby_limit"] !== undefined) params["nearby_limit"] = args["nearby_limit"]
+    let path = '/api/v1/misc/holiday-calendar'
+    return await this.http.request('GET', path, params, Object.keys(body).length > 0 ? body : undefined)
+  }
   /** 查询热榜 */
   async getMiscHotboard(args: any = {}): Promise<any> {
     const params:any = {}
     const body:any = {}
     if (args["type"] !== undefined) params["type"] = args["type"]
+    if (args["time"] !== undefined) params["time"] = args["time"]
+    if (args["keyword"] !== undefined) params["keyword"] = args["keyword"]
+    if (args["time_start"] !== undefined) params["time_start"] = args["time_start"]
+    if (args["time_end"] !== undefined) params["time_end"] = args["time_end"]
+    if (args["limit"] !== undefined) params["limit"] = args["limit"]
+    if (args["sources"] !== undefined) params["sources"] = args["sources"]
     let path = '/api/v1/misc/hotboard'
+    return await this.http.request('GET', path, params, Object.keys(body).length > 0 ? body : undefined)
+  }
+  /** 查询农历时间 */
+  async getMiscLunartime(args: any = {}): Promise<any> {
+    const params:any = {}
+    const body:any = {}
+    if (args["ts"] !== undefined) params["ts"] = args["ts"]
+    if (args["timezone"] !== undefined) params["timezone"] = args["timezone"]
+    let path = '/api/v1/misc/lunartime'
     return await this.http.request('GET', path, params, Object.keys(body).length > 0 ? body : undefined)
   }
   /** 查询手机归属地 */
@@ -385,6 +440,7 @@ class MiscApi {
     const body:any = {}
     if (args["tracking_number"] !== undefined) params["tracking_number"] = args["tracking_number"]
     if (args["carrier_code"] !== undefined) params["carrier_code"] = args["carrier_code"]
+    if (args["phone"] !== undefined) params["phone"] = args["phone"]
     let path = '/api/v1/misc/tracking/query'
     return await this.http.request('GET', path, params, Object.keys(body).length > 0 ? body : undefined)
   }
@@ -395,8 +451,11 @@ class MiscApi {
     if (args["city"] !== undefined) params["city"] = args["city"]
     if (args["adcode"] !== undefined) params["adcode"] = args["adcode"]
     if (args["extended"] !== undefined) params["extended"] = args["extended"]
-    if (args["indices"] !== undefined) params["indices"] = args["indices"]
     if (args["forecast"] !== undefined) params["forecast"] = args["forecast"]
+    if (args["hourly"] !== undefined) params["hourly"] = args["hourly"]
+    if (args["minutely"] !== undefined) params["minutely"] = args["minutely"]
+    if (args["indices"] !== undefined) params["indices"] = args["indices"]
+    if (args["lang"] !== undefined) params["lang"] = args["lang"]
     let path = '/api/v1/misc/weather'
     return await this.http.request('GET', path, params, Object.keys(body).length > 0 ? body : undefined)
   }
@@ -818,7 +877,7 @@ class WebparseApi {
     let path = '/api/v1/webparse/extractimages'
     return await this.http.request('GET', path, params, Object.keys(body).length > 0 ? body : undefined)
   }
-  /** 网页元数据 */
+  /** 提取网页元数据 */
   async getWebparseMetadata(args: any = {}): Promise<any> {
     const params:any = {}
     const body:any = {}

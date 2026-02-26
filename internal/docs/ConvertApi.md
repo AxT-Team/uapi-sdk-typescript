@@ -4,8 +4,8 @@ All URIs are relative to *https://uapis.cn/api/v1*
 
 |Method | HTTP request | Description|
 |------------- | ------------- | -------------|
-|[**getConvertUnixtime**](#getconvertunixtime) | **GET** /convert/unixtime | Unix时间戳与日期字符串双向转换|
-|[**postConvertJson**](#postconvertjson) | **POST** /convert/json | 美化并格式化JSON字符串|
+|[**getConvertUnixtime**](#getconvertunixtime) | **GET** /convert/unixtime | 时间戳转换|
+|[**postConvertJson**](#postconvertjson) | **POST** /convert/json | JSON 格式化|
 
 # **getConvertUnixtime**
 > GetConvertUnixtime200Response getConvertUnixtime()

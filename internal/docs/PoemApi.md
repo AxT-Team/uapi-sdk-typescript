@@ -4,7 +4,7 @@ All URIs are relative to *https://uapis.cn/api/v1*
 
 |Method | HTTP request | Description|
 |------------- | ------------- | -------------|
-|[**getSaying**](#getsaying) | **GET** /saying | 随机获取一句诗词或名言|
+|[**getSaying**](#getsaying) | **GET** /saying | 一言|
 
 # **getSaying**
 > GetSaying200Response getSaying()

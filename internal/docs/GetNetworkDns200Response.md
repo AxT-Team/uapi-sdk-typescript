@@ -5,7 +5,6 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**code** | **number** |  | [optional] [default to undefined]
 **domain** | **string** |  | [optional] [default to undefined]
 **error** | **string** |  | [optional] [default to undefined]
 **records** | [**Array&lt;GetNetworkDns200ResponseRecordsInner&gt;**](GetNetworkDns200ResponseRecordsInner.md) |  | [optional] [default to undefined]
@@ -17,7 +16,6 @@ Name | Type | Description | Notes
 import { GetNetworkDns200Response } from 'uapi-sdk-typescript';
 
 const instance: GetNetworkDns200Response = {
-    code,
     domain,
     error,
     records,

@@ -4,14 +4,14 @@ All URIs are relative to *https://uapis.cn/api/v1*
 
 |Method | HTTP request | Description|
 |------------- | ------------- | -------------|
-|[**getGithubRepo**](#getgithubrepo) | **GET** /github/repo | 获取GitHub仓库信息|
-|[**getSocialBilibiliArchives**](#getsocialbilibiliarchives) | **GET** /social/bilibili/archives | 获取Bilibili用户投稿列表|
-|[**getSocialBilibiliLiveroom**](#getsocialbilibililiveroom) | **GET** /social/bilibili/liveroom | 获取Bilibili直播间信息|
-|[**getSocialBilibiliReplies**](#getsocialbilibilireplies) | **GET** /social/bilibili/replies | 获取Bilibili视频评论|
-|[**getSocialBilibiliUserinfo**](#getsocialbilibiliuserinfo) | **GET** /social/bilibili/userinfo | 查询Bilibili用户信息|
-|[**getSocialBilibiliVideoinfo**](#getsocialbilibilivideoinfo) | **GET** /social/bilibili/videoinfo | 获取Bilibili视频详细信息|
-|[**getSocialQqGroupinfo**](#getsocialqqgroupinfo) | **GET** /social/qq/groupinfo | 获取QQ群名称、头像、简介|
-|[**getSocialQqUserinfo**](#getsocialqquserinfo) | **GET** /social/qq/userinfo | 独家获取QQ号头像、昵称|
+|[**getGithubRepo**](#getgithubrepo) | **GET** /github/repo | 查询 GitHub 仓库|
+|[**getSocialBilibiliArchives**](#getsocialbilibiliarchives) | **GET** /social/bilibili/archives | 查询 B站投稿|
+|[**getSocialBilibiliLiveroom**](#getsocialbilibililiveroom) | **GET** /social/bilibili/liveroom | 查询 B站直播间|
+|[**getSocialBilibiliReplies**](#getsocialbilibilireplies) | **GET** /social/bilibili/replies | 查询 B站评论|
+|[**getSocialBilibiliUserinfo**](#getsocialbilibiliuserinfo) | **GET** /social/bilibili/userinfo | 查询 B站用户|
+|[**getSocialBilibiliVideoinfo**](#getsocialbilibilivideoinfo) | **GET** /social/bilibili/videoinfo | 查询 B站视频|
+|[**getSocialQqGroupinfo**](#getsocialqqgroupinfo) | **GET** /social/qq/groupinfo | 查询 QQ 群信息|
+|[**getSocialQqUserinfo**](#getsocialqquserinfo) | **GET** /social/qq/userinfo | 查询 QQ 信息|
 
 # **getGithubRepo**
 > GetGithubRepo200Response getGithubRepo()
@@ -189,7 +189,7 @@ No authorization required
 # **getSocialBilibiliReplies**
 > GetSocialBilibiliReplies200Response getSocialBilibiliReplies()
 
-想要分析B站视频的评论区？这个接口可以帮你轻松获取评论数据，包括热门评论和最新评论，还支持分页加载。  ## 功能概述 通过视频的 `oid`（通常就是视频的`aid`），你可以分页获取该视频的评论区内容。你可以指定排序方式和分页参数，来精确地获取你需要的数据。  ## 参数说明 - **`sort` (排序方式)**: `0`=按时间排序, `1`=按点赞数排序, `2`=按回复数排序。默认为按时间排序。  ## 响应体字段说明 - **`hots` (热门评论)**: 仅在请求第一页时，可能会返回热门评论列表。其结构与 `replies` 中的对象一致。 - **`replies` (评论列表)**: 这是一个数组，包含了当前页的评论。其中：   - `root`: 指向根评论的ID。如果评论本身就是根评论，则为 `0`。   - `parent`: 指向该条回复所回复的上一级评论ID。如果评论是根评论，则为 `0`。
+想要分析B站视频的评论区？这个接口可以帮你轻松获取评论数据，包括热门评论和最新评论，还支持分页加载。  ## 功能概述 通过视频的 `oid`（通常就是视频的`aid`），你可以分页获取该视频的评论区内容。你可以指定排序方式和分页参数，来精确地获取你需要的数据。  ## 参数说明 - **`sort` (排序方式)**   - `0` 或 `time`：按时间排序   - `1` 或 `like`：按点赞排序   - `2` 或 `reply`：按回复数排序   - `3` 或 `hot`（也支持 `hottest`、`最热`）：按最热排序  ## 响应体字段说明 - **`hots` (热门评论)**: 仅在请求第一页时，可能会返回热门评论列表。其结构与 `replies` 中的对象一致。 - **`replies` (评论列表)**: 这是一个数组，包含了当前页的评论。其中：   - `root`: 指向根评论的ID。如果评论本身就是根评论，则为 `0`。   - `parent`: 指向该条回复所回复的上一级评论ID。如果评论是根评论，则为 `0`。
 
 ### Example
 
@@ -203,7 +203,7 @@ const configuration = new Configuration();
 const apiInstance = new SocialApi(configuration);
 
 let oid: string; //目标评论区的ID。对于视频，这通常就是它的 `aid`。 (default to undefined)
-let sort: string; //排序方式。`0`=按时间, `1`=按点赞, `2`=按回复。默认为 `0`。 (optional) (default to undefined)
+let sort: '0' | 'time' | '1' | 'like' | '2' | 'reply' | '3' | 'hot' | 'hottest' | '最热'; //排序方式。支持 `0/time`（按时间）、`1/like`（按点赞）、`2/reply`（按回复数）、`3/hot/hottest/最热`（按最热）。默认为 `0/time`。 (optional) (default to undefined)
 let ps: string; //每页获取的评论数量，范围是1到20。默认为 `20`。 (optional) (default to undefined)
 let pn: string; //要获取的页码，从1开始。默认为 `1`。 (optional) (default to undefined)
 
@@ -220,7 +220,7 @@ const { status, data } = await apiInstance.getSocialBilibiliReplies(
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
 | **oid** | [**string**] | 目标评论区的ID。对于视频，这通常就是它的 &#x60;aid&#x60;。 | defaults to undefined|
-| **sort** | [**string**] | 排序方式。&#x60;0&#x60;&#x3D;按时间, &#x60;1&#x60;&#x3D;按点赞, &#x60;2&#x60;&#x3D;按回复。默认为 &#x60;0&#x60;。 | (optional) defaults to undefined|
+| **sort** | [**&#39;0&#39; | &#39;time&#39; | &#39;1&#39; | &#39;like&#39; | &#39;2&#39; | &#39;reply&#39; | &#39;3&#39; | &#39;hot&#39; | &#39;hottest&#39; | &#39;最热&#39;**]**Array<&#39;0&#39; &#124; &#39;time&#39; &#124; &#39;1&#39; &#124; &#39;like&#39; &#124; &#39;2&#39; &#124; &#39;reply&#39; &#124; &#39;3&#39; &#124; &#39;hot&#39; &#124; &#39;hottest&#39; &#124; &#39;最热&#39;>** | 排序方式。支持 &#x60;0/time&#x60;（按时间）、&#x60;1/like&#x60;（按点赞）、&#x60;2/reply&#x60;（按回复数）、&#x60;3/hot/hottest/最热&#x60;（按最热）。默认为 &#x60;0/time&#x60;。 | (optional) defaults to undefined|
 | **ps** | [**string**] | 每页获取的评论数量，范围是1到20。默认为 &#x60;20&#x60;。 | (optional) defaults to undefined|
 | **pn** | [**string**] | 要获取的页码，从1开始。默认为 &#x60;1&#x60;。 | (optional) defaults to undefined|
 
@@ -357,7 +357,7 @@ No authorization required
 # **getSocialQqGroupinfo**
 > GetSocialQqGroupinfo200Response getSocialQqGroupinfo()
 
-想在你的应用里展示QQ群信息？这个接口让你轻松获取群名称、群头像、群简介等公开信息。它能帮你快速构建社群导航站、群聊推荐系统，或是为你的数据分析工具提供可靠的数据源。无论是展示群聊卡片、生成加群链接，还是进行社群数据统计，这个接口都能满足你的需求。  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者集成和测试。未来，它将转为付费API，为用户提供更稳定和强大的服务。  ## 功能概述 你只需要提供一个QQ群号（5-12位纯数字），接口就会返回该群的完整公开信息。我们会先验证群号的有效性，确保返回的数据准确可靠。接口的响应速度快，数据结构清晰，非常适合集成到各类应用场景中。  ## 返回数据说明 接口会返回以下QQ群的关键信息： - **群基础信息**: 包括群号、群名称，让你能够准确识别和展示群聊。 - **视觉素材**: 提供群头像URL（标准100x100尺寸），可直接用于在你的界面中展示群聊图标。 - **群介绍资料**: 包含群描述/简介和群标签，帮助用户了解群聊的主题和特色。 - **便捷入口**: 返回加群链接（二维码URL），方便用户一键加入感兴趣的群聊。 - **数据时效**: 提供最后更新时间戳，让你了解数据的新鲜度。  所有返回的数据都遵循标准的JSON格式，字段命名清晰，便于解析和使用。无论你是在做网页端、移动端还是后端服务，都能轻松集成。
+想在你的应用里展示QQ群信息？这个接口让你轻松获取群名称、群头像、群简介、成员数量等详细公开信息。它能帮你快速构建社群导航站、群聊推荐系统，或是为你的数据分析工具提供可靠的数据源。  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者集成和测试。未来，它将转为付费API，为用户提供更稳定和强大的服务。  ## 功能概述 你只需要提供一个QQ群号（5-12位纯数字），接口就会返回该群的完整公开信息。我们会先验证群号的有效性，确保返回的数据准确可靠。接口响应速度快，数据结构清晰，非常适合集成到各类应用场景中。  ## 返回数据说明 接口会返回以下QQ群的关键信息：  ### 基础字段（所有群都有） - **群基础信息**: 包括群号、群名称，让你能够准确识别和展示群聊 - **视觉素材**: 提供群头像URL（支持多种尺寸），可直接用于在你的界面中展示群聊图标 - **群介绍资料**: 包含群描述/简介和群标签，帮助用户了解群聊的主题和特色 - **便捷入口**: 返回加群链接（二维码URL），方便用户一键加入感兴趣的群聊 - **成员统计**: 当前成员数和最大成员数，直观了解群规模 - **数据时效**: 提供最后更新时间戳，让你了解数据的新鲜度  ### 扩展字段（部分群有） - **活跃度**: 活跃成员数量（可选） - **群主信息**: 群主QQ号和UID（可选） - **时间信息**: 建群时间戳和格式化时间（可选） - **群等级**: 群等级数值（可选） - **群公告**: 群公告/简介内容（可选） - **认证信息**: 官方认证类型和说明（可选）  所有返回的数据都遵循标准的JSON格式，字段命名清晰，便于解析和使用。扩展字段仅在数据可用时返回，保持响应体精简。
 
 ### Example
 
@@ -403,8 +403,7 @@ No authorization required
 |-------------|-------------|------------------|
 |**200** | 成功响应，返回QQ群的详细信息 |  -  |
 |**400** | 缺少或无效的group_id参数 |  -  |
-|**404** | QQ群不存在或无法访问 |  -  |
-|**500** | 获取QQ群聊信息失败 |  -  |
+|**404** | QQ群不存在或无法访问（经优化后，此接口遵循RESTful规范，群不存在时返回404而非500） |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

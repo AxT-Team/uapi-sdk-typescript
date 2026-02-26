@@ -8,7 +8,6 @@ Name | Type | Description | Notes
 **avatar** | **string** | 32x32 像素的小尺寸头像URL。 | [optional] [default to undefined]
 **avatarfull** | **string** | 184x184 像素的大尺寸头像URL。 | [optional] [default to undefined]
 **avatarmedium** | **string** | 64x64 像素的中等尺寸头像URL。 | [optional] [default to undefined]
-**code** | **number** | 状态码，200代表成功。 | [optional] [default to undefined]
 **communityvisibilitystate** | **number** | 社区资料的可见性状态: 1&#x3D;私密, 3&#x3D;公开。 | [optional] [default to undefined]
 **loccountrycode** | **string** | 用户个人资料中设置的国家代码 (ISO 3166-1)，前提是用户已设置并公开。 | [optional] [default to undefined]
 **personaname** | **string** | 玩家的当前昵称。 | [optional] [default to undefined]
@@ -30,7 +29,6 @@ const instance: GetGameSteamSummary200Response = {
     avatar,
     avatarfull,
     avatarmedium,
-    code,
     communityvisibilitystate,
     loccountrycode,
     personaname,

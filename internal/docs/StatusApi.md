@@ -4,7 +4,7 @@ All URIs are relative to *https://uapis.cn/api/v1*
 
 |Method | HTTP request | Description|
 |------------- | ------------- | -------------|
-|[**getStatusRatelimit**](#getstatusratelimit) | **GET** /status/ratelimit | 获取API限流器实时状态|
+|[**getStatusRatelimit**](#getstatusratelimit) | **GET** /status/ratelimit | 限流状态|
 |[**getStatusUsage**](#getstatususage) | **GET** /status/usage | 获取API端点使用统计|
 
 # **getStatusRatelimit**
@@ -106,10 +106,8 @@ No authorization required
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-|**200** | 当查询所有路径时 |  -  |
-|**401** | 未授权 |  -  |
-|**404** | 未找到指定路径的统计数据 |  -  |
-|**500** | 服务器内部错误 |  -  |
+|**200** | 查询某条路径时 |  -  |
+|**404** | 未找到 |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

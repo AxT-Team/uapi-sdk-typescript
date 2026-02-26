@@ -5,9 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**code** | **string** |  | [optional] [default to undefined]
-**details** | **object** |  | [optional] [default to undefined]
-**message** | **string** |  | [optional] [default to undefined]
+**error** | **string** |  | [optional] [default to undefined]
 
 ## Example
 
@@ -15,9 +13,7 @@ Name | Type | Description | Notes
 import { GetSocialQqGroupinfo404Response } from 'uapi-sdk-typescript';
 
 const instance: GetSocialQqGroupinfo404Response = {
-    code,
-    details,
-    message,
+    error,
 };
 ```
 

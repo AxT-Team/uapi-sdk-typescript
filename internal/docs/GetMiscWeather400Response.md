@@ -6,7 +6,6 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **code** | **string** |  | [optional] [default to undefined]
-**details** | **object** |  | [optional] [default to undefined]
 **message** | **string** |  | [optional] [default to undefined]
 
 ## Example
@@ -16,7 +15,6 @@ import { GetMiscWeather400Response } from 'uapi-sdk-typescript';
 
 const instance: GetMiscWeather400Response = {
     code,
-    details,
     message,
 };
 ```

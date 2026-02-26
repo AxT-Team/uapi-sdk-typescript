@@ -5,7 +5,6 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**code** | **number** |  | [optional] [default to undefined]
 **message** | **string** |  | [optional] [default to undefined]
 **is_batch** | **boolean** | 标识是否为批量翻译请求。 | [optional] [default to undefined]
 **data** | [**PostAiTranslate200ResponseData**](PostAiTranslate200ResponseData.md) |  | [optional] [default to undefined]
@@ -20,7 +19,6 @@ Name | Type | Description | Notes
 import { PostAiTranslate200Response } from 'uapi-sdk-typescript';
 
 const instance: PostAiTranslate200Response = {
-    code,
     message,
     is_batch,
     data,

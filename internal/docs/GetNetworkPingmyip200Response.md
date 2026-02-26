@@ -6,7 +6,6 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **avg** | **number** | 平均延迟(ms) | [optional] [default to undefined]
-**code** | **number** |  | [optional] [default to undefined]
 **host** | **string** |  | [optional] [default to undefined]
 **ip** | **string** |  | [optional] [default to undefined]
 **location** | **string** |  | [optional] [default to undefined]
@@ -20,7 +19,6 @@ import { GetNetworkPingmyip200Response } from 'uapi-sdk-typescript';
 
 const instance: GetNetworkPingmyip200Response = {
     avg,
-    code,
     host,
     ip,
     location,

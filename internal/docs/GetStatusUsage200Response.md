@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**endpoints** | [**Array&lt;EndpointsAggregateEndpointsInner&gt;**](EndpointsAggregateEndpointsInner.md) |  | [optional] [default to undefined]
-**unaggregated** | [**EndpointsAggregateUnaggregated**](EndpointsAggregateUnaggregated.md) |  | [optional] [default to undefined]
+**endpoints** | [**Array&lt;GetStatusUsage200ResponseAnyOfEndpointsInner&gt;**](GetStatusUsage200ResponseAnyOfEndpointsInner.md) |  | [optional] [default to undefined]
+**unaggregated** | [**GetStatusUsage200ResponseAnyOfUnaggregated**](GetStatusUsage200ResponseAnyOfUnaggregated.md) |  | [optional] [default to undefined]
 **path** | **string** |  | [optional] [default to undefined]
 **count** | **number** |  | [optional] [default to undefined]
 

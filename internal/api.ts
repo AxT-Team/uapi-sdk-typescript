@@ -23,20 +23,7 @@ import type { RequestArgs } from './base';
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, BaseAPI, RequiredError, operationServerMap } from './base';
 
-export interface EndpointsAggregate {
-    'endpoints'?: Array<EndpointsAggregateEndpointsInner>;
-    'unaggregated'?: EndpointsAggregateUnaggregated;
-}
-export interface EndpointsAggregateEndpointsInner {
-    'path'?: string;
-    'count'?: number;
-}
-export interface EndpointsAggregateUnaggregated {
-    'count'?: number;
-    'oldest_log'?: string;
-}
 export interface GetAiTranslateLanguages200Response {
-    'code'?: number;
     'message'?: string;
     'data'?: GetAiTranslateLanguages200ResponseData;
     'performance'?: GetAiTranslateLanguages200ResponsePerformance;
@@ -73,7 +60,6 @@ export interface GetAiTranslateLanguages200ResponsePerformanceTypicalResponseTim
     'normal_mode'?: number;
 }
 export interface GetAnswerbookAsk200Response {
-    'code'?: number;
     'question'?: string;
     'answer'?: string;
 }
@@ -112,10 +98,6 @@ export interface GetClipzyRaw403Response {
     'error'?: string;
 }
 export interface GetConvertUnixtime200Response {
-    /**
-     * 状态码，200代表操作成功。
-     */
-    'code'?: number;
     /**
      * 标准格式（YYYY-MM-DD HH:mm:ss）的日期时间字符串。
      */
@@ -160,10 +142,6 @@ export interface GetDailyNewsImage502Response {
     'message'?: string;
 }
 export interface GetGameEpicFree200Response {
-    /**
-     * 状态码，200代表成功。
-     */
-    'code'?: number;
     /**
      * 免费游戏列表数组。
      */
@@ -227,27 +205,38 @@ export interface GetGameEpicFree500Response {
     'code'?: string;
     'message'?: string;
 }
+/**
+ * 响应结构根据查询参数不同而变化
+ */
 export interface GetGameMinecraftHistoryid200Response {
     /**
-     * 状态码，200代表成功。
+     * 【name 查询时返回】查询的用户名。
      */
-    'code'?: number;
+    'query'?: string;
     /**
-     * 一个包含所有历史用户名的数组，按时间倒序排列。
+     * 【name 查询时返回】匹配到的用户数量，为 0 时表示未找到。
      */
-    'history'?: Array<GetGameMinecraftHistoryid200ResponseHistoryInner>;
+    'count'?: number;
     /**
-     * 玩家当前的用户名。
+     * 【name 查询时返回】匹配用户列表，包含当前用户名或曾用名匹配的所有玩家。
+     */
+    'results'?: Array<GetGameMinecraftHistoryid200ResponseResultsInner>;
+    /**
+     * 【uuid 查询时返回】玩家当前的用户名。
      */
     'id'?: string;
     /**
-     * 历史名称的总数（包含当前名称）。
+     * 【uuid 查询时返回】被查询玩家的UUID（带连字符格式）。
+     */
+    'uuid'?: string;
+    /**
+     * 【uuid 查询时返回】历史名称的总数（包含当前名称）。
      */
     'name_num'?: number;
     /**
-     * 被查询玩家的32位无破折号UUID。
+     * 【uuid 查询时返回】包含所有历史用户名的数组，按时间倒序排列。
      */
-    'uuid'?: string;
+    'history'?: Array<GetGameMinecraftHistoryid200ResponseHistoryInner>;
 }
 export interface GetGameMinecraftHistoryid200ResponseHistoryInner {
     /**
@@ -258,6 +247,28 @@ export interface GetGameMinecraftHistoryid200ResponseHistoryInner {
      * 当时使用的用户名。
      */
     'name'?: string;
+}
+export interface GetGameMinecraftHistoryid200ResponseResultsInner {
+    /**
+     * 玩家当前的用户名。
+     */
+    'id'?: string;
+    /**
+     * 玩家的UUID（带连字符格式）。
+     */
+    'uuid'?: string;
+    /**
+     * 历史名称的总数。
+     */
+    'name_num'?: number;
+    /**
+     * 历史用户名数组。
+     */
+    'history'?: Array<GetGameMinecraftHistoryid200ResponseResultsInnerHistoryInner>;
+}
+export interface GetGameMinecraftHistoryid200ResponseResultsInnerHistoryInner {
+    'name'?: string;
+    'changedToAt'?: string;
 }
 export interface GetGameMinecraftHistoryid400Response {
     'code'?: string;
@@ -275,10 +286,6 @@ export interface GetGameMinecraftHistoryid502Response {
     'message'?: string;
 }
 export interface GetGameMinecraftServerstatus200Response {
-    /**
-     * 状态码，200代表成功。
-     */
-    'code'?: number;
     /**
      * 服务器图标的 Base64 Data URI。你可以直接在 `<img>` 标签的 `src` 属性中使用它。
      */
@@ -333,10 +340,6 @@ export interface GetGameMinecraftServerstatus502Response {
 }
 export interface GetGameMinecraftUserinfo200Response {
     /**
-     * 状态码，200代表成功。
-     */
-    'code'?: number;
-    /**
      * 玩家当前使用的皮肤图片URL。
      */
     'skin_url'?: string;
@@ -359,6 +362,11 @@ export interface GetGameMinecraftUserinfo404Response {
     'details'?: object;
     'message'?: string;
 }
+export interface GetGameMinecraftUserinfo502Response {
+    'code'?: string;
+    'details'?: object;
+    'message'?: string;
+}
 export interface GetGameSteamSummary200Response {
     /**
      * 32x32 像素的小尺寸头像URL。
@@ -372,10 +380,6 @@ export interface GetGameSteamSummary200Response {
      * 64x64 像素的中等尺寸头像URL。
      */
     'avatarmedium'?: string;
-    /**
-     * 状态码，200代表成功。
-     */
-    'code'?: number;
     /**
      * 社区资料的可见性状态: 1=私密, 3=公开。
      */
@@ -465,12 +469,42 @@ export interface GetGithubRepo200Response {
     'languages'?: { [key: string]: number; };
     'collaborators'?: Array<GetGithubRepo200ResponseCollaboratorsInner> | null;
     'maintainers'?: Array<GetGithubRepo200ResponseCollaboratorsInner>;
+    'latest_release'?: GetGithubRepo200ResponseLatestRelease | null;
 }
 export interface GetGithubRepo200ResponseCollaboratorsInner {
     'login'?: string;
     'name'?: string;
     'email'?: string;
     'url'?: string;
+}
+/**
+ * 仓库最新发布版本信息，如果没有 Release 则为 null。可用于实现应用更新检查功能。
+ */
+export interface GetGithubRepo200ResponseLatestRelease {
+    /**
+     * 版本标签
+     */
+    'tag_name'?: string;
+    /**
+     * 发布名称
+     */
+    'name'?: string;
+    /**
+     * 发布时间
+     */
+    'published_at'?: string;
+    /**
+     * Release 页面链接
+     */
+    'html_url'?: string;
+    /**
+     * 是否为预发布版本
+     */
+    'prerelease'?: boolean;
+    /**
+     * 是否为草稿
+     */
+    'draft'?: boolean;
 }
 export interface GetGithubRepo400Response {
     'code'?: string;
@@ -481,7 +515,6 @@ export interface GetGithubRepo502Response {
     'message'?: string;
 }
 export interface GetHistoryProgrammer200Response {
-    'code'?: number;
     'message'?: string;
     'date'?: string;
     'events'?: Array<GetHistoryProgrammer200ResponseEventsInner>;
@@ -500,7 +533,6 @@ export interface GetHistoryProgrammer400Response {
     'message'?: string;
 }
 export interface GetHistoryProgrammerToday200Response {
-    'code'?: number;
     'message'?: string;
     'date'?: string;
     'events'?: Array<GetHistoryProgrammerToday200ResponseEventsInner>;
@@ -550,10 +582,6 @@ export interface GetImageTobase64200Response {
      */
     'base64'?: string;
     /**
-     * 状态码，200代表成功。
-     */
-    'code'?: number;
-    /**
      * 操作结果描述。
      */
     'msg'?: string;
@@ -568,6 +596,336 @@ export interface GetImageTobase64502Response {
     'details'?: object;
     'message'?: string;
 }
+export interface GetMiscDistrict200Response {
+    /**
+     * 结果总数。
+     */
+    'total'?: number;
+    /**
+     * 结果列表。
+     */
+    'results'?: Array<GetMiscDistrict200ResponseResultsInner>;
+}
+export interface GetMiscDistrict200ResponseResultsInner {
+    /**
+     * 地区名称。
+     */
+    'name'?: string;
+    /**
+     * 行政级别：province / city / district / street。
+     */
+    'level'?: string;
+    /**
+     * 国家名称。
+     */
+    'country'?: string;
+    /**
+     * ISO 3166-1 alpha-2 国家代码。
+     */
+    'country_code'?: string;
+    /**
+     * 省/州（中国数据）或一级行政区（国际数据）。
+     */
+    'province'?: string;
+    /**
+     * 市（仅中国数据）。
+     */
+    'city'?: string;
+    /**
+     * 区/县（仅中国数据）。
+     */
+    'district'?: string;
+    /**
+     * 街道/乡镇（仅中国数据）。
+     */
+    'street'?: string;
+    /**
+     * 行政区划代码（仅中国数据）。
+     */
+    'adcode'?: string;
+    /**
+     * 城市区号（仅中国数据）。
+     */
+    'citycode'?: string;
+    'center'?: GetMiscDistrict200ResponseResultsInnerCenter;
+    /**
+     * 人口（仅国际城市数据）。
+     */
+    'population'?: number;
+    /**
+     * 时区（仅国际城市数据），如 Asia/Tokyo。
+     */
+    'timezone'?: string;
+}
+/**
+ * 中心点坐标。
+ */
+export interface GetMiscDistrict200ResponseResultsInnerCenter {
+    'lat'?: number;
+    'lng'?: number;
+}
+export interface GetMiscDistrict400Response {
+    'code'?: string;
+    'message'?: string;
+}
+export interface GetMiscHolidayCalendar200Response {
+    'code'?: number;
+    'message'?: string;
+    'data'?: GetMiscHolidayCalendar200ResponseData;
+}
+export interface GetMiscHolidayCalendar200ResponseData {
+    /**
+     * 查询模式：day、month、year。
+     */
+    'mode'?: string;
+    'query'?: GetMiscHolidayCalendar200ResponseDataQuery;
+    'summary'?: GetMiscHolidayCalendar200ResponseDataSummary;
+    /**
+     * 日期明细列表。
+     */
+    'days'?: Array<GetMiscHolidayCalendar200ResponseDataDaysInner>;
+    /**
+     * 节日事件列表。
+     */
+    'holidays'?: Array<GetMiscHolidayCalendar200ResponseDataHolidaysInner>;
+    'nearby'?: GetMiscHolidayCalendar200ResponseDataNearby;
+}
+export interface GetMiscHolidayCalendar200ResponseDataDaysInner {
+    /**
+     * 公历日期（YYYY-MM-DD）。
+     */
+    'date'?: string;
+    /**
+     * 公历年份。
+     */
+    'year'?: number;
+    /**
+     * 公历月份。
+     */
+    'month'?: number;
+    /**
+     * 公历日期（天）。
+     */
+    'day'?: number;
+    /**
+     * 中文星期，如星期三。
+     */
+    'weekday_cn'?: string;
+    /**
+     * 是否为周末。
+     */
+    'is_weekend'?: boolean;
+    /**
+     * 是否为工作日（含法定调休上班日）。
+     */
+    'is_workday'?: boolean;
+    /**
+     * 是否为休息日。
+     */
+    'is_rest_day'?: boolean;
+    /**
+     * 当天是否存在节日/节气/法定事件。
+     */
+    'is_holiday'?: boolean;
+    /**
+     * 法定节假日名称，无则为空。
+     */
+    'legal_holiday_name'?: string;
+    /**
+     * 法定假日类型：rest 或 workday_adjust。
+     */
+    'legal_holiday_type'?: string;
+    /**
+     * 公历节日名称，无则为空。
+     */
+    'solar_festival'?: string;
+    /**
+     * 农历节日名称，无则为空。
+     */
+    'lunar_festival'?: string;
+    /**
+     * 节气名称，无则为空。
+     */
+    'solar_term'?: string;
+    /**
+     * 农历年份（数字）。
+     */
+    'lunar_year'?: number;
+    /**
+     * 农历月份（数字）。
+     */
+    'lunar_month'?: number;
+    /**
+     * 农历日期（数字）。
+     */
+    'lunar_day'?: number;
+    /**
+     * 农历月份中文名称。
+     */
+    'lunar_month_name'?: string;
+    /**
+     * 农历日期中文名称。
+     */
+    'lunar_day_name'?: string;
+    /**
+     * 干支年。
+     */
+    'ganzhi_year'?: string;
+    /**
+     * 干支月。
+     */
+    'ganzhi_month'?: string;
+    /**
+     * 干支日。
+     */
+    'ganzhi_day'?: string;
+}
+export interface GetMiscHolidayCalendar200ResponseDataHolidaysInner {
+    /**
+     * 事件日期（YYYY-MM-DD）。
+     */
+    'date'?: string;
+    /**
+     * 事件名称。
+     */
+    'name'?: string;
+    /**
+     * 事件类型。
+     */
+    'type'?: GetMiscHolidayCalendar200ResponseDataHolidaysInnerTypeEnum;
+    /**
+     * 仅 legal_workday_adjust 场景有意义。
+     */
+    'is_workday'?: boolean;
+}
+
+export const GetMiscHolidayCalendar200ResponseDataHolidaysInnerTypeEnum = {
+    LegalRest: 'legal_rest',
+    LegalWorkdayAdjust: 'legal_workday_adjust',
+    SolarFestival: 'solar_festival',
+    LunarFestival: 'lunar_festival',
+    SolarTerm: 'solar_term'
+} as const;
+
+export type GetMiscHolidayCalendar200ResponseDataHolidaysInnerTypeEnum = typeof GetMiscHolidayCalendar200ResponseDataHolidaysInnerTypeEnum[keyof typeof GetMiscHolidayCalendar200ResponseDataHolidaysInnerTypeEnum];
+
+/**
+ * 前后最近节日，仅 include_nearby=true 且 date 模式返回。
+ */
+export interface GetMiscHolidayCalendar200ResponseDataNearby {
+    /**
+     * 当前查询日期之前最近的节日列表（按时间倒序）。
+     */
+    'previous'?: Array<GetMiscHolidayCalendar200ResponseDataNearbyPreviousInner>;
+    /**
+     * 当前查询日期之后最近的节日列表（按时间正序）。
+     */
+    'next'?: Array<GetMiscHolidayCalendar200ResponseDataNearbyNextInner>;
+}
+export interface GetMiscHolidayCalendar200ResponseDataNearbyNextInner {
+    /**
+     * 事件日期。
+     */
+    'date'?: string;
+    /**
+     * 事件名称。
+     */
+    'name'?: string;
+    /**
+     * 事件类型。
+     */
+    'type'?: string;
+}
+export interface GetMiscHolidayCalendar200ResponseDataNearbyPreviousInner {
+    /**
+     * 事件日期。
+     */
+    'date'?: string;
+    /**
+     * 事件名称。
+     */
+    'name'?: string;
+    /**
+     * 事件类型。
+     */
+    'type'?: string;
+}
+/**
+ * 请求参数回显。
+ */
+export interface GetMiscHolidayCalendar200ResponseDataQuery {
+    /**
+     * 日视图查询参数（YYYY-MM-DD）。非日视图时可能为空。
+     */
+    'date'?: string;
+    /**
+     * 月视图查询参数（YYYY-MM）。非月视图时可能为空。
+     */
+    'month'?: string;
+    /**
+     * 年视图查询参数（YYYY）。非年视图时可能为空。
+     */
+    'year'?: string;
+    /**
+     * 实际生效的时区。
+     */
+    'timezone'?: string;
+    /**
+     * 节日筛选类型。
+     */
+    'holiday_type'?: string;
+    /**
+     * 是否开启前后最近节日查询。
+     */
+    'include_nearby'?: boolean;
+    /**
+     * 前后最近节日返回数量上限。
+     */
+    'nearby_limit'?: number;
+}
+/**
+ * 统计摘要。
+ */
+export interface GetMiscHolidayCalendar200ResponseDataSummary {
+    /**
+     * 查询范围内总天数。
+     */
+    'total_days'?: number;
+    /**
+     * 查询范围内周末天数。
+     */
+    'weekend_days'?: number;
+    /**
+     * 查询范围内工作日天数（含法定调休上班）。
+     */
+    'workdays'?: number;
+    /**
+     * 查询范围内休息日天数（含周末和法定休假）。
+     */
+    'rest_days'?: number;
+    /**
+     * 按 holiday_type 过滤后的节日事件总数。
+     */
+    'holiday_events'?: number;
+    /**
+     * 法定休假日天数。
+     */
+    'legal_rest_days'?: number;
+    /**
+     * 法定调休上班天数。
+     */
+    'legal_workdays'?: number;
+}
+export interface GetMiscHolidayCalendar400Response {
+    /**
+     * 业务状态码，400 表示请求参数错误。
+     */
+    'code'?: number;
+    /**
+     * 具体错误原因提示。
+     */
+    'message'?: string;
+}
 export interface GetMiscHotboard200Response {
     /**
      * 热榜条目列表。
@@ -575,6 +933,26 @@ export interface GetMiscHotboard200Response {
     'list'?: Array<GetMiscHotboard200ResponseListInner>;
     'type'?: string;
     'update_time'?: string;
+    /**
+     * 时光机模式返回的快照实际时间戳（毫秒）。
+     */
+    'snapshot_time'?: number;
+    /**
+     * 搜索模式返回的搜索关键词。
+     */
+    'keyword'?: string;
+    /**
+     * 搜索模式返回的结果数量。
+     */
+    'count'?: number;
+    /**
+     * 搜索模式返回的结果数组。
+     */
+    'results'?: Array<GetMiscHotboard200ResponseResultsInner>;
+    /**
+     * 数据源列表模式返回的可用历史数据源数组。
+     */
+    'sources'?: Array<string>;
 }
 export interface GetMiscHotboard200ResponseListInner {
     /**
@@ -584,6 +962,15 @@ export interface GetMiscHotboard200ResponseListInner {
     'hot_value'?: string;
     'index'?: number;
     'title'?: string;
+    'url'?: string;
+    /**
+     * 封面图 URL，音乐类热榜返回专辑封面，其他平台无此字段。
+     */
+    'cover'?: string;
+}
+export interface GetMiscHotboard200ResponseResultsInner {
+    'title'?: string;
+    'hot_value'?: string;
     'url'?: string;
 }
 export interface GetMiscHotboard400Response {
@@ -599,6 +986,114 @@ export interface GetMiscHotboard500Response {
 export interface GetMiscHotboard502Response {
     'code'?: string;
     'details'?: object;
+    'message'?: string;
+}
+export interface GetMiscLunartime200Response {
+    /**
+     * 业务状态码，200 表示成功。
+     */
+    'code'?: number;
+    /**
+     * 状态描述。
+     */
+    'message'?: string;
+    'data'?: GetMiscLunartime200ResponseData;
+}
+/**
+ * 万年历查询结果。
+ */
+export interface GetMiscLunartime200ResponseData {
+    /**
+     * 原始 ts 入参。
+     */
+    'query_timestamp'?: string;
+    /**
+     * 原始 timezone 入参。
+     */
+    'query_timezone'?: string;
+    /**
+     * 解析后的时区。
+     */
+    'timezone'?: string;
+    /**
+     * 本地化时间，格式 YYYY-MM-DD HH:mm:ss。
+     */
+    'datetime'?: string;
+    /**
+     * RFC3339 时间格式。
+     */
+    'datetime_rfc3339'?: string;
+    /**
+     * 秒级 Unix 时间戳。
+     */
+    'timestamp_unix'?: number;
+    /**
+     * 星期英文。
+     */
+    'weekday'?: string;
+    /**
+     * 星期中文。
+     */
+    'weekday_cn'?: string;
+    /**
+     * 农历年份（数字）。
+     */
+    'lunar_year'?: number;
+    /**
+     * 农历月份（数字）。
+     */
+    'lunar_month'?: number;
+    /**
+     * 农历日期（数字）。
+     */
+    'lunar_day'?: number;
+    /**
+     * 是否闰月。
+     */
+    'is_leap_month'?: boolean;
+    /**
+     * 农历年份中文表示。
+     */
+    'lunar_year_cn'?: string;
+    /**
+     * 农历月份中文表示。
+     */
+    'lunar_month_cn'?: string;
+    /**
+     * 农历日期中文表示。
+     */
+    'lunar_day_cn'?: string;
+    /**
+     * 干支年。
+     */
+    'ganzhi_year'?: string;
+    /**
+     * 干支月。
+     */
+    'ganzhi_month'?: string;
+    /**
+     * 干支日。
+     */
+    'ganzhi_day'?: string;
+    /**
+     * 生肖。
+     */
+    'zodiac'?: string;
+    /**
+     * 节气，无则为空字符串。
+     */
+    'solar_term'?: string;
+    /**
+     * 农历节日数组。
+     */
+    'lunar_festivals'?: Array<string>;
+    /**
+     * 公历节日数组。
+     */
+    'solar_festivals'?: Array<string>;
+}
+export interface GetMiscLunartime400Response {
+    'code'?: number;
     'message'?: string;
 }
 export interface GetMiscPhoneinfo200Response {
@@ -750,34 +1245,475 @@ export interface GetMiscTrackingQuery404Response {
     'message'?: string;
 }
 export interface GetMiscWeather200Response {
-    'adcode'?: string;
-    'city'?: string;
-    'humidity'?: number;
+    /**
+     * 省份
+     */
     'province'?: string;
-    'report_time'?: string;
-    'temperature'?: number;
+    /**
+     * 城市名
+     */
+    'city'?: string;
+    /**
+     * 行政区划代码（部分数据源可能为空）
+     */
+    'adcode'?: string;
+    /**
+     * 天气状况描述。默认返回中文，传 `lang=en` 时返回英文。非固定枚举。
+     */
     'weather'?: string;
+    /**
+     * 当前温度 °C
+     */
+    'temperature'?: number;
+    /**
+     * 风向
+     */
     'wind_direction'?: string;
+    /**
+     * 风力等级
+     */
     'wind_power'?: string;
+    /**
+     * 相对湿度 %
+     */
+    'humidity'?: number;
+    /**
+     * 数据更新时间
+     */
+    'report_time'?: string;
+    /**
+     * 体感温度 °C（extended=true 时返回）
+     */
+    'feels_like'?: number;
+    /**
+     * 能见度 km（extended=true 时返回）
+     */
+    'visibility'?: number;
+    /**
+     * 气压 hPa（extended=true 时返回）
+     */
+    'pressure'?: number;
+    /**
+     * 紫外线指数（extended=true 时返回）
+     */
+    'uv'?: number;
+    /**
+     * 当前降水量 mm（extended=true 时返回）
+     */
+    'precipitation'?: number;
+    /**
+     * 云量 %（extended=true 时返回）
+     */
+    'cloud'?: number;
+    /**
+     * 空气质量指数 0-500（extended=true 时返回）
+     */
+    'aqi'?: number;
+    /**
+     * AQI 等级 1-6（extended=true 时返回）
+     */
+    'aqi_level'?: number;
+    /**
+     * AQI 等级描述（优/良/轻度污染/中度污染/重度污染/严重污染）（extended=true 时返回）
+     */
+    'aqi_category'?: string;
+    /**
+     * 主要污染物（如 PM2.5、PM10、O3 等）（extended=true 时返回）
+     */
+    'aqi_primary'?: string;
+    'air_pollutants'?: GetMiscWeather200ResponseAirPollutants;
+    /**
+     * 当天最高温 °C（forecast=true 时返回）
+     */
+    'temp_max'?: number;
+    /**
+     * 当天最低温 °C（forecast=true 时返回）
+     */
+    'temp_min'?: number;
+    /**
+     * 多天天气预报，最多7天（forecast=true 时返回）
+     */
+    'forecast'?: Array<GetMiscWeather200ResponseForecastInner>;
+    /**
+     * 逐小时预报，最多24小时（hourly=true 时返回）
+     */
+    'hourly_forecast'?: Array<GetMiscWeather200ResponseHourlyForecastInner>;
+    'minutely_precip'?: GetMiscWeather200ResponseMinutelyPrecip;
+    'life_indices'?: GetMiscWeather200ResponseLifeIndices;
+}
+/**
+ * 空气污染物分项数据（extended=true 时返回，部分数据源可能不返回）
+ */
+export interface GetMiscWeather200ResponseAirPollutants {
+    /**
+     * PM2.5 μg/m³
+     */
+    'pm25'?: number;
+    /**
+     * PM10 μg/m³
+     */
+    'pm10'?: number;
+    /**
+     * 臭氧 μg/m³
+     */
+    'o3'?: number;
+    /**
+     * 二氧化氮 μg/m³
+     */
+    'no2'?: number;
+    /**
+     * 二氧化硫 μg/m³
+     */
+    'so2'?: number;
+    /**
+     * 一氧化碳 mg/m³
+     */
+    'co'?: number;
+}
+export interface GetMiscWeather200ResponseForecastInner {
+    /**
+     * 日期 YYYY-MM-DD
+     */
+    'date'?: string;
+    /**
+     * 星期几（`lang=en` 时返回英文星期）
+     */
+    'week'?: string;
+    /**
+     * 最高温度 °C
+     */
+    'temp_max'?: number;
+    /**
+     * 最低温度 °C
+     */
+    'temp_min'?: number;
+    /**
+     * 白天天气（`lang=en` 时返回英文）
+     */
+    'weather_day'?: string;
+    /**
+     * 夜间天气（`lang=en` 时返回英文）
+     */
+    'weather_night'?: string;
+    /**
+     * 白天风向（可选，`lang=en` 时返回英文）
+     */
+    'wind_dir_day'?: string;
+    /**
+     * 夜间风向（可选，`lang=en` 时返回英文）
+     */
+    'wind_dir_night'?: string;
+    /**
+     * 白天风力（可选，`lang=en` 时返回英文）
+     */
+    'wind_scale_day'?: string;
+    /**
+     * 夜间风力（可选，`lang=en` 时返回英文）
+     */
+    'wind_scale_night'?: string;
+    /**
+     * 白天风速 km/h（可选）
+     */
+    'wind_speed_day'?: number;
+    /**
+     * 湿度 %（可选）
+     */
+    'humidity'?: number;
+    /**
+     * 降水量 mm（可选）
+     */
+    'precip'?: number;
+    /**
+     * 能见度 km（可选）
+     */
+    'visibility'?: number;
+    /**
+     * 紫外线指数（可选）
+     */
+    'uv_index'?: number;
+    /**
+     * 日出时间 HH:MM（可选）
+     */
+    'sunrise'?: string;
+    /**
+     * 日落时间 HH:MM（可选）
+     */
+    'sunset'?: string;
+}
+export interface GetMiscWeather200ResponseHourlyForecastInner {
+    /**
+     * 预报时间（ISO8601 或 YYYY-MM-DD HH:MM）
+     */
+    'time'?: string;
+    /**
+     * 温度 °C
+     */
+    'temperature'?: number;
+    /**
+     * 天气状况
+     */
+    'weather'?: string;
+    /**
+     * 风向（可选）
+     */
+    'wind_direction'?: string;
+    /**
+     * 风速 km/h（可选）
+     */
+    'wind_speed'?: number;
+    /**
+     * 风力等级（可选）
+     */
+    'wind_scale'?: string;
+    /**
+     * 湿度 %（可选）
+     */
+    'humidity'?: number;
+    /**
+     * 降水量 mm（可选）
+     */
+    'precip'?: number;
+    /**
+     * 气压 hPa（可选）
+     */
+    'pressure'?: number;
+    /**
+     * 云量 %（可选）
+     */
+    'cloud'?: number;
+    /**
+     * 体感温度 °C（可选）
+     */
+    'feels_like'?: number;
+    /**
+     * 露点温度 °C（可选）
+     */
+    'dew_point'?: number;
+    /**
+     * 能见度 km（可选）
+     */
+    'visibility'?: number;
+    /**
+     * 降水概率 %（可选）
+     */
+    'pop'?: number;
+    /**
+     * 紫外线指数（可选）
+     */
+    'uv_index'?: number;
+}
+/**
+ * 18项生活指数（indices=true 时返回），每项包含 level（等级名称）、brief（简短描述）、advice（详细建议）
+ */
+export interface GetMiscWeather200ResponseLifeIndices {
+    'clothing'?: GetMiscWeather200ResponseLifeIndicesClothing;
+    'uv'?: GetMiscWeather200ResponseLifeIndicesUv;
+    'car_wash'?: GetMiscWeather200ResponseLifeIndicesCarWash;
+    'drying'?: GetMiscWeather200ResponseLifeIndicesDrying;
+    'air_conditioner'?: GetMiscWeather200ResponseLifeIndicesAirConditioner;
+    'cold_risk'?: GetMiscWeather200ResponseLifeIndicesColdRisk;
+    'exercise'?: GetMiscWeather200ResponseLifeIndicesExercise;
+    'comfort'?: GetMiscWeather200ResponseLifeIndicesComfort;
+    'travel'?: GetMiscWeather200ResponseLifeIndicesTravel;
+    'fishing'?: GetMiscWeather200ResponseLifeIndicesFishing;
+    'allergy'?: GetMiscWeather200ResponseLifeIndicesAllergy;
+    'sunscreen'?: GetMiscWeather200ResponseLifeIndicesSunscreen;
+    'mood'?: GetMiscWeather200ResponseLifeIndicesMood;
+    'beer'?: GetMiscWeather200ResponseLifeIndicesBeer;
+    'umbrella'?: GetMiscWeather200ResponseLifeIndicesUmbrella;
+    'traffic'?: GetMiscWeather200ResponseLifeIndicesTraffic;
+    'air_purifier'?: GetMiscWeather200ResponseLifeIndicesAirPurifier;
+    'pollen'?: GetMiscWeather200ResponseLifeIndicesPollen;
+}
+/**
+ * 空调开启指数
+ */
+export interface GetMiscWeather200ResponseLifeIndicesAirConditioner {
+    'level'?: string;
+    'brief'?: string;
+    'advice'?: string;
+}
+/**
+ * 空气净化器指数
+ */
+export interface GetMiscWeather200ResponseLifeIndicesAirPurifier {
+    'level'?: string;
+    'brief'?: string;
+    'advice'?: string;
+}
+/**
+ * 过敏指数
+ */
+export interface GetMiscWeather200ResponseLifeIndicesAllergy {
+    'level'?: string;
+    'brief'?: string;
+    'advice'?: string;
+}
+/**
+ * 啤酒指数
+ */
+export interface GetMiscWeather200ResponseLifeIndicesBeer {
+    'level'?: string;
+    'brief'?: string;
+    'advice'?: string;
+}
+/**
+ * 洗车指数
+ */
+export interface GetMiscWeather200ResponseLifeIndicesCarWash {
+    'level'?: string;
+    'brief'?: string;
+    'advice'?: string;
+}
+/**
+ * 穿衣指数
+ */
+export interface GetMiscWeather200ResponseLifeIndicesClothing {
+    'level'?: string;
+    'brief'?: string;
+    'advice'?: string;
+}
+/**
+ * 感冒指数
+ */
+export interface GetMiscWeather200ResponseLifeIndicesColdRisk {
+    'level'?: string;
+    'brief'?: string;
+    'advice'?: string;
+}
+/**
+ * 舒适度指数
+ */
+export interface GetMiscWeather200ResponseLifeIndicesComfort {
+    'level'?: string;
+    'brief'?: string;
+    'advice'?: string;
+}
+/**
+ * 晾晒指数
+ */
+export interface GetMiscWeather200ResponseLifeIndicesDrying {
+    'level'?: string;
+    'brief'?: string;
+    'advice'?: string;
+}
+/**
+ * 运动指数
+ */
+export interface GetMiscWeather200ResponseLifeIndicesExercise {
+    'level'?: string;
+    'brief'?: string;
+    'advice'?: string;
+}
+/**
+ * 钓鱼指数
+ */
+export interface GetMiscWeather200ResponseLifeIndicesFishing {
+    'level'?: string;
+    'brief'?: string;
+    'advice'?: string;
+}
+/**
+ * 心情指数
+ */
+export interface GetMiscWeather200ResponseLifeIndicesMood {
+    'level'?: string;
+    'brief'?: string;
+    'advice'?: string;
+}
+/**
+ * 花粉扩散指数
+ */
+export interface GetMiscWeather200ResponseLifeIndicesPollen {
+    'level'?: string;
+    'brief'?: string;
+    'advice'?: string;
+}
+/**
+ * 防晒指数
+ */
+export interface GetMiscWeather200ResponseLifeIndicesSunscreen {
+    'level'?: string;
+    'brief'?: string;
+    'advice'?: string;
+}
+/**
+ * 交通指数
+ */
+export interface GetMiscWeather200ResponseLifeIndicesTraffic {
+    'level'?: string;
+    'brief'?: string;
+    'advice'?: string;
+}
+/**
+ * 出行指数
+ */
+export interface GetMiscWeather200ResponseLifeIndicesTravel {
+    'level'?: string;
+    'brief'?: string;
+    'advice'?: string;
+}
+/**
+ * 雨伞指数
+ */
+export interface GetMiscWeather200ResponseLifeIndicesUmbrella {
+    'level'?: string;
+    'brief'?: string;
+    'advice'?: string;
+}
+/**
+ * 紫外线指数
+ */
+export interface GetMiscWeather200ResponseLifeIndicesUv {
+    'level'?: string;
+    'brief'?: string;
+    'advice'?: string;
+}
+/**
+ * 分钟级降水预报（minutely=true 时返回，仅国内城市可用）
+ */
+export interface GetMiscWeather200ResponseMinutelyPrecip {
+    /**
+     * 降水描述
+     */
+    'summary'?: string;
+    /**
+     * 更新时间
+     */
+    'update_time'?: string;
+    /**
+     * 每5分钟一个数据点，共24个
+     */
+    'data'?: Array<GetMiscWeather200ResponseMinutelyPrecipDataInner>;
+}
+export interface GetMiscWeather200ResponseMinutelyPrecipDataInner {
+    /**
+     * 预报时间 ISO8601
+     */
+    'time'?: string;
+    /**
+     * 5分钟累计降水量 mm
+     */
+    'precip'?: number;
+    /**
+     * 降水类型：rain / snow
+     */
+    'type'?: string;
 }
 export interface GetMiscWeather400Response {
     'code'?: string;
-    'details'?: object;
     'message'?: string;
 }
-export interface GetMiscWeather410Response {
+export interface GetMiscWeather404Response {
     'code'?: string;
-    'details'?: object;
     'message'?: string;
 }
 export interface GetMiscWeather500Response {
     'code'?: string;
-    'details'?: object;
     'message'?: string;
 }
-export interface GetMiscWeather502Response {
+export interface GetMiscWeather503Response {
     'code'?: string;
-    'details'?: object;
     'message'?: string;
 }
 export interface GetMiscWorldtime200Response {
@@ -800,7 +1736,6 @@ export interface GetMiscWorldtime404Response {
     'message'?: string;
 }
 export interface GetNetworkDns200Response {
-    'code'?: number;
     'domain'?: string;
     'error'?: string;
     'records'?: Array<GetNetworkDns200ResponseRecordsInner>;
@@ -849,65 +1784,45 @@ export interface GetNetworkIcp404Response {
 }
 export interface GetNetworkIpinfo200Response {
     /**
-     * 自治系统编号 (由GeoLite2或商业版提供)
+     * 查询的IP地址
      */
-    'asn'?: string;
-    /**
-     * IP范围起始 (仅在默认查询中提供)
-     */
-    'beginip'?: string;
-    'code'?: number;
-    /**
-     * IP范围结束 (仅在默认查询中提供)
-     */
-    'endip'?: string;
     'ip'?: string;
     /**
-     * 运营商
-     */
-    'isp'?: string;
-    'latitude'?: number;
-    /**
-     * 归属
-     */
-    'llc'?: string;
-    'longitude'?: number;
-    /**
-     * 格式：国家 省份 城市
+     * 地理位置，格式：国家 省份 城市
      */
     'region'?: string;
     /**
-     * 行政区 (仅在商业查询中提供)
+     * 运营商名称
+     */
+    'isp'?: string;
+    /**
+     * 归属机构
+     */
+    'llc'?: string;
+    /**
+     * 自治系统编号
+     */
+    'asn'?: string;
+    /**
+     * 纬度
+     */
+    'latitude'?: number;
+    /**
+     * 经度
+     */
+    'longitude'?: number;
+    /**
+     * IP段起始地址（标准查询）
+     */
+    'beginip'?: string;
+    /**
+     * IP段结束地址（标准查询）
+     */
+    'endip'?: string;
+    /**
+     * 行政区（商业查询）
      */
     'district'?: string;
-    /**
-     * 行政区划代码 (仅在商业查询中提供)
-     */
-    'area_code'?: string;
-    /**
-     * 城市区号 (仅在商业查询中提供)
-     */
-    'city_code'?: string;
-    /**
-     * 邮政编码 (仅在商业查询中提供)
-     */
-    'zip_code'?: string;
-    /**
-     * 时区 (仅在商业查询中提供)
-     */
-    'time_zone'?: string;
-    /**
-     * 应用场景 (仅在商业查询中提供)
-     */
-    'scenes'?: string;
-    /**
-     * 海拔（米）(仅在商业查询中提供)
-     */
-    'elevation'?: string;
-    /**
-     * 气象站代码 (仅在商业查询中提供)
-     */
-    'weather_station'?: string;
 }
 export interface GetNetworkIpinfo400Response {
     'code'?: string;
@@ -924,6 +1839,48 @@ export interface GetNetworkIpinfo500Response {
     'details'?: object;
     'message'?: string;
 }
+export interface GetNetworkMyip200Response {
+    /**
+     * 你的公网IP地址
+     */
+    'ip'?: string;
+    /**
+     * 地理位置，格式：国家 省份 城市
+     */
+    'region'?: string;
+    /**
+     * 运营商名称
+     */
+    'isp'?: string;
+    /**
+     * 归属机构
+     */
+    'llc'?: string;
+    /**
+     * 自治系统编号
+     */
+    'asn'?: string;
+    /**
+     * 纬度
+     */
+    'latitude'?: number;
+    /**
+     * 经度
+     */
+    'longitude'?: number;
+    /**
+     * IP段起始地址（标准查询）
+     */
+    'beginip'?: string;
+    /**
+     * IP段结束地址（标准查询）
+     */
+    'endip'?: string;
+    /**
+     * 行政区（商业查询）
+     */
+    'district'?: string;
+}
 export interface GetNetworkMyip400Response {
     'code'?: string;
     'details'?: object;
@@ -939,7 +1896,6 @@ export interface GetNetworkPing200Response {
      * 平均延迟(ms)
      */
     'avg'?: number;
-    'code'?: number;
     'host'?: string;
     'ip'?: string;
     'location'?: string;
@@ -965,7 +1921,6 @@ export interface GetNetworkPingmyip200Response {
      * 平均延迟(ms)
      */
     'avg'?: number;
-    'code'?: number;
     'host'?: string;
     'ip'?: string;
     'location'?: string;
@@ -984,7 +1939,6 @@ export interface GetNetworkPingmyip404Response {
     'message'?: string;
 }
 export interface GetNetworkPortscan200Response {
-    'code'?: number;
     'ip'?: string;
     'port'?: number;
     /**
@@ -1003,10 +1957,27 @@ export interface GetNetworkPortscan500Response {
     'details'?: object;
     'message'?: string;
 }
-export interface GetNetworkUrlstatus200Response {
-    'code'?: number;
+/**
+ * @type GetNetworkUrlstatus200Response
+ */
+export type GetNetworkUrlstatus200Response = GetNetworkUrlstatus200ResponseOneOf | GetNetworkUrlstatus200ResponseOneOf1;
+
+/**
+ * 当目标 URL 可访问时，`status` 为目标返回的 HTTP 状态码（如 `200`）。
+ */
+export interface GetNetworkUrlstatus200ResponseOneOf {
     /**
-     * HTTP响应状态码
+     * 目标URL实际返回的HTTP状态码。
+     */
+    'status'?: number;
+    'url'?: string;
+}
+/**
+ * 当目标 URL 不可达或请求失败（如 DNS 失败、超时、连接失败）时，`status` 为 `0`。
+ */
+export interface GetNetworkUrlstatus200ResponseOneOf1 {
+    /**
+     * 目标不可达或请求失败时固定为 0。
      */
     'status'?: number;
     'url'?: string;
@@ -1025,7 +1996,6 @@ export type GetNetworkWhois200Response = GetNetworkWhois200ResponseOneOf | GetNe
  * ### 文本格式响应 当 `format=text` 或未指定时，`whois` 字段包含原始的WHOIS查询文本。这保留了最完整的信息，适合需要自行解析或展示原始数据的场景。
  */
 export interface GetNetworkWhois200ResponseOneOf {
-    'code'?: number;
     /**
      * **WHOIS原始文本**  返回未经处理的原始WHOIS查询结果文本。
      */
@@ -1035,7 +2005,6 @@ export interface GetNetworkWhois200ResponseOneOf {
  * ### JSON格式响应 当 `format=json` 时，`whois` 字段返回结构化的JSON对象。  > [!NOTE] > **注意**：返回的具体字段可能因域名注册局和隐私保护设置而异。某些敏感信息可能会被部分隐藏或标记为 `REDACTED FOR PRIVACY`。
  */
 export interface GetNetworkWhois200ResponseOneOf1 {
-    'code'?: number;
     /**
      * ### 结构化WHOIS信息  返回经过解析的JSON对象，包含以下主要部分：  - **域名信息**: 包含域名ID、注册状态、DNS服务器等 - **注册商信息**: 注册服务商的详细信息 - **注册人信息**: 域名所有者的相关信息（可能因隐私保护而部分隐藏） - **重要日期**: 包括注册日期、更新日期和到期日期
      */
@@ -1071,7 +2040,6 @@ export interface GetRandomImage500Response {
     'message'?: string;
 }
 export interface GetRandomString200Response {
-    'code'?: number;
     'text'?: string;
 }
 export interface GetRandomString400Response {
@@ -1580,6 +2548,50 @@ export interface GetSocialQqGroupinfo200Response {
      * 最后更新时间（ISO 8601格式）
      */
     'last_updated'?: string;
+    /**
+     * 当前成员数
+     */
+    'member_count'?: number;
+    /**
+     * 最大成员数
+     */
+    'max_member_count'?: number;
+    /**
+     * 活跃成员数（可选，部分群有此数据）
+     */
+    'active_member_num'?: number;
+    /**
+     * 群主QQ号（可选）
+     */
+    'owner_uin'?: string;
+    /**
+     * 群主UID（可选）
+     */
+    'owner_uid'?: string;
+    /**
+     * 建群时间戳（Unix时间戳，可选）
+     */
+    'create_time'?: number;
+    /**
+     * 建群时间格式化字符串（可选）
+     */
+    'create_time_str'?: string;
+    /**
+     * 群等级（可选）
+     */
+    'group_grade'?: number;
+    /**
+     * 群公告/简介（可选）
+     */
+    'group_memo'?: string;
+    /**
+     * 认证类型（0=未认证，可选）
+     */
+    'cert_type'?: number;
+    /**
+     * 认证说明文本（可选）
+     */
+    'cert_text'?: string;
 }
 export interface GetSocialQqGroupinfo400Response {
     'code'?: string;
@@ -1587,14 +2599,7 @@ export interface GetSocialQqGroupinfo400Response {
     'message'?: string;
 }
 export interface GetSocialQqGroupinfo404Response {
-    'code'?: string;
-    'details'?: object;
-    'message'?: string;
-}
-export interface GetSocialQqGroupinfo500Response {
-    'code'?: string;
-    'details'?: object;
-    'message'?: string;
+    'error'?: string;
 }
 export interface GetSocialQqUserinfo200Response {
     /**
@@ -1708,19 +2713,35 @@ export interface GetStatusRatelimit401Response {
     'message'?: string;
 }
 export interface GetStatusUsage200Response {
-    'endpoints'?: Array<EndpointsAggregateEndpointsInner>;
-    'unaggregated'?: EndpointsAggregateUnaggregated;
+    'endpoints'?: Array<GetStatusUsage200ResponseAnyOfEndpointsInner>;
+    'unaggregated'?: GetStatusUsage200ResponseAnyOfUnaggregated;
     'path'?: string;
     'count'?: number;
 }
+/**
+ * 查询所有端点时返回的聚合统计数据
+ */
+export interface GetStatusUsage200ResponseAnyOf {
+    'endpoints'?: Array<GetStatusUsage200ResponseAnyOfEndpointsInner>;
+    'unaggregated'?: GetStatusUsage200ResponseAnyOfUnaggregated;
+}
+/**
+ * 查询指定path参数时返回的单个端点统计数据
+ */
+export interface GetStatusUsage200ResponseAnyOf1 {
+    'path'?: string;
+    'count'?: number;
+}
+export interface GetStatusUsage200ResponseAnyOfEndpointsInner {
+    'path'?: string;
+    'count'?: number;
+}
+export interface GetStatusUsage200ResponseAnyOfUnaggregated {
+    'count'?: number;
+    'oldest_log'?: string;
+}
 export interface GetStatusUsage404Response {
     'code'?: string;
-    'details'?: object;
-    'message'?: string;
-}
-export interface GetStatusUsage500Response {
-    'code'?: string;
-    'details'?: object;
     'message'?: string;
 }
 export interface GetTextMd5200Response {
@@ -1823,7 +2844,6 @@ export interface GetWebparseMetadata500Response {
     'message'?: string;
 }
 export interface PostAiTranslate200Response {
-    'code'?: number;
     'message'?: string;
     /**
      * 标识是否为批量翻译请求。
@@ -1960,7 +2980,6 @@ export const PostAiTranslateRequestContextEnum = {
 export type PostAiTranslateRequestContextEnum = typeof PostAiTranslateRequestContextEnum[keyof typeof PostAiTranslateRequestContextEnum];
 
 export interface PostAnswerbookAsk200Response {
-    'code'?: number;
     'question'?: string;
     'answer'?: string;
 }
@@ -1995,10 +3014,6 @@ export interface PostClipzyStoreRequest {
     'ttl'?: number;
 }
 export interface PostConvertJson200Response {
-    /**
-     * 状态码，200代表操作成功。
-     */
-    'code'?: number;
     /**
      * 格式化后的JSON字符串，带有标准缩进和换行。
      */
@@ -2046,10 +3061,6 @@ export interface PostImageCompress500Response {
 }
 export interface PostImageFrombase64200Response {
     /**
-     * 状态码，200代表成功。
-     */
-    'code'?: number;
-    /**
      * 图片保存后在服务器上的绝对访问URL。
      */
     'image_url'?: string;
@@ -2080,6 +3091,52 @@ export interface PostImageMotou400Response {
 export interface PostImageMotou500Response {
     'error'?: string;
 }
+export interface PostImageNsfw200Response {
+    /**
+     * NSFW 内容的置信度分数，范围 0-1，越高表示越可能是敏感内容。
+     */
+    'nsfw_score'?: number;
+    /**
+     * 正常内容的置信度分数，范围 0-1。
+     */
+    'normal_score'?: number;
+    /**
+     * 是否判定为 NSFW 内容。
+     */
+    'is_nsfw'?: boolean;
+    /**
+     * 内容标签，\'nsfw\' 或 \'normal\'。
+     */
+    'label'?: string;
+    /**
+     * 处理建议：\'pass\'（通过）、\'review\'（人工复核）、\'block\'（拦截）。
+     */
+    'suggestion'?: string;
+    /**
+     * 风险等级：\'low\'、\'medium\'、\'high\'。
+     */
+    'risk_level'?: string;
+    /**
+     * 模型对当前判断的置信度。
+     */
+    'confidence'?: number;
+    /**
+     * 模型推理耗时，单位毫秒。
+     */
+    'inference_time_ms'?: number;
+}
+export interface PostImageNsfw400Response {
+    'code'?: string;
+    'message'?: string;
+}
+export interface PostImageNsfw413Response {
+    'code'?: string;
+    'message'?: string;
+}
+export interface PostImageNsfw500Response {
+    'code'?: string;
+    'message'?: string;
+}
 export interface PostImageSpeechless400Response {
     'error'?: string;
 }
@@ -2104,6 +3161,51 @@ export interface PostImageSvg500Response {
     'code'?: string;
     'message'?: string;
 }
+export interface PostMiscDateDiff200Response {
+    /**
+     * 总天数
+     */
+    'days'?: number;
+    /**
+     * 总小时数
+     */
+    'hours'?: number;
+    /**
+     * 总分钟数
+     */
+    'minutes'?: number;
+    /**
+     * 总秒数
+     */
+    'seconds'?: number;
+    /**
+     * 总周数
+     */
+    'weeks'?: number;
+    /**
+     * 人性化显示格式
+     */
+    'human_readable'?: string;
+}
+export interface PostMiscDateDiff400Response {
+    'error_code'?: string;
+    'error_message'?: string;
+    'error_details'?: string;
+}
+export interface PostMiscDateDiffRequest {
+    /**
+     * 开始日期，支持多种格式自动识别
+     */
+    'start_date': string;
+    /**
+     * 结束日期，支持多种格式自动识别
+     */
+    'end_date': string;
+    /**
+     * 日期格式（可选），如DD-MM-YYYY。不指定则自动识别
+     */
+    'format'?: string;
+}
 export interface PostSearchAggregate200Response {
     /**
      * 实际执行的搜索查询
@@ -2118,7 +3220,7 @@ export interface PostSearchAggregate200Response {
      */
     'results'?: Array<PostSearchAggregate200ResponseResultsInner>;
     /**
-     * 各搜索引擎的结果数量统计
+     * 各搜索源的结果统计
      */
     'sources'?: Array<PostSearchAggregate200ResponseSourcesInner>;
     /**
@@ -2216,19 +3318,58 @@ export interface PostSearchAggregateRequest {
      * 请求超时时间（毫秒），范围 1000-30000
      */
     'timeout_ms'?: number;
+    /**
+     * 排序方式
+     */
+    'sort'?: PostSearchAggregateRequestSortEnum;
+    /**
+     * 时间范围过滤
+     */
+    'time_range'?: PostSearchAggregateRequestTimeRangeEnum;
 }
+
+export const PostSearchAggregateRequestSortEnum = {
+    Relevance: 'relevance',
+    Date: 'date'
+} as const;
+
+export type PostSearchAggregateRequestSortEnum = typeof PostSearchAggregateRequestSortEnum[keyof typeof PostSearchAggregateRequestSortEnum];
+export const PostSearchAggregateRequestTimeRangeEnum = {
+    Day: 'day',
+    Week: 'week',
+    Month: 'month',
+    Year: 'year'
+} as const;
+
+export type PostSearchAggregateRequestTimeRangeEnum = typeof PostSearchAggregateRequestTimeRangeEnum[keyof typeof PostSearchAggregateRequestTimeRangeEnum];
+
 export interface PostSensitiveWordAnalyze200Response {
     'results'?: Array<PostSensitiveWordAnalyze200ResponseResultsInner>;
     'total'?: number;
 }
 export interface PostSensitiveWordAnalyze200ResponseResultsInner {
     'k'?: string;
-    'r'?: string;
-    's'?: Array<number>;
-    'v'?: Array<string>;
-    't'?: Array<string>;
-    'd'?: string;
+    'label'?: PostSensitiveWordAnalyze200ResponseResultsInnerLabelEnum;
+    'category'?: PostSensitiveWordAnalyze200ResponseResultsInnerCategoryEnum;
+    'confidence'?: number;
 }
+
+export const PostSensitiveWordAnalyze200ResponseResultsInnerLabelEnum = {
+    Sensitive: 'sensitive',
+    Normal: 'normal'
+} as const;
+
+export type PostSensitiveWordAnalyze200ResponseResultsInnerLabelEnum = typeof PostSensitiveWordAnalyze200ResponseResultsInnerLabelEnum[keyof typeof PostSensitiveWordAnalyze200ResponseResultsInnerLabelEnum];
+export const PostSensitiveWordAnalyze200ResponseResultsInnerCategoryEnum = {
+    Safe: 'safe',
+    Threat: 'threat',
+    Porn: 'porn',
+    Fraud: 'fraud',
+    Insult: 'insult'
+} as const;
+
+export type PostSensitiveWordAnalyze200ResponseResultsInnerCategoryEnum = typeof PostSensitiveWordAnalyze200ResponseResultsInnerCategoryEnum[keyof typeof PostSensitiveWordAnalyze200ResponseResultsInnerCategoryEnum];
+
 export interface PostSensitiveWordAnalyze400Response {
     'code'?: string;
     'message'?: string;
@@ -2272,6 +3413,56 @@ export interface PostTextAesDecrypt500Response {
     'details'?: object;
     'message'?: string;
 }
+export interface PostTextAesDecryptAdvanced200Response {
+    /**
+     * 解密后的明文文本
+     */
+    'plaintext'?: string;
+}
+export interface PostTextAesDecryptAdvanced400Response {
+    'error'?: string;
+}
+export interface PostTextAesDecryptAdvancedRequest {
+    /**
+     * 待解密的密文（Base64编码）。此值来自加密接口返回的ciphertext字段
+     */
+    'text': string;
+    /**
+     * 解密密钥（必须与加密时相同）
+     */
+    'key': string;
+    /**
+     * 加密模式（必须与加密时相同）：GCM/CBC/ECB/CTR/OFB/CFB
+     */
+    'mode': PostTextAesDecryptAdvancedRequestModeEnum;
+    /**
+     * 填充方式（可选，必须与加密时相同）：PKCS7/ZERO/NONE。GCM模式默认为NONE
+     */
+    'padding'?: PostTextAesDecryptAdvancedRequestPaddingEnum;
+    /**
+     * 初始化向量（非GCM模式必须提供，Base64编码）。此值来自加密接口返回的iv字段
+     */
+    'iv'?: string;
+}
+
+export const PostTextAesDecryptAdvancedRequestModeEnum = {
+    Gcm: 'GCM',
+    Cbc: 'CBC',
+    Ecb: 'ECB',
+    Ctr: 'CTR',
+    Ofb: 'OFB',
+    Cfb: 'CFB'
+} as const;
+
+export type PostTextAesDecryptAdvancedRequestModeEnum = typeof PostTextAesDecryptAdvancedRequestModeEnum[keyof typeof PostTextAesDecryptAdvancedRequestModeEnum];
+export const PostTextAesDecryptAdvancedRequestPaddingEnum = {
+    Pkcs7: 'PKCS7',
+    Zero: 'ZERO',
+    None: 'NONE'
+} as const;
+
+export type PostTextAesDecryptAdvancedRequestPaddingEnum = typeof PostTextAesDecryptAdvancedRequestPaddingEnum[keyof typeof PostTextAesDecryptAdvancedRequestPaddingEnum];
+
 export interface PostTextAesDecryptRequest {
     /**
      * 密钥，长度必须为16、24或32字节，对应AES-128/192/256。
@@ -2282,7 +3473,7 @@ export interface PostTextAesDecryptRequest {
      */
     'text': string;
     /**
-     * 16�ֽڵ�IV/Nonce����Ϊ16���ַ�
+     * 16字节的IV/Nonce，必须为16个字符
      */
     'nonce': string;
 }
@@ -2299,6 +3490,78 @@ export interface PostTextAesEncrypt500Response {
     'details'?: object;
     'message'?: string;
 }
+export interface PostTextAesEncryptAdvanced200Response {
+    /**
+     * 加密后的密文（Base64编码）
+     */
+    'ciphertext'?: string;
+    /**
+     * 使用的加密模式
+     */
+    'mode'?: string;
+    /**
+     * 使用的填充方式
+     */
+    'padding'?: string;
+    /**
+     * 使用的IV（Base64编码）。GCM模式不返回此字段
+     */
+    'iv'?: string;
+}
+export interface PostTextAesEncryptAdvanced400Response {
+    'error'?: string;
+}
+export interface PostTextAesEncryptAdvancedRequest {
+    /**
+     * 待加密的明文文本
+     */
+    'text': string;
+    /**
+     * 加密密钥（支持任意长度）
+     */
+    'key': string;
+    /**
+     * 加密模式：GCM/CBC/ECB/CTR/OFB/CFB（可选，默认GCM）
+     */
+    'mode'?: PostTextAesEncryptAdvancedRequestModeEnum;
+    /**
+     * 填充方式：PKCS7/ZERO/NONE（可选，默认PKCS7）
+     */
+    'padding'?: PostTextAesEncryptAdvancedRequestPaddingEnum;
+    /**
+     * 自定义IV（可选，Base64编码，16字节）。GCM模式无需此参数
+     */
+    'iv'?: string;
+    /**
+     * 输出格式：base64（默认）或hex
+     */
+    'output_format'?: PostTextAesEncryptAdvancedRequestOutputFormatEnum;
+}
+
+export const PostTextAesEncryptAdvancedRequestModeEnum = {
+    Gcm: 'GCM',
+    Cbc: 'CBC',
+    Ecb: 'ECB',
+    Ctr: 'CTR',
+    Ofb: 'OFB',
+    Cfb: 'CFB'
+} as const;
+
+export type PostTextAesEncryptAdvancedRequestModeEnum = typeof PostTextAesEncryptAdvancedRequestModeEnum[keyof typeof PostTextAesEncryptAdvancedRequestModeEnum];
+export const PostTextAesEncryptAdvancedRequestPaddingEnum = {
+    Pkcs7: 'PKCS7',
+    Zero: 'ZERO',
+    None: 'NONE'
+} as const;
+
+export type PostTextAesEncryptAdvancedRequestPaddingEnum = typeof PostTextAesEncryptAdvancedRequestPaddingEnum[keyof typeof PostTextAesEncryptAdvancedRequestPaddingEnum];
+export const PostTextAesEncryptAdvancedRequestOutputFormatEnum = {
+    Base64: 'base64',
+    Hex: 'hex'
+} as const;
+
+export type PostTextAesEncryptAdvancedRequestOutputFormatEnum = typeof PostTextAesEncryptAdvancedRequestOutputFormatEnum[keyof typeof PostTextAesEncryptAdvancedRequestOutputFormatEnum];
+
 export interface PostTextAesEncryptRequest {
     /**
      * Key must be 16, 24, or 32 bytes long to select AES-128, AES-192, or AES-256.
@@ -2343,6 +3606,83 @@ export interface PostTextBase64Encode400Response {
 export interface PostTextBase64EncodeRequest {
     'text': string;
 }
+export interface PostTextConvert200Response {
+    /**
+     * 转换结果
+     */
+    'result'?: string;
+    /**
+     * 源格式
+     */
+    'from'?: string;
+    /**
+     * 目标格式
+     */
+    'to'?: string;
+    /**
+     * 结果长度
+     */
+    'length'?: number;
+    /**
+     * 额外信息（如哈希不可逆提示）
+     */
+    'info'?: string;
+}
+export interface PostTextConvert400Response {
+    'error_code'?: string;
+    'error_message'?: string;
+    'error_details'?: string;
+}
+export interface PostTextConvertRequest {
+    /**
+     * 待转换的文本内容
+     */
+    'text': string;
+    /**
+     * 源格式类型
+     */
+    'from': PostTextConvertRequestFromEnum;
+    /**
+     * 目标格式类型
+     */
+    'to': PostTextConvertRequestToEnum;
+    /**
+     * 可选参数（预留，当前未使用）
+     */
+    'options'?: { [key: string]: any; };
+}
+
+export const PostTextConvertRequestFromEnum = {
+    Plain: 'plain',
+    Base64: 'base64',
+    Hex: 'hex',
+    Url: 'url',
+    Html: 'html',
+    Unicode: 'unicode',
+    Binary: 'binary',
+    Md5: 'md5',
+    Sha1: 'sha1',
+    Sha256: 'sha256',
+    Sha512: 'sha512'
+} as const;
+
+export type PostTextConvertRequestFromEnum = typeof PostTextConvertRequestFromEnum[keyof typeof PostTextConvertRequestFromEnum];
+export const PostTextConvertRequestToEnum = {
+    Plain: 'plain',
+    Base64: 'base64',
+    Hex: 'hex',
+    Url: 'url',
+    Html: 'html',
+    Unicode: 'unicode',
+    Binary: 'binary',
+    Md5: 'md5',
+    Sha1: 'sha1',
+    Sha256: 'sha256',
+    Sha512: 'sha512'
+} as const;
+
+export type PostTextConvertRequestToEnum = typeof PostTextConvertRequestToEnum[keyof typeof PostTextConvertRequestToEnum];
+
 export interface PostTextMd5400Response {
     'code'?: string;
     'details'?: object;
@@ -2478,10 +3818,6 @@ export interface PostWebTomarkdownAsync400Response {
     'message'?: string;
     'code'?: number;
 }
-export interface SingleEndpoint {
-    'path'?: string;
-    'count'?: number;
-}
 
 /**
  * DefaultApi - axios parameter creator
@@ -2490,7 +3826,7 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
     return {
         /**
          * 获取 UAPI Pro Search 引擎的详细信息，包括支持的功能特性、参数限制和使用说明。  ## 功能概述  此接口返回搜索引擎的完整配置信息，你可以用它来： - 了解搜索引擎支持哪些功能（如站内搜索、文件类型过滤等） - 获取参数的默认值和限制范围 - 查看当前引擎版本和可用状态  适合在应用初始化时调用，或用于动态配置搜索界面。       
-         * @summary 获取搜索引擎信息
+         * @summary 搜索引擎配置
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -2520,7 +3856,7 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 通过URL查询参数分析单个关键词，便于GET请求调用。
-         * @summary 查询参数分析
+         * @summary 敏感词分析 (GET)
          * @param {string} keyword 要分析的关键词，最长50字符。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -2556,7 +3892,7 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
-         * 想在你的应用中集成搜索功能？我们提供了一个强大的搜索引擎API，让你可以轻松实现实时网页搜索。  ## 功能概述  UAPI Pro Search 是自研的智能搜索引擎，采用机器学习算法对搜索结果进行智能排序，确保最相关的内容排在前面。你可以用它搜索任何关键词，也可以限定在特定网站或特定文件类型中搜索。  - **实时网页搜索**: 毫秒级响应，快速返回搜索结果 - **智能排序**: 采用机器学习回归排序算法，结果更精准 - **站内搜索**: 支持 `site:` 操作符，在指定网站内搜索 - **文件类型过滤**: 支持 `filetype:` 操作符，快速找到 PDF、Word 等特定格式文件  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者集成和测试。未来，它将转为付费API，为用户提供更稳定和强大的服务。       
+         * 想在你的应用中集成搜索功能？我们提供了一个强大的搜索引擎API，让你可以轻松实现实时网页搜索。  ## 功能概述  UAPI Pro Search 是一个智能搜索引擎，采用机器学习算法对搜索结果进行智能排序，确保最相关的内容排在前面。你可以用它搜索任何关键词，也可以限定在特定网站或特定文件类型中搜索。  - **实时网页搜索**: 毫秒级响应，快速返回搜索结果 - **智能排序**: 采用机器学习回归排序算法，结果更精准 - **时间排序**: 支持按发布时间排序，获取最新内容 - **时间范围过滤**: 支持按天/周/月/年过滤结果 - **站内搜索**: 支持 `site:` 操作符，在指定网站内搜索 - **文件类型过滤**: 支持 `filetype:` 操作符，快速找到 PDF、Word 等特定格式文件  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者集成和测试。未来，它将转为付费API，为用户提供更稳定和强大的服务。       
          * @summary 智能搜索
          * @param {PostSearchAggregateRequest} postSearchAggregateRequest 包含搜索参数的JSON对象
          * @param {*} [options] Override http request option.
@@ -2592,7 +3928,7 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
-         * 分析单个或多个关键词的敏感程度，返回详细的风险评分和分析结果。  > [!VIP] > 本API基于先进的分析模型，提供三级缓存策略和并发处理能力。  ## 功能概述  - **模型驱动**: 使用先进的分析模型进行语义分析。 - **高性能**: 采用三级缓存策略（持久化存储 → 统一缓存 → 模型分析），确保高频请求的响应速度。 - **并发支持**: 支持批量并发处理，单次最多可分析100个关键词。 - **详细评分**: 提供色情、辱骂、暴力三个维度的详细风险评分。 - **变体识别**: 能够自动识别关键词的常见变体形式，如拼音、缩写等。  ## 风险评分说明  返回的 `s` 字段包含三个维度的风险评分，范围均为0.0至1.0：  - **s[0] - 色情风险**: 评估内容涉及色情信息的程度。 - **s[1] - 辱骂/仇恨言论风险**: 评估内容是否包含侮辱性或仇恨性言论。 - **s[2] - 暴力/威胁风险**: 评估内容是否涉及暴力或威胁信息。  风险等级可参考：0.0-0.3为低风险，0.3-0.7为中等风险，0.7-1.0为高风险。  ## 响应字段说明  | 字段 | 类型 | 说明 | |------|------|------| | `results` | array | 分析结果对象的数组。 | | `results[].k` | string | 您在请求中提供的原始关键词。 | | `results[].r` | string | 模型对该关键词的分析过程和判断理由的简要说明。 | | `results[].s` | array[float] | 一个包含三个浮点数的数组，分别代表[色情, 辱骂, 暴力]三个维度的风险评分。分值范围从0.0到1.0，越高代表风险越大。 | | `results[].v` | array[string] | 模型识别出的该关键词的常见变体形式，例如拼音、谐音、缩写等。 | | `results[].t` | array[string] | 根据分析结果为关键词附加的分类标签，便于进行程序化处理和过滤。 | | `results[].d` | string | 对整体分析结果的一句简短总结，适合直接展示给用户或记录在日志中。 | | `total` | integer | 本次请求成功分析的关键词总数。 |       
+         * 分析单个或多个关键词的敏感程度，返回标准化风险标签与置信度结果。  > [!VIP] > 本API基于先进的分析模型，提供三级缓存策略和并发处理能力。  ## 功能概述  - **模型驱动**: 使用先进的分析模型进行语义分析。 - **高性能**: 采用三级缓存策略（持久化存储 → 统一缓存 → 模型分析），确保高频请求的响应速度。 - **并发支持**: 支持批量并发处理，单次最多可分析100个关键词。 - **标准标签**: 返回 `label` 字段，明确区分 `sensitive` 与 `normal`。 - **分类清晰**: 返回 `category` 字段，用于标识具体风险类别。 - **置信度输出**: 返回 `confidence` 字段，范围为0.0到1.0。  ## 响应字段说明  | 字段 | 类型 | 说明 | |------|------|------| | `results` | array | 分析结果对象的数组。 | | `results[].k` | string | 您在请求中提供的原始关键词。 | | `results[].label` | string | 核心判断字段：`sensitive`(敏感)、`normal`(正常)。 | | `results[].category` | string | 风险分类：`safe`(安全)、`threat`(威胁)、`porn`(色情)、`fraud`(欺诈)、`insult`(辱骂)。 | | `results[].confidence` | number | 当前分类的置信度，范围0.0到1.0。 | | `total` | integer | 本次请求成功分析的关键词总数。 |       
          * @summary 分析敏感词
          * @param {PostSensitiveWordAnalyzeRequest} postSensitiveWordAnalyzeRequest 包含待检测文本 \&#39;keywords\&#39; 的JSON对象
          * @param {*} [options] Override http request option.
@@ -2674,7 +4010,7 @@ export const DefaultApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 获取 UAPI Pro Search 引擎的详细信息，包括支持的功能特性、参数限制和使用说明。  ## 功能概述  此接口返回搜索引擎的完整配置信息，你可以用它来： - 了解搜索引擎支持哪些功能（如站内搜索、文件类型过滤等） - 获取参数的默认值和限制范围 - 查看当前引擎版本和可用状态  适合在应用初始化时调用，或用于动态配置搜索界面。       
-         * @summary 获取搜索引擎信息
+         * @summary 搜索引擎配置
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -2686,7 +4022,7 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 通过URL查询参数分析单个关键词，便于GET请求调用。
-         * @summary 查询参数分析
+         * @summary 敏感词分析 (GET)
          * @param {string} keyword 要分析的关键词，最长50字符。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -2698,7 +4034,7 @@ export const DefaultApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * 想在你的应用中集成搜索功能？我们提供了一个强大的搜索引擎API，让你可以轻松实现实时网页搜索。  ## 功能概述  UAPI Pro Search 是自研的智能搜索引擎，采用机器学习算法对搜索结果进行智能排序，确保最相关的内容排在前面。你可以用它搜索任何关键词，也可以限定在特定网站或特定文件类型中搜索。  - **实时网页搜索**: 毫秒级响应，快速返回搜索结果 - **智能排序**: 采用机器学习回归排序算法，结果更精准 - **站内搜索**: 支持 `site:` 操作符，在指定网站内搜索 - **文件类型过滤**: 支持 `filetype:` 操作符，快速找到 PDF、Word 等特定格式文件  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者集成和测试。未来，它将转为付费API，为用户提供更稳定和强大的服务。       
+         * 想在你的应用中集成搜索功能？我们提供了一个强大的搜索引擎API，让你可以轻松实现实时网页搜索。  ## 功能概述  UAPI Pro Search 是一个智能搜索引擎，采用机器学习算法对搜索结果进行智能排序，确保最相关的内容排在前面。你可以用它搜索任何关键词，也可以限定在特定网站或特定文件类型中搜索。  - **实时网页搜索**: 毫秒级响应，快速返回搜索结果 - **智能排序**: 采用机器学习回归排序算法，结果更精准 - **时间排序**: 支持按发布时间排序，获取最新内容 - **时间范围过滤**: 支持按天/周/月/年过滤结果 - **站内搜索**: 支持 `site:` 操作符，在指定网站内搜索 - **文件类型过滤**: 支持 `filetype:` 操作符，快速找到 PDF、Word 等特定格式文件  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者集成和测试。未来，它将转为付费API，为用户提供更稳定和强大的服务。       
          * @summary 智能搜索
          * @param {PostSearchAggregateRequest} postSearchAggregateRequest 包含搜索参数的JSON对象
          * @param {*} [options] Override http request option.
@@ -2711,7 +4047,7 @@ export const DefaultApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * 分析单个或多个关键词的敏感程度，返回详细的风险评分和分析结果。  > [!VIP] > 本API基于先进的分析模型，提供三级缓存策略和并发处理能力。  ## 功能概述  - **模型驱动**: 使用先进的分析模型进行语义分析。 - **高性能**: 采用三级缓存策略（持久化存储 → 统一缓存 → 模型分析），确保高频请求的响应速度。 - **并发支持**: 支持批量并发处理，单次最多可分析100个关键词。 - **详细评分**: 提供色情、辱骂、暴力三个维度的详细风险评分。 - **变体识别**: 能够自动识别关键词的常见变体形式，如拼音、缩写等。  ## 风险评分说明  返回的 `s` 字段包含三个维度的风险评分，范围均为0.0至1.0：  - **s[0] - 色情风险**: 评估内容涉及色情信息的程度。 - **s[1] - 辱骂/仇恨言论风险**: 评估内容是否包含侮辱性或仇恨性言论。 - **s[2] - 暴力/威胁风险**: 评估内容是否涉及暴力或威胁信息。  风险等级可参考：0.0-0.3为低风险，0.3-0.7为中等风险，0.7-1.0为高风险。  ## 响应字段说明  | 字段 | 类型 | 说明 | |------|------|------| | `results` | array | 分析结果对象的数组。 | | `results[].k` | string | 您在请求中提供的原始关键词。 | | `results[].r` | string | 模型对该关键词的分析过程和判断理由的简要说明。 | | `results[].s` | array[float] | 一个包含三个浮点数的数组，分别代表[色情, 辱骂, 暴力]三个维度的风险评分。分值范围从0.0到1.0，越高代表风险越大。 | | `results[].v` | array[string] | 模型识别出的该关键词的常见变体形式，例如拼音、谐音、缩写等。 | | `results[].t` | array[string] | 根据分析结果为关键词附加的分类标签，便于进行程序化处理和过滤。 | | `results[].d` | string | 对整体分析结果的一句简短总结，适合直接展示给用户或记录在日志中。 | | `total` | integer | 本次请求成功分析的关键词总数。 |       
+         * 分析单个或多个关键词的敏感程度，返回标准化风险标签与置信度结果。  > [!VIP] > 本API基于先进的分析模型，提供三级缓存策略和并发处理能力。  ## 功能概述  - **模型驱动**: 使用先进的分析模型进行语义分析。 - **高性能**: 采用三级缓存策略（持久化存储 → 统一缓存 → 模型分析），确保高频请求的响应速度。 - **并发支持**: 支持批量并发处理，单次最多可分析100个关键词。 - **标准标签**: 返回 `label` 字段，明确区分 `sensitive` 与 `normal`。 - **分类清晰**: 返回 `category` 字段，用于标识具体风险类别。 - **置信度输出**: 返回 `confidence` 字段，范围为0.0到1.0。  ## 响应字段说明  | 字段 | 类型 | 说明 | |------|------|------| | `results` | array | 分析结果对象的数组。 | | `results[].k` | string | 您在请求中提供的原始关键词。 | | `results[].label` | string | 核心判断字段：`sensitive`(敏感)、`normal`(正常)。 | | `results[].category` | string | 风险分类：`safe`(安全)、`threat`(威胁)、`porn`(色情)、`fraud`(欺诈)、`insult`(辱骂)。 | | `results[].confidence` | number | 当前分类的置信度，范围0.0到1.0。 | | `total` | integer | 本次请求成功分析的关键词总数。 |       
          * @summary 分析敏感词
          * @param {PostSensitiveWordAnalyzeRequest} postSensitiveWordAnalyzeRequest 包含待检测文本 \&#39;keywords\&#39; 的JSON对象
          * @param {*} [options] Override http request option.
@@ -2747,7 +4083,7 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
     return {
         /**
          * 获取 UAPI Pro Search 引擎的详细信息，包括支持的功能特性、参数限制和使用说明。  ## 功能概述  此接口返回搜索引擎的完整配置信息，你可以用它来： - 了解搜索引擎支持哪些功能（如站内搜索、文件类型过滤等） - 获取参数的默认值和限制范围 - 查看当前引擎版本和可用状态  适合在应用初始化时调用，或用于动态配置搜索界面。       
-         * @summary 获取搜索引擎信息
+         * @summary 搜索引擎配置
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -2756,7 +4092,7 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 通过URL查询参数分析单个关键词，便于GET请求调用。
-         * @summary 查询参数分析
+         * @summary 敏感词分析 (GET)
          * @param {string} keyword 要分析的关键词，最长50字符。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -2765,7 +4101,7 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.getSensitiveWordAnalyzeQuery(keyword, options).then((request) => request(axios, basePath));
         },
         /**
-         * 想在你的应用中集成搜索功能？我们提供了一个强大的搜索引擎API，让你可以轻松实现实时网页搜索。  ## 功能概述  UAPI Pro Search 是自研的智能搜索引擎，采用机器学习算法对搜索结果进行智能排序，确保最相关的内容排在前面。你可以用它搜索任何关键词，也可以限定在特定网站或特定文件类型中搜索。  - **实时网页搜索**: 毫秒级响应，快速返回搜索结果 - **智能排序**: 采用机器学习回归排序算法，结果更精准 - **站内搜索**: 支持 `site:` 操作符，在指定网站内搜索 - **文件类型过滤**: 支持 `filetype:` 操作符，快速找到 PDF、Word 等特定格式文件  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者集成和测试。未来，它将转为付费API，为用户提供更稳定和强大的服务。       
+         * 想在你的应用中集成搜索功能？我们提供了一个强大的搜索引擎API，让你可以轻松实现实时网页搜索。  ## 功能概述  UAPI Pro Search 是一个智能搜索引擎，采用机器学习算法对搜索结果进行智能排序，确保最相关的内容排在前面。你可以用它搜索任何关键词，也可以限定在特定网站或特定文件类型中搜索。  - **实时网页搜索**: 毫秒级响应，快速返回搜索结果 - **智能排序**: 采用机器学习回归排序算法，结果更精准 - **时间排序**: 支持按发布时间排序，获取最新内容 - **时间范围过滤**: 支持按天/周/月/年过滤结果 - **站内搜索**: 支持 `site:` 操作符，在指定网站内搜索 - **文件类型过滤**: 支持 `filetype:` 操作符，快速找到 PDF、Word 等特定格式文件  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者集成和测试。未来，它将转为付费API，为用户提供更稳定和强大的服务。       
          * @summary 智能搜索
          * @param {PostSearchAggregateRequest} postSearchAggregateRequest 包含搜索参数的JSON对象
          * @param {*} [options] Override http request option.
@@ -2775,7 +4111,7 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.postSearchAggregate(postSearchAggregateRequest, options).then((request) => request(axios, basePath));
         },
         /**
-         * 分析单个或多个关键词的敏感程度，返回详细的风险评分和分析结果。  > [!VIP] > 本API基于先进的分析模型，提供三级缓存策略和并发处理能力。  ## 功能概述  - **模型驱动**: 使用先进的分析模型进行语义分析。 - **高性能**: 采用三级缓存策略（持久化存储 → 统一缓存 → 模型分析），确保高频请求的响应速度。 - **并发支持**: 支持批量并发处理，单次最多可分析100个关键词。 - **详细评分**: 提供色情、辱骂、暴力三个维度的详细风险评分。 - **变体识别**: 能够自动识别关键词的常见变体形式，如拼音、缩写等。  ## 风险评分说明  返回的 `s` 字段包含三个维度的风险评分，范围均为0.0至1.0：  - **s[0] - 色情风险**: 评估内容涉及色情信息的程度。 - **s[1] - 辱骂/仇恨言论风险**: 评估内容是否包含侮辱性或仇恨性言论。 - **s[2] - 暴力/威胁风险**: 评估内容是否涉及暴力或威胁信息。  风险等级可参考：0.0-0.3为低风险，0.3-0.7为中等风险，0.7-1.0为高风险。  ## 响应字段说明  | 字段 | 类型 | 说明 | |------|------|------| | `results` | array | 分析结果对象的数组。 | | `results[].k` | string | 您在请求中提供的原始关键词。 | | `results[].r` | string | 模型对该关键词的分析过程和判断理由的简要说明。 | | `results[].s` | array[float] | 一个包含三个浮点数的数组，分别代表[色情, 辱骂, 暴力]三个维度的风险评分。分值范围从0.0到1.0，越高代表风险越大。 | | `results[].v` | array[string] | 模型识别出的该关键词的常见变体形式，例如拼音、谐音、缩写等。 | | `results[].t` | array[string] | 根据分析结果为关键词附加的分类标签，便于进行程序化处理和过滤。 | | `results[].d` | string | 对整体分析结果的一句简短总结，适合直接展示给用户或记录在日志中。 | | `total` | integer | 本次请求成功分析的关键词总数。 |       
+         * 分析单个或多个关键词的敏感程度，返回标准化风险标签与置信度结果。  > [!VIP] > 本API基于先进的分析模型，提供三级缓存策略和并发处理能力。  ## 功能概述  - **模型驱动**: 使用先进的分析模型进行语义分析。 - **高性能**: 采用三级缓存策略（持久化存储 → 统一缓存 → 模型分析），确保高频请求的响应速度。 - **并发支持**: 支持批量并发处理，单次最多可分析100个关键词。 - **标准标签**: 返回 `label` 字段，明确区分 `sensitive` 与 `normal`。 - **分类清晰**: 返回 `category` 字段，用于标识具体风险类别。 - **置信度输出**: 返回 `confidence` 字段，范围为0.0到1.0。  ## 响应字段说明  | 字段 | 类型 | 说明 | |------|------|------| | `results` | array | 分析结果对象的数组。 | | `results[].k` | string | 您在请求中提供的原始关键词。 | | `results[].label` | string | 核心判断字段：`sensitive`(敏感)、`normal`(正常)。 | | `results[].category` | string | 风险分类：`safe`(安全)、`threat`(威胁)、`porn`(色情)、`fraud`(欺诈)、`insult`(辱骂)。 | | `results[].confidence` | number | 当前分类的置信度，范围0.0到1.0。 | | `total` | integer | 本次请求成功分析的关键词总数。 |       
          * @summary 分析敏感词
          * @param {PostSensitiveWordAnalyzeRequest} postSensitiveWordAnalyzeRequest 包含待检测文本 \&#39;keywords\&#39; 的JSON对象
          * @param {*} [options] Override http request option.
@@ -2803,7 +4139,7 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
 export class DefaultApi extends BaseAPI {
     /**
      * 获取 UAPI Pro Search 引擎的详细信息，包括支持的功能特性、参数限制和使用说明。  ## 功能概述  此接口返回搜索引擎的完整配置信息，你可以用它来： - 了解搜索引擎支持哪些功能（如站内搜索、文件类型过滤等） - 获取参数的默认值和限制范围 - 查看当前引擎版本和可用状态  适合在应用初始化时调用，或用于动态配置搜索界面。       
-     * @summary 获取搜索引擎信息
+     * @summary 搜索引擎配置
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -2813,7 +4149,7 @@ export class DefaultApi extends BaseAPI {
 
     /**
      * 通过URL查询参数分析单个关键词，便于GET请求调用。
-     * @summary 查询参数分析
+     * @summary 敏感词分析 (GET)
      * @param {string} keyword 要分析的关键词，最长50字符。
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -2823,7 +4159,7 @@ export class DefaultApi extends BaseAPI {
     }
 
     /**
-     * 想在你的应用中集成搜索功能？我们提供了一个强大的搜索引擎API，让你可以轻松实现实时网页搜索。  ## 功能概述  UAPI Pro Search 是自研的智能搜索引擎，采用机器学习算法对搜索结果进行智能排序，确保最相关的内容排在前面。你可以用它搜索任何关键词，也可以限定在特定网站或特定文件类型中搜索。  - **实时网页搜索**: 毫秒级响应，快速返回搜索结果 - **智能排序**: 采用机器学习回归排序算法，结果更精准 - **站内搜索**: 支持 `site:` 操作符，在指定网站内搜索 - **文件类型过滤**: 支持 `filetype:` 操作符，快速找到 PDF、Word 等特定格式文件  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者集成和测试。未来，它将转为付费API，为用户提供更稳定和强大的服务。       
+     * 想在你的应用中集成搜索功能？我们提供了一个强大的搜索引擎API，让你可以轻松实现实时网页搜索。  ## 功能概述  UAPI Pro Search 是一个智能搜索引擎，采用机器学习算法对搜索结果进行智能排序，确保最相关的内容排在前面。你可以用它搜索任何关键词，也可以限定在特定网站或特定文件类型中搜索。  - **实时网页搜索**: 毫秒级响应，快速返回搜索结果 - **智能排序**: 采用机器学习回归排序算法，结果更精准 - **时间排序**: 支持按发布时间排序，获取最新内容 - **时间范围过滤**: 支持按天/周/月/年过滤结果 - **站内搜索**: 支持 `site:` 操作符，在指定网站内搜索 - **文件类型过滤**: 支持 `filetype:` 操作符，快速找到 PDF、Word 等特定格式文件  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者集成和测试。未来，它将转为付费API，为用户提供更稳定和强大的服务。       
      * @summary 智能搜索
      * @param {PostSearchAggregateRequest} postSearchAggregateRequest 包含搜索参数的JSON对象
      * @param {*} [options] Override http request option.
@@ -2834,7 +4170,7 @@ export class DefaultApi extends BaseAPI {
     }
 
     /**
-     * 分析单个或多个关键词的敏感程度，返回详细的风险评分和分析结果。  > [!VIP] > 本API基于先进的分析模型，提供三级缓存策略和并发处理能力。  ## 功能概述  - **模型驱动**: 使用先进的分析模型进行语义分析。 - **高性能**: 采用三级缓存策略（持久化存储 → 统一缓存 → 模型分析），确保高频请求的响应速度。 - **并发支持**: 支持批量并发处理，单次最多可分析100个关键词。 - **详细评分**: 提供色情、辱骂、暴力三个维度的详细风险评分。 - **变体识别**: 能够自动识别关键词的常见变体形式，如拼音、缩写等。  ## 风险评分说明  返回的 `s` 字段包含三个维度的风险评分，范围均为0.0至1.0：  - **s[0] - 色情风险**: 评估内容涉及色情信息的程度。 - **s[1] - 辱骂/仇恨言论风险**: 评估内容是否包含侮辱性或仇恨性言论。 - **s[2] - 暴力/威胁风险**: 评估内容是否涉及暴力或威胁信息。  风险等级可参考：0.0-0.3为低风险，0.3-0.7为中等风险，0.7-1.0为高风险。  ## 响应字段说明  | 字段 | 类型 | 说明 | |------|------|------| | `results` | array | 分析结果对象的数组。 | | `results[].k` | string | 您在请求中提供的原始关键词。 | | `results[].r` | string | 模型对该关键词的分析过程和判断理由的简要说明。 | | `results[].s` | array[float] | 一个包含三个浮点数的数组，分别代表[色情, 辱骂, 暴力]三个维度的风险评分。分值范围从0.0到1.0，越高代表风险越大。 | | `results[].v` | array[string] | 模型识别出的该关键词的常见变体形式，例如拼音、谐音、缩写等。 | | `results[].t` | array[string] | 根据分析结果为关键词附加的分类标签，便于进行程序化处理和过滤。 | | `results[].d` | string | 对整体分析结果的一句简短总结，适合直接展示给用户或记录在日志中。 | | `total` | integer | 本次请求成功分析的关键词总数。 |       
+     * 分析单个或多个关键词的敏感程度，返回标准化风险标签与置信度结果。  > [!VIP] > 本API基于先进的分析模型，提供三级缓存策略和并发处理能力。  ## 功能概述  - **模型驱动**: 使用先进的分析模型进行语义分析。 - **高性能**: 采用三级缓存策略（持久化存储 → 统一缓存 → 模型分析），确保高频请求的响应速度。 - **并发支持**: 支持批量并发处理，单次最多可分析100个关键词。 - **标准标签**: 返回 `label` 字段，明确区分 `sensitive` 与 `normal`。 - **分类清晰**: 返回 `category` 字段，用于标识具体风险类别。 - **置信度输出**: 返回 `confidence` 字段，范围为0.0到1.0。  ## 响应字段说明  | 字段 | 类型 | 说明 | |------|------|------| | `results` | array | 分析结果对象的数组。 | | `results[].k` | string | 您在请求中提供的原始关键词。 | | `results[].label` | string | 核心判断字段：`sensitive`(敏感)、`normal`(正常)。 | | `results[].category` | string | 风险分类：`safe`(安全)、`threat`(威胁)、`porn`(色情)、`fraud`(欺诈)、`insult`(辱骂)。 | | `results[].confidence` | number | 当前分类的置信度，范围0.0到1.0。 | | `total` | integer | 本次请求成功分析的关键词总数。 |       
      * @summary 分析敏感词
      * @param {PostSensitiveWordAnalyzeRequest} postSensitiveWordAnalyzeRequest 包含待检测文本 \&#39;keywords\&#39; 的JSON对象
      * @param {*} [options] Override http request option.
@@ -3117,7 +4453,7 @@ export const ConvertApiAxiosParamCreator = function (configuration?: Configurati
     return {
         /**
          * 时间戳和日期字符串，哪个用着更顺手？别纠结了，这个接口让你轻松拥有两种格式！  ## 功能概述 这是一个非常智能的转换器。你给它一个 Unix 时间戳，它还你一个人类可读的日期时间；你给它一个日期时间字符串，它还你一个 Unix 时间戳。它会自动识别你输入的是哪种格式。  ## 使用须知 这个接口非常智能，能够自动识别输入格式：  - **输入时间戳**：支持10位秒级（如 `1672531200`）和13位毫秒级（如 `1672531200000`）。 - **输入日期字符串**：为了确保准确性，推荐使用 `YYYY-MM-DD HH:mm:ss` 标准格式（如 `2023-01-01 08:00:00`）。  > [!TIP] > 无论你输入哪种格式，响应中都会同时包含标准日期字符串和秒级Unix时间戳，方便你按需取用。  ## 错误处理指南 - **400 Bad Request**: 如果你提供的 `time` 参数既不是有效的时间戳，也不是我们支持的日期格式，就会收到这个错误。请检查你的输入值。
-         * @summary Unix时间戳与日期字符串双向转换
+         * @summary 时间戳转换
          * @param {string} time 一个智能时间参数，可传入Unix时间戳（10位或13位）或标准日期字符串（如 \&#39;2023-10-27 10:30:00\&#39;），系统将自动识别并转换。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -3154,7 +4490,7 @@ export const ConvertApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 还在为一团乱麻的 JSON 字符串头疼吗？这个接口能瞬间让它变得井井有条，赏心悦目。  ## 功能概述 你只需要提供一个原始的、可能是压缩过的或者格式混乱的 JSON 字符串，这个 API 就会返回一个经过美化（带标准缩进和换行）的版本。这在调试 API 响应、或者需要在前端界面清晰展示 JSON 数据时非常有用。  ## 使用须知 > [!NOTE] > **请求格式** > 请注意，待格式化的 JSON 字符串需要被包裹在另一个 JSON 对象中，作为 `content` 字段的值提交。具体格式请参考请求体示例。  ## 错误处理指南 - **400 Bad Request**: 最常见的原因是你提供的 `content` 字符串本身不是一个有效的 JSON。请仔细检查括号、引号是否正确闭合，或者有没有多余的逗号等语法错误。
-         * @summary 美化并格式化JSON字符串
+         * @summary JSON 格式化
          * @param {PostConvertJsonRequest} postConvertJsonRequest 这是一个JSON对象，里面必须包含一个名为 &#x60;content&#x60; 的字段。这个字段的值，就是你希望格式化的、原始的JSON字符串。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -3199,7 +4535,7 @@ export const ConvertApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 时间戳和日期字符串，哪个用着更顺手？别纠结了，这个接口让你轻松拥有两种格式！  ## 功能概述 这是一个非常智能的转换器。你给它一个 Unix 时间戳，它还你一个人类可读的日期时间；你给它一个日期时间字符串，它还你一个 Unix 时间戳。它会自动识别你输入的是哪种格式。  ## 使用须知 这个接口非常智能，能够自动识别输入格式：  - **输入时间戳**：支持10位秒级（如 `1672531200`）和13位毫秒级（如 `1672531200000`）。 - **输入日期字符串**：为了确保准确性，推荐使用 `YYYY-MM-DD HH:mm:ss` 标准格式（如 `2023-01-01 08:00:00`）。  > [!TIP] > 无论你输入哪种格式，响应中都会同时包含标准日期字符串和秒级Unix时间戳，方便你按需取用。  ## 错误处理指南 - **400 Bad Request**: 如果你提供的 `time` 参数既不是有效的时间戳，也不是我们支持的日期格式，就会收到这个错误。请检查你的输入值。
-         * @summary Unix时间戳与日期字符串双向转换
+         * @summary 时间戳转换
          * @param {string} time 一个智能时间参数，可传入Unix时间戳（10位或13位）或标准日期字符串（如 \&#39;2023-10-27 10:30:00\&#39;），系统将自动识别并转换。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -3212,7 +4548,7 @@ export const ConvertApiFp = function(configuration?: Configuration) {
         },
         /**
          * 还在为一团乱麻的 JSON 字符串头疼吗？这个接口能瞬间让它变得井井有条，赏心悦目。  ## 功能概述 你只需要提供一个原始的、可能是压缩过的或者格式混乱的 JSON 字符串，这个 API 就会返回一个经过美化（带标准缩进和换行）的版本。这在调试 API 响应、或者需要在前端界面清晰展示 JSON 数据时非常有用。  ## 使用须知 > [!NOTE] > **请求格式** > 请注意，待格式化的 JSON 字符串需要被包裹在另一个 JSON 对象中，作为 `content` 字段的值提交。具体格式请参考请求体示例。  ## 错误处理指南 - **400 Bad Request**: 最常见的原因是你提供的 `content` 字符串本身不是一个有效的 JSON。请仔细检查括号、引号是否正确闭合，或者有没有多余的逗号等语法错误。
-         * @summary 美化并格式化JSON字符串
+         * @summary JSON 格式化
          * @param {PostConvertJsonRequest} postConvertJsonRequest 这是一个JSON对象，里面必须包含一个名为 &#x60;content&#x60; 的字段。这个字段的值，就是你希望格式化的、原始的JSON字符串。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -3234,7 +4570,7 @@ export const ConvertApiFactory = function (configuration?: Configuration, basePa
     return {
         /**
          * 时间戳和日期字符串，哪个用着更顺手？别纠结了，这个接口让你轻松拥有两种格式！  ## 功能概述 这是一个非常智能的转换器。你给它一个 Unix 时间戳，它还你一个人类可读的日期时间；你给它一个日期时间字符串，它还你一个 Unix 时间戳。它会自动识别你输入的是哪种格式。  ## 使用须知 这个接口非常智能，能够自动识别输入格式：  - **输入时间戳**：支持10位秒级（如 `1672531200`）和13位毫秒级（如 `1672531200000`）。 - **输入日期字符串**：为了确保准确性，推荐使用 `YYYY-MM-DD HH:mm:ss` 标准格式（如 `2023-01-01 08:00:00`）。  > [!TIP] > 无论你输入哪种格式，响应中都会同时包含标准日期字符串和秒级Unix时间戳，方便你按需取用。  ## 错误处理指南 - **400 Bad Request**: 如果你提供的 `time` 参数既不是有效的时间戳，也不是我们支持的日期格式，就会收到这个错误。请检查你的输入值。
-         * @summary Unix时间戳与日期字符串双向转换
+         * @summary 时间戳转换
          * @param {string} time 一个智能时间参数，可传入Unix时间戳（10位或13位）或标准日期字符串（如 \&#39;2023-10-27 10:30:00\&#39;），系统将自动识别并转换。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -3244,7 +4580,7 @@ export const ConvertApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 还在为一团乱麻的 JSON 字符串头疼吗？这个接口能瞬间让它变得井井有条，赏心悦目。  ## 功能概述 你只需要提供一个原始的、可能是压缩过的或者格式混乱的 JSON 字符串，这个 API 就会返回一个经过美化（带标准缩进和换行）的版本。这在调试 API 响应、或者需要在前端界面清晰展示 JSON 数据时非常有用。  ## 使用须知 > [!NOTE] > **请求格式** > 请注意，待格式化的 JSON 字符串需要被包裹在另一个 JSON 对象中，作为 `content` 字段的值提交。具体格式请参考请求体示例。  ## 错误处理指南 - **400 Bad Request**: 最常见的原因是你提供的 `content` 字符串本身不是一个有效的 JSON。请仔细检查括号、引号是否正确闭合，或者有没有多余的逗号等语法错误。
-         * @summary 美化并格式化JSON字符串
+         * @summary JSON 格式化
          * @param {PostConvertJsonRequest} postConvertJsonRequest 这是一个JSON对象，里面必须包含一个名为 &#x60;content&#x60; 的字段。这个字段的值，就是你希望格式化的、原始的JSON字符串。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -3261,7 +4597,7 @@ export const ConvertApiFactory = function (configuration?: Configuration, basePa
 export class ConvertApi extends BaseAPI {
     /**
      * 时间戳和日期字符串，哪个用着更顺手？别纠结了，这个接口让你轻松拥有两种格式！  ## 功能概述 这是一个非常智能的转换器。你给它一个 Unix 时间戳，它还你一个人类可读的日期时间；你给它一个日期时间字符串，它还你一个 Unix 时间戳。它会自动识别你输入的是哪种格式。  ## 使用须知 这个接口非常智能，能够自动识别输入格式：  - **输入时间戳**：支持10位秒级（如 `1672531200`）和13位毫秒级（如 `1672531200000`）。 - **输入日期字符串**：为了确保准确性，推荐使用 `YYYY-MM-DD HH:mm:ss` 标准格式（如 `2023-01-01 08:00:00`）。  > [!TIP] > 无论你输入哪种格式，响应中都会同时包含标准日期字符串和秒级Unix时间戳，方便你按需取用。  ## 错误处理指南 - **400 Bad Request**: 如果你提供的 `time` 参数既不是有效的时间戳，也不是我们支持的日期格式，就会收到这个错误。请检查你的输入值。
-     * @summary Unix时间戳与日期字符串双向转换
+     * @summary 时间戳转换
      * @param {string} time 一个智能时间参数，可传入Unix时间戳（10位或13位）或标准日期字符串（如 \&#39;2023-10-27 10:30:00\&#39;），系统将自动识别并转换。
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -3272,7 +4608,7 @@ export class ConvertApi extends BaseAPI {
 
     /**
      * 还在为一团乱麻的 JSON 字符串头疼吗？这个接口能瞬间让它变得井井有条，赏心悦目。  ## 功能概述 你只需要提供一个原始的、可能是压缩过的或者格式混乱的 JSON 字符串，这个 API 就会返回一个经过美化（带标准缩进和换行）的版本。这在调试 API 响应、或者需要在前端界面清晰展示 JSON 数据时非常有用。  ## 使用须知 > [!NOTE] > **请求格式** > 请注意，待格式化的 JSON 字符串需要被包裹在另一个 JSON 对象中，作为 `content` 字段的值提交。具体格式请参考请求体示例。  ## 错误处理指南 - **400 Bad Request**: 最常见的原因是你提供的 `content` 字符串本身不是一个有效的 JSON。请仔细检查括号、引号是否正确闭合，或者有没有多余的逗号等语法错误。
-     * @summary 美化并格式化JSON字符串
+     * @summary JSON 格式化
      * @param {PostConvertJsonRequest} postConvertJsonRequest 这是一个JSON对象，里面必须包含一个名为 &#x60;content&#x60; 的字段。这个字段的值，就是你希望格式化的、原始的JSON字符串。
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -3291,7 +4627,7 @@ export const DailyApiAxiosParamCreator = function (configuration?: Configuration
     return {
         /**
          * 想用一张图快速了解天下大事？这个接口为你一键生成今日新闻摘要，非常适合用在早报、数字看板或应用首页等场景。  ## 功能概述 此接口会实时抓取各大平台的热点新闻，并动态地将它们渲染成一张清晰、美观的摘要图片。你调用接口，直接就能得到一张可以展示的图片。  ## 使用须知 调用此接口时，请务必注意以下两点：  1.  **响应格式是图片**：接口成功时直接返回 `image/jpeg` 格式的二进制数据，而非 JSON。请确保你的客户端能正确处理二进制流，例如直接在 `<img>` 标签中显示，或保存为 `.jpg` 文件。  2.  **设置合理超时**：由于涉及实时新闻抓取和图片渲染，处理过程可能耗时数秒。建议将客户端请求超时时间设置为至少10秒，以防止因等待过久而失败。  > [!IMPORTANT] > 未能正确处理图片响应或超时设置过短，是导致调用失败的最常见原因。
-         * @summary 生成每日新闻摘要图片
+         * @summary 每日新闻图
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -3330,7 +4666,7 @@ export const DailyApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 想用一张图快速了解天下大事？这个接口为你一键生成今日新闻摘要，非常适合用在早报、数字看板或应用首页等场景。  ## 功能概述 此接口会实时抓取各大平台的热点新闻，并动态地将它们渲染成一张清晰、美观的摘要图片。你调用接口，直接就能得到一张可以展示的图片。  ## 使用须知 调用此接口时，请务必注意以下两点：  1.  **响应格式是图片**：接口成功时直接返回 `image/jpeg` 格式的二进制数据，而非 JSON。请确保你的客户端能正确处理二进制流，例如直接在 `<img>` 标签中显示，或保存为 `.jpg` 文件。  2.  **设置合理超时**：由于涉及实时新闻抓取和图片渲染，处理过程可能耗时数秒。建议将客户端请求超时时间设置为至少10秒，以防止因等待过久而失败。  > [!IMPORTANT] > 未能正确处理图片响应或超时设置过短，是导致调用失败的最常见原因。
-         * @summary 生成每日新闻摘要图片
+         * @summary 每日新闻图
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -3351,7 +4687,7 @@ export const DailyApiFactory = function (configuration?: Configuration, basePath
     return {
         /**
          * 想用一张图快速了解天下大事？这个接口为你一键生成今日新闻摘要，非常适合用在早报、数字看板或应用首页等场景。  ## 功能概述 此接口会实时抓取各大平台的热点新闻，并动态地将它们渲染成一张清晰、美观的摘要图片。你调用接口，直接就能得到一张可以展示的图片。  ## 使用须知 调用此接口时，请务必注意以下两点：  1.  **响应格式是图片**：接口成功时直接返回 `image/jpeg` 格式的二进制数据，而非 JSON。请确保你的客户端能正确处理二进制流，例如直接在 `<img>` 标签中显示，或保存为 `.jpg` 文件。  2.  **设置合理超时**：由于涉及实时新闻抓取和图片渲染，处理过程可能耗时数秒。建议将客户端请求超时时间设置为至少10秒，以防止因等待过久而失败。  > [!IMPORTANT] > 未能正确处理图片响应或超时设置过短，是导致调用失败的最常见原因。
-         * @summary 生成每日新闻摘要图片
+         * @summary 每日新闻图
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -3367,7 +4703,7 @@ export const DailyApiFactory = function (configuration?: Configuration, basePath
 export class DailyApi extends BaseAPI {
     /**
      * 想用一张图快速了解天下大事？这个接口为你一键生成今日新闻摘要，非常适合用在早报、数字看板或应用首页等场景。  ## 功能概述 此接口会实时抓取各大平台的热点新闻，并动态地将它们渲染成一张清晰、美观的摘要图片。你调用接口，直接就能得到一张可以展示的图片。  ## 使用须知 调用此接口时，请务必注意以下两点：  1.  **响应格式是图片**：接口成功时直接返回 `image/jpeg` 格式的二进制数据，而非 JSON。请确保你的客户端能正确处理二进制流，例如直接在 `<img>` 标签中显示，或保存为 `.jpg` 文件。  2.  **设置合理超时**：由于涉及实时新闻抓取和图片渲染，处理过程可能耗时数秒。建议将客户端请求超时时间设置为至少10秒，以防止因等待过久而失败。  > [!IMPORTANT] > 未能正确处理图片响应或超时设置过短，是导致调用失败的最常见原因。
-     * @summary 生成每日新闻摘要图片
+     * @summary 每日新闻图
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -3385,7 +4721,7 @@ export const GameApiAxiosParamCreator = function (configuration?: Configuration)
     return {
         /**
          * 白嫖党的福音来了！想第一时间知道Epic商店本周送了哪些游戏大作吗？  ## 功能概述 这个接口帮你实时追踪Epic Games商店的每周免费游戏活动。无需任何参数，调用后即可获得当前所有免费游戏的完整信息，包括游戏封面、原价、剩余时间等，再也不用担心错过心仪的免费游戏了！  ## 使用场景 - 开发游戏资讯应用或网站 - 制作Epic免费游戏推送机器人 - 为用户提供游戏收藏建议 - 构建个人游戏库管理工具  > [!TIP] > **关于时间格式** > 为了方便不同场景的使用，我们同时提供了可读的时间字符串（如 `2025/01/10 00:00:00`）和13位毫秒时间戳。前端显示用字符串，程序逻辑用时间戳
-         * @summary 获取Epic Games免费游戏
+         * @summary Epic 免费游戏
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -3414,15 +4750,14 @@ export const GameApiAxiosParamCreator = function (configuration?: Configuration)
             };
         },
         /**
-         * 想知道某个大佬以前叫什么名字吗？这个接口可以帮你追溯一个 Minecraft 玩家的“黑历史”！  ## 功能概述 通过提供一个玩家的 UUID，你可以获取到该玩家所有曾用名及其变更时间的列表。这对于识别回归的老玩家或者社区管理非常有用。  ## 使用须知 > [!NOTE] > **UUID 格式** > 查询时，请务必提供玩家的 **32位无破折号** Minecraft UUID，例如 `ee9b4ed1aac1491eb7611471be374b80`。
-         * @summary 查询Minecraft玩家历史用户名
-         * @param {string} uuid 玩家的 Minecraft UUID，请务必使用32位无破折号的格式。
+         * 想知道某个大佬以前叫什么名字吗？这个接口可以帮你追溯一个 Minecraft 玩家的“黑历史”！  ## 功能概述 通过提供玩家的用户名或 UUID，你可以获取到该玩家所有曾用名及其变更时间的列表。这对于识别回归的老玩家或者社区管理非常有用。  ## 使用须知 > [!NOTE] > **参数说明** > - `name` 和 `uuid` 二选一 > - UUID 支持带连字符（如 `ee9b4ed1-aac1-491e-b761-1471be374b80`）或不带连字符格式  > [!IMPORTANT] > **响应结构差异** > - 使用 `uuid` 查询：返回单个用户的历史记录 > - 使用 `name` 查询：返回所有匹配用户的列表（包括当前用户名或曾用名匹配的玩家），需判断响应中是否有 `results` 字段来区分两种模式
+         * @summary 查询 MC 曾用名
+         * @param {string} [name] 玩家的 Minecraft 用户名。使用此参数查询时，会返回所有匹配用户的列表（包括当前用户名或曾用名匹配的玩家）。
+         * @param {string} [uuid] 玩家的 Minecraft UUID，支持带连字符或不带连字符格式。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getGameMinecraftHistoryid: async (uuid: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'uuid' is not null or undefined
-            assertParamExists('getGameMinecraftHistoryid', 'uuid', uuid)
+        getGameMinecraftHistoryid: async (name?: string, uuid?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/game/minecraft/historyid`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -3434,6 +4769,10 @@ export const GameApiAxiosParamCreator = function (configuration?: Configuration)
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            if (name !== undefined) {
+                localVarQueryParameter['name'] = name;
+            }
 
             if (uuid !== undefined) {
                 localVarQueryParameter['uuid'] = uuid;
@@ -3452,7 +4791,7 @@ export const GameApiAxiosParamCreator = function (configuration?: Configuration)
         },
         /**
          * 想在加入服务器前看看有多少人在线？或者检查一下服务器开没开？用这个接口就对了！  ## 功能概述 你可以通过提供服务器地址（域名或IP），来获取一个 Minecraft Java 版服务器的实时状态。返回信息非常丰富，包括服务器是否在线、当前玩家数、最大玩家数、服务器版本、MOTD（每日消息）以及服务器图标等。
-         * @summary 查询Minecraft服务器状态
+         * @summary 查询 MC 服务器
          * @param {string} server Minecraft服务器的地址，可以是域名（如 &#x60;hypixel.net&#x60;）或 &#x60;IP:端口&#x60; 的形式（如 &#x60;mc.example.com:25565&#x60;）。如果省略端口，将默认使用 &#x60;25565&#x60;。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -3489,7 +4828,7 @@ export const GameApiAxiosParamCreator = function (configuration?: Configuration)
         },
         /**
          * 只需要一个玩家的用户名，就能快速获取到他的正版皮肤和独一无二的UUID！  ## 功能概述 这是一个基础但非常实用的接口。通过玩家当前的游戏内名称（Username），你可以查询到他对应的UUID（唯一标识符）和当前皮肤的URL地址。这是构建许多其他玩家相关服务的第一步。
-         * @summary 查询Minecraft玩家信息
+         * @summary 查询 MC 玩家
          * @param {string} username 玩家的 Minecraft 游戏内名称（正版ID）。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -3526,7 +4865,7 @@ export const GameApiAxiosParamCreator = function (configuration?: Configuration)
         },
         /**
          * 想在你的网站或应用中展示用户的 Steam 个人资料？这个接口就是为你准备的。  ## 功能概述 通过一个用户的 Steam 标识（支持多种格式），你可以获取到他公开的个人资料摘要，包括昵称、头像、在线状态、真实姓名（如果公开）和个人资料主页URL等信息。  ## 支持的参数格式 接口现在支持以下几种标识符格式： - **`steamid`**: 64位SteamID（如 `76561197960287930`） - **`id`**: 自定义URL名称（如 `gabelogannewell`） - **`id3`**: Steam ID3格式（如 `STEAM_0:0:22202`） - 完整的个人资料链接 - 好友代码  ## 使用须知  > [!IMPORTANT] > **API Key 安全** > 此接口需要一个 Steam Web API Key。我们强烈建议由后端统一配置和调用，以避免在客户端泄露。当然，你也可以通过 `key` 查询参数临时提供一个Key来覆盖后端配置。  在处理响应时，请注意以下数字代码的含义： - **`personastate` (用户状态)**: 0-离线, 1-在线, 2-忙碌, 3-离开, 4-打盹, 5-想交易, 6-想玩。 - **`communityvisibilitystate` (社区可见性)**: 1-私密, 3-公开 (API通常只能查到这两种状态)。
-         * @summary 获取Steam用户公开摘要
+         * @summary 查询 Steam 用户
          * @param {string} [steamid] 用户的 Steam 标识。可以是以下任意一种格式： - 纯数字的 **SteamID64** - 用户的 **自定义 URL 名称** (Vanity URL) - 完整的 **个人资料链接** (包含 SteamID64 或自定义名称) - 好友代码 (如 &#x60;22202&#x60;)
          * @param {string} [id] 用户的 Steam 自定义URL名称（Vanity URL）。例如个人资料链接中 &#x60;/id/&#x60; 后面的部分。
          * @param {string} [id3] 用户的 Steam ID3 格式标识符。传统的 Steam ID 格式，形如 STEAM_X:Y:Z。
@@ -3585,7 +4924,7 @@ export const GameApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 白嫖党的福音来了！想第一时间知道Epic商店本周送了哪些游戏大作吗？  ## 功能概述 这个接口帮你实时追踪Epic Games商店的每周免费游戏活动。无需任何参数，调用后即可获得当前所有免费游戏的完整信息，包括游戏封面、原价、剩余时间等，再也不用担心错过心仪的免费游戏了！  ## 使用场景 - 开发游戏资讯应用或网站 - 制作Epic免费游戏推送机器人 - 为用户提供游戏收藏建议 - 构建个人游戏库管理工具  > [!TIP] > **关于时间格式** > 为了方便不同场景的使用，我们同时提供了可读的时间字符串（如 `2025/01/10 00:00:00`）和13位毫秒时间戳。前端显示用字符串，程序逻辑用时间戳
-         * @summary 获取Epic Games免费游戏
+         * @summary Epic 免费游戏
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -3596,21 +4935,22 @@ export const GameApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * 想知道某个大佬以前叫什么名字吗？这个接口可以帮你追溯一个 Minecraft 玩家的“黑历史”！  ## 功能概述 通过提供一个玩家的 UUID，你可以获取到该玩家所有曾用名及其变更时间的列表。这对于识别回归的老玩家或者社区管理非常有用。  ## 使用须知 > [!NOTE] > **UUID 格式** > 查询时，请务必提供玩家的 **32位无破折号** Minecraft UUID，例如 `ee9b4ed1aac1491eb7611471be374b80`。
-         * @summary 查询Minecraft玩家历史用户名
-         * @param {string} uuid 玩家的 Minecraft UUID，请务必使用32位无破折号的格式。
+         * 想知道某个大佬以前叫什么名字吗？这个接口可以帮你追溯一个 Minecraft 玩家的“黑历史”！  ## 功能概述 通过提供玩家的用户名或 UUID，你可以获取到该玩家所有曾用名及其变更时间的列表。这对于识别回归的老玩家或者社区管理非常有用。  ## 使用须知 > [!NOTE] > **参数说明** > - `name` 和 `uuid` 二选一 > - UUID 支持带连字符（如 `ee9b4ed1-aac1-491e-b761-1471be374b80`）或不带连字符格式  > [!IMPORTANT] > **响应结构差异** > - 使用 `uuid` 查询：返回单个用户的历史记录 > - 使用 `name` 查询：返回所有匹配用户的列表（包括当前用户名或曾用名匹配的玩家），需判断响应中是否有 `results` 字段来区分两种模式
+         * @summary 查询 MC 曾用名
+         * @param {string} [name] 玩家的 Minecraft 用户名。使用此参数查询时，会返回所有匹配用户的列表（包括当前用户名或曾用名匹配的玩家）。
+         * @param {string} [uuid] 玩家的 Minecraft UUID，支持带连字符或不带连字符格式。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getGameMinecraftHistoryid(uuid: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetGameMinecraftHistoryid200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getGameMinecraftHistoryid(uuid, options);
+        async getGameMinecraftHistoryid(name?: string, uuid?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetGameMinecraftHistoryid200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getGameMinecraftHistoryid(name, uuid, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['GameApi.getGameMinecraftHistoryid']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
          * 想在加入服务器前看看有多少人在线？或者检查一下服务器开没开？用这个接口就对了！  ## 功能概述 你可以通过提供服务器地址（域名或IP），来获取一个 Minecraft Java 版服务器的实时状态。返回信息非常丰富，包括服务器是否在线、当前玩家数、最大玩家数、服务器版本、MOTD（每日消息）以及服务器图标等。
-         * @summary 查询Minecraft服务器状态
+         * @summary 查询 MC 服务器
          * @param {string} server Minecraft服务器的地址，可以是域名（如 &#x60;hypixel.net&#x60;）或 &#x60;IP:端口&#x60; 的形式（如 &#x60;mc.example.com:25565&#x60;）。如果省略端口，将默认使用 &#x60;25565&#x60;。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -3623,7 +4963,7 @@ export const GameApiFp = function(configuration?: Configuration) {
         },
         /**
          * 只需要一个玩家的用户名，就能快速获取到他的正版皮肤和独一无二的UUID！  ## 功能概述 这是一个基础但非常实用的接口。通过玩家当前的游戏内名称（Username），你可以查询到他对应的UUID（唯一标识符）和当前皮肤的URL地址。这是构建许多其他玩家相关服务的第一步。
-         * @summary 查询Minecraft玩家信息
+         * @summary 查询 MC 玩家
          * @param {string} username 玩家的 Minecraft 游戏内名称（正版ID）。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -3636,7 +4976,7 @@ export const GameApiFp = function(configuration?: Configuration) {
         },
         /**
          * 想在你的网站或应用中展示用户的 Steam 个人资料？这个接口就是为你准备的。  ## 功能概述 通过一个用户的 Steam 标识（支持多种格式），你可以获取到他公开的个人资料摘要，包括昵称、头像、在线状态、真实姓名（如果公开）和个人资料主页URL等信息。  ## 支持的参数格式 接口现在支持以下几种标识符格式： - **`steamid`**: 64位SteamID（如 `76561197960287930`） - **`id`**: 自定义URL名称（如 `gabelogannewell`） - **`id3`**: Steam ID3格式（如 `STEAM_0:0:22202`） - 完整的个人资料链接 - 好友代码  ## 使用须知  > [!IMPORTANT] > **API Key 安全** > 此接口需要一个 Steam Web API Key。我们强烈建议由后端统一配置和调用，以避免在客户端泄露。当然，你也可以通过 `key` 查询参数临时提供一个Key来覆盖后端配置。  在处理响应时，请注意以下数字代码的含义： - **`personastate` (用户状态)**: 0-离线, 1-在线, 2-忙碌, 3-离开, 4-打盹, 5-想交易, 6-想玩。 - **`communityvisibilitystate` (社区可见性)**: 1-私密, 3-公开 (API通常只能查到这两种状态)。
-         * @summary 获取Steam用户公开摘要
+         * @summary 查询 Steam 用户
          * @param {string} [steamid] 用户的 Steam 标识。可以是以下任意一种格式： - 纯数字的 **SteamID64** - 用户的 **自定义 URL 名称** (Vanity URL) - 完整的 **个人资料链接** (包含 SteamID64 或自定义名称) - 好友代码 (如 &#x60;22202&#x60;)
          * @param {string} [id] 用户的 Steam 自定义URL名称（Vanity URL）。例如个人资料链接中 &#x60;/id/&#x60; 后面的部分。
          * @param {string} [id3] 用户的 Steam ID3 格式标识符。传统的 Steam ID 格式，形如 STEAM_X:Y:Z。
@@ -3661,7 +5001,7 @@ export const GameApiFactory = function (configuration?: Configuration, basePath?
     return {
         /**
          * 白嫖党的福音来了！想第一时间知道Epic商店本周送了哪些游戏大作吗？  ## 功能概述 这个接口帮你实时追踪Epic Games商店的每周免费游戏活动。无需任何参数，调用后即可获得当前所有免费游戏的完整信息，包括游戏封面、原价、剩余时间等，再也不用担心错过心仪的免费游戏了！  ## 使用场景 - 开发游戏资讯应用或网站 - 制作Epic免费游戏推送机器人 - 为用户提供游戏收藏建议 - 构建个人游戏库管理工具  > [!TIP] > **关于时间格式** > 为了方便不同场景的使用，我们同时提供了可读的时间字符串（如 `2025/01/10 00:00:00`）和13位毫秒时间戳。前端显示用字符串，程序逻辑用时间戳
-         * @summary 获取Epic Games免费游戏
+         * @summary Epic 免费游戏
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -3669,18 +5009,19 @@ export const GameApiFactory = function (configuration?: Configuration, basePath?
             return localVarFp.getGameEpicFree(options).then((request) => request(axios, basePath));
         },
         /**
-         * 想知道某个大佬以前叫什么名字吗？这个接口可以帮你追溯一个 Minecraft 玩家的“黑历史”！  ## 功能概述 通过提供一个玩家的 UUID，你可以获取到该玩家所有曾用名及其变更时间的列表。这对于识别回归的老玩家或者社区管理非常有用。  ## 使用须知 > [!NOTE] > **UUID 格式** > 查询时，请务必提供玩家的 **32位无破折号** Minecraft UUID，例如 `ee9b4ed1aac1491eb7611471be374b80`。
-         * @summary 查询Minecraft玩家历史用户名
-         * @param {string} uuid 玩家的 Minecraft UUID，请务必使用32位无破折号的格式。
+         * 想知道某个大佬以前叫什么名字吗？这个接口可以帮你追溯一个 Minecraft 玩家的“黑历史”！  ## 功能概述 通过提供玩家的用户名或 UUID，你可以获取到该玩家所有曾用名及其变更时间的列表。这对于识别回归的老玩家或者社区管理非常有用。  ## 使用须知 > [!NOTE] > **参数说明** > - `name` 和 `uuid` 二选一 > - UUID 支持带连字符（如 `ee9b4ed1-aac1-491e-b761-1471be374b80`）或不带连字符格式  > [!IMPORTANT] > **响应结构差异** > - 使用 `uuid` 查询：返回单个用户的历史记录 > - 使用 `name` 查询：返回所有匹配用户的列表（包括当前用户名或曾用名匹配的玩家），需判断响应中是否有 `results` 字段来区分两种模式
+         * @summary 查询 MC 曾用名
+         * @param {string} [name] 玩家的 Minecraft 用户名。使用此参数查询时，会返回所有匹配用户的列表（包括当前用户名或曾用名匹配的玩家）。
+         * @param {string} [uuid] 玩家的 Minecraft UUID，支持带连字符或不带连字符格式。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getGameMinecraftHistoryid(uuid: string, options?: RawAxiosRequestConfig): AxiosPromise<GetGameMinecraftHistoryid200Response> {
-            return localVarFp.getGameMinecraftHistoryid(uuid, options).then((request) => request(axios, basePath));
+        getGameMinecraftHistoryid(name?: string, uuid?: string, options?: RawAxiosRequestConfig): AxiosPromise<GetGameMinecraftHistoryid200Response> {
+            return localVarFp.getGameMinecraftHistoryid(name, uuid, options).then((request) => request(axios, basePath));
         },
         /**
          * 想在加入服务器前看看有多少人在线？或者检查一下服务器开没开？用这个接口就对了！  ## 功能概述 你可以通过提供服务器地址（域名或IP），来获取一个 Minecraft Java 版服务器的实时状态。返回信息非常丰富，包括服务器是否在线、当前玩家数、最大玩家数、服务器版本、MOTD（每日消息）以及服务器图标等。
-         * @summary 查询Minecraft服务器状态
+         * @summary 查询 MC 服务器
          * @param {string} server Minecraft服务器的地址，可以是域名（如 &#x60;hypixel.net&#x60;）或 &#x60;IP:端口&#x60; 的形式（如 &#x60;mc.example.com:25565&#x60;）。如果省略端口，将默认使用 &#x60;25565&#x60;。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -3690,7 +5031,7 @@ export const GameApiFactory = function (configuration?: Configuration, basePath?
         },
         /**
          * 只需要一个玩家的用户名，就能快速获取到他的正版皮肤和独一无二的UUID！  ## 功能概述 这是一个基础但非常实用的接口。通过玩家当前的游戏内名称（Username），你可以查询到他对应的UUID（唯一标识符）和当前皮肤的URL地址。这是构建许多其他玩家相关服务的第一步。
-         * @summary 查询Minecraft玩家信息
+         * @summary 查询 MC 玩家
          * @param {string} username 玩家的 Minecraft 游戏内名称（正版ID）。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -3700,7 +5041,7 @@ export const GameApiFactory = function (configuration?: Configuration, basePath?
         },
         /**
          * 想在你的网站或应用中展示用户的 Steam 个人资料？这个接口就是为你准备的。  ## 功能概述 通过一个用户的 Steam 标识（支持多种格式），你可以获取到他公开的个人资料摘要，包括昵称、头像、在线状态、真实姓名（如果公开）和个人资料主页URL等信息。  ## 支持的参数格式 接口现在支持以下几种标识符格式： - **`steamid`**: 64位SteamID（如 `76561197960287930`） - **`id`**: 自定义URL名称（如 `gabelogannewell`） - **`id3`**: Steam ID3格式（如 `STEAM_0:0:22202`） - 完整的个人资料链接 - 好友代码  ## 使用须知  > [!IMPORTANT] > **API Key 安全** > 此接口需要一个 Steam Web API Key。我们强烈建议由后端统一配置和调用，以避免在客户端泄露。当然，你也可以通过 `key` 查询参数临时提供一个Key来覆盖后端配置。  在处理响应时，请注意以下数字代码的含义： - **`personastate` (用户状态)**: 0-离线, 1-在线, 2-忙碌, 3-离开, 4-打盹, 5-想交易, 6-想玩。 - **`communityvisibilitystate` (社区可见性)**: 1-私密, 3-公开 (API通常只能查到这两种状态)。
-         * @summary 获取Steam用户公开摘要
+         * @summary 查询 Steam 用户
          * @param {string} [steamid] 用户的 Steam 标识。可以是以下任意一种格式： - 纯数字的 **SteamID64** - 用户的 **自定义 URL 名称** (Vanity URL) - 完整的 **个人资料链接** (包含 SteamID64 或自定义名称) - 好友代码 (如 &#x60;22202&#x60;)
          * @param {string} [id] 用户的 Steam 自定义URL名称（Vanity URL）。例如个人资料链接中 &#x60;/id/&#x60; 后面的部分。
          * @param {string} [id3] 用户的 Steam ID3 格式标识符。传统的 Steam ID 格式，形如 STEAM_X:Y:Z。
@@ -3720,7 +5061,7 @@ export const GameApiFactory = function (configuration?: Configuration, basePath?
 export class GameApi extends BaseAPI {
     /**
      * 白嫖党的福音来了！想第一时间知道Epic商店本周送了哪些游戏大作吗？  ## 功能概述 这个接口帮你实时追踪Epic Games商店的每周免费游戏活动。无需任何参数，调用后即可获得当前所有免费游戏的完整信息，包括游戏封面、原价、剩余时间等，再也不用担心错过心仪的免费游戏了！  ## 使用场景 - 开发游戏资讯应用或网站 - 制作Epic免费游戏推送机器人 - 为用户提供游戏收藏建议 - 构建个人游戏库管理工具  > [!TIP] > **关于时间格式** > 为了方便不同场景的使用，我们同时提供了可读的时间字符串（如 `2025/01/10 00:00:00`）和13位毫秒时间戳。前端显示用字符串，程序逻辑用时间戳
-     * @summary 获取Epic Games免费游戏
+     * @summary Epic 免费游戏
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -3729,19 +5070,20 @@ export class GameApi extends BaseAPI {
     }
 
     /**
-     * 想知道某个大佬以前叫什么名字吗？这个接口可以帮你追溯一个 Minecraft 玩家的“黑历史”！  ## 功能概述 通过提供一个玩家的 UUID，你可以获取到该玩家所有曾用名及其变更时间的列表。这对于识别回归的老玩家或者社区管理非常有用。  ## 使用须知 > [!NOTE] > **UUID 格式** > 查询时，请务必提供玩家的 **32位无破折号** Minecraft UUID，例如 `ee9b4ed1aac1491eb7611471be374b80`。
-     * @summary 查询Minecraft玩家历史用户名
-     * @param {string} uuid 玩家的 Minecraft UUID，请务必使用32位无破折号的格式。
+     * 想知道某个大佬以前叫什么名字吗？这个接口可以帮你追溯一个 Minecraft 玩家的“黑历史”！  ## 功能概述 通过提供玩家的用户名或 UUID，你可以获取到该玩家所有曾用名及其变更时间的列表。这对于识别回归的老玩家或者社区管理非常有用。  ## 使用须知 > [!NOTE] > **参数说明** > - `name` 和 `uuid` 二选一 > - UUID 支持带连字符（如 `ee9b4ed1-aac1-491e-b761-1471be374b80`）或不带连字符格式  > [!IMPORTANT] > **响应结构差异** > - 使用 `uuid` 查询：返回单个用户的历史记录 > - 使用 `name` 查询：返回所有匹配用户的列表（包括当前用户名或曾用名匹配的玩家），需判断响应中是否有 `results` 字段来区分两种模式
+     * @summary 查询 MC 曾用名
+     * @param {string} [name] 玩家的 Minecraft 用户名。使用此参数查询时，会返回所有匹配用户的列表（包括当前用户名或曾用名匹配的玩家）。
+     * @param {string} [uuid] 玩家的 Minecraft UUID，支持带连字符或不带连字符格式。
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public getGameMinecraftHistoryid(uuid: string, options?: RawAxiosRequestConfig) {
-        return GameApiFp(this.configuration).getGameMinecraftHistoryid(uuid, options).then((request) => request(this.axios, this.basePath));
+    public getGameMinecraftHistoryid(name?: string, uuid?: string, options?: RawAxiosRequestConfig) {
+        return GameApiFp(this.configuration).getGameMinecraftHistoryid(name, uuid, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 想在加入服务器前看看有多少人在线？或者检查一下服务器开没开？用这个接口就对了！  ## 功能概述 你可以通过提供服务器地址（域名或IP），来获取一个 Minecraft Java 版服务器的实时状态。返回信息非常丰富，包括服务器是否在线、当前玩家数、最大玩家数、服务器版本、MOTD（每日消息）以及服务器图标等。
-     * @summary 查询Minecraft服务器状态
+     * @summary 查询 MC 服务器
      * @param {string} server Minecraft服务器的地址，可以是域名（如 &#x60;hypixel.net&#x60;）或 &#x60;IP:端口&#x60; 的形式（如 &#x60;mc.example.com:25565&#x60;）。如果省略端口，将默认使用 &#x60;25565&#x60;。
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -3752,7 +5094,7 @@ export class GameApi extends BaseAPI {
 
     /**
      * 只需要一个玩家的用户名，就能快速获取到他的正版皮肤和独一无二的UUID！  ## 功能概述 这是一个基础但非常实用的接口。通过玩家当前的游戏内名称（Username），你可以查询到他对应的UUID（唯一标识符）和当前皮肤的URL地址。这是构建许多其他玩家相关服务的第一步。
-     * @summary 查询Minecraft玩家信息
+     * @summary 查询 MC 玩家
      * @param {string} username 玩家的 Minecraft 游戏内名称（正版ID）。
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -3763,7 +5105,7 @@ export class GameApi extends BaseAPI {
 
     /**
      * 想在你的网站或应用中展示用户的 Steam 个人资料？这个接口就是为你准备的。  ## 功能概述 通过一个用户的 Steam 标识（支持多种格式），你可以获取到他公开的个人资料摘要，包括昵称、头像、在线状态、真实姓名（如果公开）和个人资料主页URL等信息。  ## 支持的参数格式 接口现在支持以下几种标识符格式： - **`steamid`**: 64位SteamID（如 `76561197960287930`） - **`id`**: 自定义URL名称（如 `gabelogannewell`） - **`id3`**: Steam ID3格式（如 `STEAM_0:0:22202`） - 完整的个人资料链接 - 好友代码  ## 使用须知  > [!IMPORTANT] > **API Key 安全** > 此接口需要一个 Steam Web API Key。我们强烈建议由后端统一配置和调用，以避免在客户端泄露。当然，你也可以通过 `key` 查询参数临时提供一个Key来覆盖后端配置。  在处理响应时，请注意以下数字代码的含义： - **`personastate` (用户状态)**: 0-离线, 1-在线, 2-忙碌, 3-离开, 4-打盹, 5-想交易, 6-想玩。 - **`communityvisibilitystate` (社区可见性)**: 1-私密, 3-公开 (API通常只能查到这两种状态)。
-     * @summary 获取Steam用户公开摘要
+     * @summary 查询 Steam 用户
      * @param {string} [steamid] 用户的 Steam 标识。可以是以下任意一种格式： - 纯数字的 **SteamID64** - 用户的 **自定义 URL 名称** (Vanity URL) - 完整的 **个人资料链接** (包含 SteamID64 或自定义名称) - 好友代码 (如 &#x60;22202&#x60;)
      * @param {string} [id] 用户的 Steam 自定义URL名称（Vanity URL）。例如个人资料链接中 &#x60;/id/&#x60; 后面的部分。
      * @param {string} [id3] 用户的 Steam ID3 格式标识符。传统的 Steam ID 格式，形如 STEAM_X:Y:Z。
@@ -3840,7 +5182,7 @@ export const ImageApiAxiosParamCreator = function (configuration?: Configuration
         },
         /**
          * 每天都想换张新壁纸？让必应的美图点亮你的一天吧！  ## 功能概述 这个接口会获取 Bing 搜索引擎当天全球同步的每日壁纸，并直接以图片形式返回。你可以用它来做应用的启动页、网站背景，或者任何需要每日更新精美图片的地方。  ## 使用须知  > [!NOTE] > **响应格式是图片** > 请注意，此接口成功时直接返回图片二进制数据（通常为 `image/jpeg`），而非 JSON 格式。请确保客户端能够正确处理。  我们内置了备用方案：如果从必应官方获取图片失败，系统会尝试返回一张预存的高质量风景图，以保证服务的稳定性。
-         * @summary 获取必应每日壁纸
+         * @summary 必应壁纸
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -3870,7 +5212,7 @@ export const ImageApiAxiosParamCreator = function (configuration?: Configuration
         },
         /**
          * 想在线rua一下好友的头像吗？这个趣味接口可以满足你。  ## 功能概述 此接口通过GET方法，专门用于通过QQ号生成摸摸头GIF。你只需要提供一个QQ号码，我们就会自动获取其公开头像，并制作成一个可爱的动图。  ## 使用须知 - **响应格式**：接口成功时直接返回 `image/gif` 格式的二进制数据。 - **背景颜色**：你可以通过 `bg_color` 参数来控制GIF的背景。使用 `transparent` 选项可以让它更好地融入各种聊天背景中。
-         * @summary 生成摸摸头GIF (QQ号方式)
+         * @summary 生成摸摸头GIF (QQ号)
          * @param {string} qq 你想要摸头的对象的QQ号码。
          * @param {GetImageMotouBgColorEnum} [bgColor] GIF的背景颜色。留空则由后端服务决定默认值。
          * @param {*} [options] Override http request option.
@@ -3911,15 +5253,18 @@ export const ImageApiAxiosParamCreator = function (configuration?: Configuration
             };
         },
         /**
-         * 无论是网址、文本还是联系方式，通通可以变成一个二维码！这是一个非常灵活的二维码生成工具。  ## 功能概述 你提供一段文本内容，我们为你生成对应的二维码图片。你可以自定义尺寸，并选择不同的返回格式以适应不同场景。  ## 使用须知  > [!IMPORTANT] > **关键参数 `format`** > 此参数决定了成功响应的内容类型和结构，请务必根据你的需求选择并正确处理响应： > - **`image`** (默认): 直接返回 `image/png` 格式的图片二进制数据，适合在 `<img>` 标签中直接使用。 > - **`json`**: 返回一个包含 Base64 Data URI 的 JSON 对象，适合需要在前端直接嵌入CSS或HTML的场景。 > - **`json_url`**: 返回一个包含图片临时URL的JSON对象，适合需要图片链接的场景。
-         * @summary 动态生成二维码
+         * 无论是网址、文本还是联系方式，通通可以变成一个二维码！这是一个非常灵活的二维码生成工具。  ## 功能概述 你提供一段文本内容，我们为你生成对应的二维码图片。你可以自定义尺寸、前景色、背景色，还支持透明背景，并选择不同的返回格式以适应不同场景。  ## 使用须知  > [!IMPORTANT] > **关键参数 `format`** > 此参数决定了成功响应的内容类型和结构，请务必根据你的需求选择并正确处理响应： > - **`image`** (默认): 直接返回 `image/png` 格式的图片二进制数据，适合在 `<img>` 标签中直接使用。 > - **`json`**: 返回一个包含 Base64 Data URI 的 JSON 对象，适合需要在前端直接嵌入CSS或HTML的场景。 > - **`json_url`**: 返回一个包含图片临时URL的JSON对象，适合需要图片链接的场景。  > [!TIP] > **颜色参数说明** > - 颜色参数使用十六进制格式（如 `#FF0000`） > - URL 中需要对 `#` 进行编码，即 `%23`（例如：`fgcolor=%23FF0000`） > - 当 `transparent=true` 时，`bgcolor` 参数会被忽略
+         * @summary 生成二维码
          * @param {string} text 你希望编码到二维码中的任何文本内容，比如一个URL、一段话或者一个JSON字符串。
-         * @param {number} [size] 二维码图片的边长（正方形），单位是像素。有效范围是 256 到 1024 之间。
+         * @param {number} [size] 二维码图片的边长（正方形），单位是像素。有效范围是 256 到 2048 之间。
          * @param {GetImageQrcodeFormatEnum} [format] 指定响应内容的格式。可选值为 &#x60;image&#x60;, &#x60;json&#x60;, &#x60;json_url&#x60;。
+         * @param {boolean} [transparent] 是否使用透明背景。启用后生成的 PNG 图片将具有 alpha 通道，背景透明。
+         * @param {string} [fgcolor] 二维码前景色（即二维码本身的颜色），使用十六进制格式。URL 中需要将 &#x60;#&#x60; 编码为 &#x60;%23&#x60;。
+         * @param {string} [bgcolor] 二维码背景色，使用十六进制格式。当 &#x60;transparent&#x3D;true&#x60; 时此参数会被忽略。URL 中需要将 &#x60;#&#x60; 编码为 &#x60;%23&#x60;。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getImageQrcode: async (text: string, size?: number, format?: GetImageQrcodeFormatEnum, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getImageQrcode: async (text: string, size?: number, format?: GetImageQrcodeFormatEnum, transparent?: boolean, fgcolor?: string, bgcolor?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'text' is not null or undefined
             assertParamExists('getImageQrcode', 'text', text)
             const localVarPath = `/image/qrcode`;
@@ -3946,6 +5291,18 @@ export const ImageApiAxiosParamCreator = function (configuration?: Configuration
                 localVarQueryParameter['format'] = format;
             }
 
+            if (transparent !== undefined) {
+                localVarQueryParameter['transparent'] = transparent;
+            }
+
+            if (fgcolor !== undefined) {
+                localVarQueryParameter['fgcolor'] = fgcolor;
+            }
+
+            if (bgcolor !== undefined) {
+                localVarQueryParameter['bgcolor'] = bgcolor;
+            }
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -3959,7 +5316,7 @@ export const ImageApiAxiosParamCreator = function (configuration?: Configuration
         },
         /**
          * 看到一张网上的图片，想把它转换成 Base64 编码以便嵌入到你的 HTML 或 CSS 中？用这个接口就对了。  ## 功能概述 你提供一个公开可访问的图片 URL，我们帮你把它下载下来，并转换成包含 MIME 类型的 Base64 Data URI 字符串返回给你。
-         * @summary 将在线图片转换为Base64
+         * @summary 图片转 Base64
          * @param {string} url 需要转换为Base64的、可公开访问的图片URL地址。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -3995,7 +5352,7 @@ export const ImageApiAxiosParamCreator = function (configuration?: Configuration
             };
         },
         /**
-         * 还在为图片体积和加载速度发愁吗？体验一下我们强大的**无损压缩服务**，它能在几乎不牺牲任何肉眼可感知的画质的前提下，将图片体积压缩到极致。  ## 功能概述 你只需要上传一张常见的图片（如 PNG, JPG），选择一个压缩等级，就能获得一个体积小到惊人的压缩文件。这对于需要大量展示高清图片的网站、App 或小程序来说，是优化用户体验、节省带宽和存储成本的利器。  ## 使用须知 > [!TIP] > 为了给您最好的压缩效果，我们的算法需要进行复杂计算，处理时间可能会稍长一些，请耐心等待。  > [!WARNING] > **服务排队提醒** > 这是一个计算密集型服务。在高并发时，您的请求可能会被排队等待处理。如果您需要将其集成到对延迟敏感的生产服务中，请注意这一点。  ### 请求与响应格式 - 请求必须使用 `multipart/form-data` 格式上传文件。 - 成功响应将直接返回压缩后的文件二进制流 (`application/octet-stream`)，并附带 `Content-Disposition` 头，建议客户端根据此头信息保存文件。  ## 参数详解 ### `level` (压缩等级) 这是一个从 `1` 到 `5` 的整数，它决定了压缩的强度和策略，数字越小，压缩率越高。所有等级都经过精心调校，以在最大化压缩率的同时保证出色的视觉质量。 - `1`: **极限压缩** (推荐，体积最小，画质优异) - `2`: **高效压缩** - `3`: **智能均衡** (默认选项) - `4`: **画质优先** - `5`: **专业保真** (压缩率稍低，保留最多图像信息)  ## 错误处理指南 - **400 Bad Request**: 通常因为没有上传文件，或者 `level` 参数不在 1-5 的范围内。 - **500 Internal Server Error**: 如果在压缩过程中服务器发生内部错误，会返回此状态码。
+         * 还在为图片体积和加载速度发愁吗？体验一下我们强大的**无损压缩服务**，它能在几乎不牺牲任何肉眼可感知的画质的前提下，将图片体积压缩到极致。  ## 功能概述 你只需要上传一张常见的图片（如 PNG, JPG），选择一个压缩等级，就能获得一个体积小到惊人的压缩文件。这对于需要大量展示高清图片的网站、App 或小程序来说，是优化用户体验、节省带宽和存储成本的利器。  ## 使用须知 > [!TIP] > 为了给您最好的压缩效果，我们的算法需要进行复杂计算，处理时间可能会稍长一些，请耐心等待。  > [!WARNING] > **服务排队提醒** > 这是一个计算密集型服务。在高并发时，您的请求可能会被排队等待处理。如果您需要将其集成到对延迟敏感的生产服务中，请注意这一点。  ### 请求与响应格式 - 请求必须使用 `multipart/form-data` 格式上传文件。 - 成功响应将直接返回压缩后的文件二进制流 (`image/_*`)，并附带 `Content-Disposition` 头，建议客户端根据此头信息保存文件。  ## 参数详解 ### `level` (压缩等级) 这是一个从 `1` 到 `5` 的整数，它决定了压缩的强度和策略，数字越小，压缩率越高。所有等级都经过精心调校，以在最大化压缩率的同时保证出色的视觉质量。 - `1`: **极限压缩** (推荐，体积最小，画质优异) - `2`: **高效压缩** - `3`: **智能均衡** (默认选项) - `4`: **画质优先** - `5`: **专业保真** (压缩率稍低，保留最多图像信息)  ## 错误处理指南 - **400 Bad Request**: 通常因为没有上传文件，或者 `level` 参数不在 1-5 的范围内。 - **500 Internal Server Error**: 如果在压缩过程中服务器发生内部错误，会返回此状态码。
          * @summary 无损压缩图片
          * @param {File} file 支持PNG, JPG, JPEG等常见图片格式。文件大小不超过15MB。
          * @param {PostImageCompressLevelEnum} [level] 压缩强度 (1-5)，默认为 3。数字越小，压缩率越高。
@@ -4083,7 +5440,7 @@ export const ImageApiAxiosParamCreator = function (configuration?: Configuration
         },
         /**
          * 除了使用QQ头像，你还可以通过上传自己的图片或提供图片URL来制作独一无二的摸摸头GIF。  ## 功能概述 此接口通过POST方法，支持两种方式生成GIF： 1.  **图片URL**：在表单中提供 `image_url` 字段。 2.  **上传图片**：在表单中上传 `file` 文件。  ## 使用须知 - **响应格式**：接口成功时直接返回 `image/gif` 格式的二进制数据。 - **参数优先级**：如果同时提供了 `image_url` 和上传的 `file` 文件，系统将 **优先使用 `image_url`**。 - **背景颜色**：同样支持 `bg_color` 表单字段来控制GIF背景。
-         * @summary 生成摸摸头GIF (图片上传或URL方式)
+         * @summary 生成摸摸头GIF
          * @param {string} [imageUrl] 图片的URL地址。如果提供此项，将优先使用该URL的图片。
          * @param {File} [file] 上传的图片文件。支持JPG、PNG、GIF等常见格式。
          * @param {PostImageMotouBgColorEnum} [bgColor] GIF的背景颜色。可选值为 \\\&#39;white\\\&#39;, \\\&#39;black\\\&#39;, \\\&#39;transparent\\\&#39;。
@@ -4131,7 +5488,51 @@ export const ImageApiAxiosParamCreator = function (configuration?: Configuration
             };
         },
         /**
-         * 你们怎么不说话了？是不是都在偷偷玩Uapi，求求你们不要玩Uapi了  ## 效果展示 ![示例](https://uapis.cn/static/uploads/33580466897f1e5815296f235b582815.png)  ## 使用须知 - **响应格式**：接口成功时直接返回 `image/jpeg` 格式的二进制数据。 - **文字内容**：至少需要提供 `top_text`（上方文字）或 `bottom_text`（下方文字）之一。 - **梗图逻辑**：上方描述某个行为，下方通常以「们」开头表示劝阻，形成戏谑的对比效果。
+         * 这是一个图片内容审核接口，自动识别图片中的违规内容并返回处理建议。  > [!VIP] > 此接口限时免费开放，无需企业认证即可使用。  ## 功能概述 上传图片文件或提供图片URL，接口会自动分析图片内容，返回是否违规、风险等级和处理建议。适合对接到用户上传流程中，实现自动化内容审核。  ## 返回字段说明 - **is_nsfw**: 是否判定为违规内容，`true` 表示违规，`false` 表示正常 - **nsfw_score**: 违规内容置信度，0-1 之间，越高表示越可能违规 - **normal_score**: 正常内容置信度，0-1 之间，与 nsfw_score 互补 - **suggestion**: 处理建议   - `pass`: 内容正常，可以直接放行   - `review`: 存在风险，建议转人工复核   - `block`: 高风险内容，建议直接拦截 - **risk_level**: 风险等级   - `low`: 低风险   - `medium`: 中风险   - `high`: 高风险 - **label**: 内容标签，`nsfw` 或 `normal` - **confidence**: 模型对当前判断的整体置信度 - **inference_time_ms**: 模型推理耗时，单位毫秒
+         * @summary 图片敏感检测
+         * @param {File} [file] 要检测的图片文件。支持 JPG、JPEG、PNG、GIF、WebP 格式，最大 20MB。
+         * @param {string} [url] 图片的 URL 地址。如果同时提供 file 和 url，将优先使用 file。
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postImageNsfw: async (file?: File, url?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/image/nsfw`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+            const localVarFormParams = new ((configuration && configuration.formDataCtor) || FormData)();
+
+
+            if (file !== undefined) { 
+                localVarFormParams.append('file', file as any);
+            }
+    
+            if (url !== undefined) { 
+                localVarFormParams.append('url', url as any);
+            }
+    
+    
+            localVarHeaderParameter['Content-Type'] = 'multipart/form-data';
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = localVarFormParams;
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 你们怎么不说话了？是不是都在偷偷玩Uapi，求求你们不要玩Uapi了  ## 使用须知 - **响应格式**：接口成功时直接返回 `image/png` 格式的二进制数据。 - **文字内容**：至少需要提供 `top_text`（上方文字）或 `bottom_text`（下方文字）之一。 - **梗图逻辑**：上方描述某个行为，下方通常以「们」开头表示劝阻，形成戏谑的对比效果。
          * @summary 生成你们怎么不说话了表情包
          * @param {PostImageSpeechlessRequest} postImageSpeechlessRequest 包含表情包文字内容的JSON对象。至少需要提供上方或下方文字之一。
          * @param {*} [options] Override http request option.
@@ -4253,7 +5654,7 @@ export const ImageApiFp = function(configuration?: Configuration) {
         },
         /**
          * 每天都想换张新壁纸？让必应的美图点亮你的一天吧！  ## 功能概述 这个接口会获取 Bing 搜索引擎当天全球同步的每日壁纸，并直接以图片形式返回。你可以用它来做应用的启动页、网站背景，或者任何需要每日更新精美图片的地方。  ## 使用须知  > [!NOTE] > **响应格式是图片** > 请注意，此接口成功时直接返回图片二进制数据（通常为 `image/jpeg`），而非 JSON 格式。请确保客户端能够正确处理。  我们内置了备用方案：如果从必应官方获取图片失败，系统会尝试返回一张预存的高质量风景图，以保证服务的稳定性。
-         * @summary 获取必应每日壁纸
+         * @summary 必应壁纸
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -4265,7 +5666,7 @@ export const ImageApiFp = function(configuration?: Configuration) {
         },
         /**
          * 想在线rua一下好友的头像吗？这个趣味接口可以满足你。  ## 功能概述 此接口通过GET方法，专门用于通过QQ号生成摸摸头GIF。你只需要提供一个QQ号码，我们就会自动获取其公开头像，并制作成一个可爱的动图。  ## 使用须知 - **响应格式**：接口成功时直接返回 `image/gif` 格式的二进制数据。 - **背景颜色**：你可以通过 `bg_color` 参数来控制GIF的背景。使用 `transparent` 选项可以让它更好地融入各种聊天背景中。
-         * @summary 生成摸摸头GIF (QQ号方式)
+         * @summary 生成摸摸头GIF (QQ号)
          * @param {string} qq 你想要摸头的对象的QQ号码。
          * @param {GetImageMotouBgColorEnum} [bgColor] GIF的背景颜色。留空则由后端服务决定默认值。
          * @param {*} [options] Override http request option.
@@ -4278,23 +5679,26 @@ export const ImageApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * 无论是网址、文本还是联系方式，通通可以变成一个二维码！这是一个非常灵活的二维码生成工具。  ## 功能概述 你提供一段文本内容，我们为你生成对应的二维码图片。你可以自定义尺寸，并选择不同的返回格式以适应不同场景。  ## 使用须知  > [!IMPORTANT] > **关键参数 `format`** > 此参数决定了成功响应的内容类型和结构，请务必根据你的需求选择并正确处理响应： > - **`image`** (默认): 直接返回 `image/png` 格式的图片二进制数据，适合在 `<img>` 标签中直接使用。 > - **`json`**: 返回一个包含 Base64 Data URI 的 JSON 对象，适合需要在前端直接嵌入CSS或HTML的场景。 > - **`json_url`**: 返回一个包含图片临时URL的JSON对象，适合需要图片链接的场景。
-         * @summary 动态生成二维码
+         * 无论是网址、文本还是联系方式，通通可以变成一个二维码！这是一个非常灵活的二维码生成工具。  ## 功能概述 你提供一段文本内容，我们为你生成对应的二维码图片。你可以自定义尺寸、前景色、背景色，还支持透明背景，并选择不同的返回格式以适应不同场景。  ## 使用须知  > [!IMPORTANT] > **关键参数 `format`** > 此参数决定了成功响应的内容类型和结构，请务必根据你的需求选择并正确处理响应： > - **`image`** (默认): 直接返回 `image/png` 格式的图片二进制数据，适合在 `<img>` 标签中直接使用。 > - **`json`**: 返回一个包含 Base64 Data URI 的 JSON 对象，适合需要在前端直接嵌入CSS或HTML的场景。 > - **`json_url`**: 返回一个包含图片临时URL的JSON对象，适合需要图片链接的场景。  > [!TIP] > **颜色参数说明** > - 颜色参数使用十六进制格式（如 `#FF0000`） > - URL 中需要对 `#` 进行编码，即 `%23`（例如：`fgcolor=%23FF0000`） > - 当 `transparent=true` 时，`bgcolor` 参数会被忽略
+         * @summary 生成二维码
          * @param {string} text 你希望编码到二维码中的任何文本内容，比如一个URL、一段话或者一个JSON字符串。
-         * @param {number} [size] 二维码图片的边长（正方形），单位是像素。有效范围是 256 到 1024 之间。
+         * @param {number} [size] 二维码图片的边长（正方形），单位是像素。有效范围是 256 到 2048 之间。
          * @param {GetImageQrcodeFormatEnum} [format] 指定响应内容的格式。可选值为 &#x60;image&#x60;, &#x60;json&#x60;, &#x60;json_url&#x60;。
+         * @param {boolean} [transparent] 是否使用透明背景。启用后生成的 PNG 图片将具有 alpha 通道，背景透明。
+         * @param {string} [fgcolor] 二维码前景色（即二维码本身的颜色），使用十六进制格式。URL 中需要将 &#x60;#&#x60; 编码为 &#x60;%23&#x60;。
+         * @param {string} [bgcolor] 二维码背景色，使用十六进制格式。当 &#x60;transparent&#x3D;true&#x60; 时此参数会被忽略。URL 中需要将 &#x60;#&#x60; 编码为 &#x60;%23&#x60;。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getImageQrcode(text: string, size?: number, format?: GetImageQrcodeFormatEnum, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<File>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getImageQrcode(text, size, format, options);
+        async getImageQrcode(text: string, size?: number, format?: GetImageQrcodeFormatEnum, transparent?: boolean, fgcolor?: string, bgcolor?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<File>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getImageQrcode(text, size, format, transparent, fgcolor, bgcolor, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['ImageApi.getImageQrcode']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
          * 看到一张网上的图片，想把它转换成 Base64 编码以便嵌入到你的 HTML 或 CSS 中？用这个接口就对了。  ## 功能概述 你提供一个公开可访问的图片 URL，我们帮你把它下载下来，并转换成包含 MIME 类型的 Base64 Data URI 字符串返回给你。
-         * @summary 将在线图片转换为Base64
+         * @summary 图片转 Base64
          * @param {string} url 需要转换为Base64的、可公开访问的图片URL地址。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -4306,7 +5710,7 @@ export const ImageApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * 还在为图片体积和加载速度发愁吗？体验一下我们强大的**无损压缩服务**，它能在几乎不牺牲任何肉眼可感知的画质的前提下，将图片体积压缩到极致。  ## 功能概述 你只需要上传一张常见的图片（如 PNG, JPG），选择一个压缩等级，就能获得一个体积小到惊人的压缩文件。这对于需要大量展示高清图片的网站、App 或小程序来说，是优化用户体验、节省带宽和存储成本的利器。  ## 使用须知 > [!TIP] > 为了给您最好的压缩效果，我们的算法需要进行复杂计算，处理时间可能会稍长一些，请耐心等待。  > [!WARNING] > **服务排队提醒** > 这是一个计算密集型服务。在高并发时，您的请求可能会被排队等待处理。如果您需要将其集成到对延迟敏感的生产服务中，请注意这一点。  ### 请求与响应格式 - 请求必须使用 `multipart/form-data` 格式上传文件。 - 成功响应将直接返回压缩后的文件二进制流 (`application/octet-stream`)，并附带 `Content-Disposition` 头，建议客户端根据此头信息保存文件。  ## 参数详解 ### `level` (压缩等级) 这是一个从 `1` 到 `5` 的整数，它决定了压缩的强度和策略，数字越小，压缩率越高。所有等级都经过精心调校，以在最大化压缩率的同时保证出色的视觉质量。 - `1`: **极限压缩** (推荐，体积最小，画质优异) - `2`: **高效压缩** - `3`: **智能均衡** (默认选项) - `4`: **画质优先** - `5`: **专业保真** (压缩率稍低，保留最多图像信息)  ## 错误处理指南 - **400 Bad Request**: 通常因为没有上传文件，或者 `level` 参数不在 1-5 的范围内。 - **500 Internal Server Error**: 如果在压缩过程中服务器发生内部错误，会返回此状态码。
+         * 还在为图片体积和加载速度发愁吗？体验一下我们强大的**无损压缩服务**，它能在几乎不牺牲任何肉眼可感知的画质的前提下，将图片体积压缩到极致。  ## 功能概述 你只需要上传一张常见的图片（如 PNG, JPG），选择一个压缩等级，就能获得一个体积小到惊人的压缩文件。这对于需要大量展示高清图片的网站、App 或小程序来说，是优化用户体验、节省带宽和存储成本的利器。  ## 使用须知 > [!TIP] > 为了给您最好的压缩效果，我们的算法需要进行复杂计算，处理时间可能会稍长一些，请耐心等待。  > [!WARNING] > **服务排队提醒** > 这是一个计算密集型服务。在高并发时，您的请求可能会被排队等待处理。如果您需要将其集成到对延迟敏感的生产服务中，请注意这一点。  ### 请求与响应格式 - 请求必须使用 `multipart/form-data` 格式上传文件。 - 成功响应将直接返回压缩后的文件二进制流 (`image/_*`)，并附带 `Content-Disposition` 头，建议客户端根据此头信息保存文件。  ## 参数详解 ### `level` (压缩等级) 这是一个从 `1` 到 `5` 的整数，它决定了压缩的强度和策略，数字越小，压缩率越高。所有等级都经过精心调校，以在最大化压缩率的同时保证出色的视觉质量。 - `1`: **极限压缩** (推荐，体积最小，画质优异) - `2`: **高效压缩** - `3`: **智能均衡** (默认选项) - `4`: **画质优先** - `5`: **专业保真** (压缩率稍低，保留最多图像信息)  ## 错误处理指南 - **400 Bad Request**: 通常因为没有上传文件，或者 `level` 参数不在 1-5 的范围内。 - **500 Internal Server Error**: 如果在压缩过程中服务器发生内部错误，会返回此状态码。
          * @summary 无损压缩图片
          * @param {File} file 支持PNG, JPG, JPEG等常见图片格式。文件大小不超过15MB。
          * @param {PostImageCompressLevelEnum} [level] 压缩强度 (1-5)，默认为 3。数字越小，压缩率越高。
@@ -4335,7 +5739,7 @@ export const ImageApiFp = function(configuration?: Configuration) {
         },
         /**
          * 除了使用QQ头像，你还可以通过上传自己的图片或提供图片URL来制作独一无二的摸摸头GIF。  ## 功能概述 此接口通过POST方法，支持两种方式生成GIF： 1.  **图片URL**：在表单中提供 `image_url` 字段。 2.  **上传图片**：在表单中上传 `file` 文件。  ## 使用须知 - **响应格式**：接口成功时直接返回 `image/gif` 格式的二进制数据。 - **参数优先级**：如果同时提供了 `image_url` 和上传的 `file` 文件，系统将 **优先使用 `image_url`**。 - **背景颜色**：同样支持 `bg_color` 表单字段来控制GIF背景。
-         * @summary 生成摸摸头GIF (图片上传或URL方式)
+         * @summary 生成摸摸头GIF
          * @param {string} [imageUrl] 图片的URL地址。如果提供此项，将优先使用该URL的图片。
          * @param {File} [file] 上传的图片文件。支持JPG、PNG、GIF等常见格式。
          * @param {PostImageMotouBgColorEnum} [bgColor] GIF的背景颜色。可选值为 \\\&#39;white\\\&#39;, \\\&#39;black\\\&#39;, \\\&#39;transparent\\\&#39;。
@@ -4349,7 +5753,21 @@ export const ImageApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * 你们怎么不说话了？是不是都在偷偷玩Uapi，求求你们不要玩Uapi了  ## 效果展示 ![示例](https://uapis.cn/static/uploads/33580466897f1e5815296f235b582815.png)  ## 使用须知 - **响应格式**：接口成功时直接返回 `image/jpeg` 格式的二进制数据。 - **文字内容**：至少需要提供 `top_text`（上方文字）或 `bottom_text`（下方文字）之一。 - **梗图逻辑**：上方描述某个行为，下方通常以「们」开头表示劝阻，形成戏谑的对比效果。
+         * 这是一个图片内容审核接口，自动识别图片中的违规内容并返回处理建议。  > [!VIP] > 此接口限时免费开放，无需企业认证即可使用。  ## 功能概述 上传图片文件或提供图片URL，接口会自动分析图片内容，返回是否违规、风险等级和处理建议。适合对接到用户上传流程中，实现自动化内容审核。  ## 返回字段说明 - **is_nsfw**: 是否判定为违规内容，`true` 表示违规，`false` 表示正常 - **nsfw_score**: 违规内容置信度，0-1 之间，越高表示越可能违规 - **normal_score**: 正常内容置信度，0-1 之间，与 nsfw_score 互补 - **suggestion**: 处理建议   - `pass`: 内容正常，可以直接放行   - `review`: 存在风险，建议转人工复核   - `block`: 高风险内容，建议直接拦截 - **risk_level**: 风险等级   - `low`: 低风险   - `medium`: 中风险   - `high`: 高风险 - **label**: 内容标签，`nsfw` 或 `normal` - **confidence**: 模型对当前判断的整体置信度 - **inference_time_ms**: 模型推理耗时，单位毫秒
+         * @summary 图片敏感检测
+         * @param {File} [file] 要检测的图片文件。支持 JPG、JPEG、PNG、GIF、WebP 格式，最大 20MB。
+         * @param {string} [url] 图片的 URL 地址。如果同时提供 file 和 url，将优先使用 file。
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postImageNsfw(file?: File, url?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PostImageNsfw200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postImageNsfw(file, url, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ImageApi.postImageNsfw']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 你们怎么不说话了？是不是都在偷偷玩Uapi，求求你们不要玩Uapi了  ## 使用须知 - **响应格式**：接口成功时直接返回 `image/png` 格式的二进制数据。 - **文字内容**：至少需要提供 `top_text`（上方文字）或 `bottom_text`（下方文字）之一。 - **梗图逻辑**：上方描述某个行为，下方通常以「们」开头表示劝阻，形成戏谑的对比效果。
          * @summary 生成你们怎么不说话了表情包
          * @param {PostImageSpeechlessRequest} postImageSpeechlessRequest 包含表情包文字内容的JSON对象。至少需要提供上方或下方文字之一。
          * @param {*} [options] Override http request option.
@@ -4403,7 +5821,7 @@ export const ImageApiFactory = function (configuration?: Configuration, basePath
         },
         /**
          * 每天都想换张新壁纸？让必应的美图点亮你的一天吧！  ## 功能概述 这个接口会获取 Bing 搜索引擎当天全球同步的每日壁纸，并直接以图片形式返回。你可以用它来做应用的启动页、网站背景，或者任何需要每日更新精美图片的地方。  ## 使用须知  > [!NOTE] > **响应格式是图片** > 请注意，此接口成功时直接返回图片二进制数据（通常为 `image/jpeg`），而非 JSON 格式。请确保客户端能够正确处理。  我们内置了备用方案：如果从必应官方获取图片失败，系统会尝试返回一张预存的高质量风景图，以保证服务的稳定性。
-         * @summary 获取必应每日壁纸
+         * @summary 必应壁纸
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -4412,7 +5830,7 @@ export const ImageApiFactory = function (configuration?: Configuration, basePath
         },
         /**
          * 想在线rua一下好友的头像吗？这个趣味接口可以满足你。  ## 功能概述 此接口通过GET方法，专门用于通过QQ号生成摸摸头GIF。你只需要提供一个QQ号码，我们就会自动获取其公开头像，并制作成一个可爱的动图。  ## 使用须知 - **响应格式**：接口成功时直接返回 `image/gif` 格式的二进制数据。 - **背景颜色**：你可以通过 `bg_color` 参数来控制GIF的背景。使用 `transparent` 选项可以让它更好地融入各种聊天背景中。
-         * @summary 生成摸摸头GIF (QQ号方式)
+         * @summary 生成摸摸头GIF (QQ号)
          * @param {string} qq 你想要摸头的对象的QQ号码。
          * @param {GetImageMotouBgColorEnum} [bgColor] GIF的背景颜色。留空则由后端服务决定默认值。
          * @param {*} [options] Override http request option.
@@ -4422,20 +5840,23 @@ export const ImageApiFactory = function (configuration?: Configuration, basePath
             return localVarFp.getImageMotou(qq, bgColor, options).then((request) => request(axios, basePath));
         },
         /**
-         * 无论是网址、文本还是联系方式，通通可以变成一个二维码！这是一个非常灵活的二维码生成工具。  ## 功能概述 你提供一段文本内容，我们为你生成对应的二维码图片。你可以自定义尺寸，并选择不同的返回格式以适应不同场景。  ## 使用须知  > [!IMPORTANT] > **关键参数 `format`** > 此参数决定了成功响应的内容类型和结构，请务必根据你的需求选择并正确处理响应： > - **`image`** (默认): 直接返回 `image/png` 格式的图片二进制数据，适合在 `<img>` 标签中直接使用。 > - **`json`**: 返回一个包含 Base64 Data URI 的 JSON 对象，适合需要在前端直接嵌入CSS或HTML的场景。 > - **`json_url`**: 返回一个包含图片临时URL的JSON对象，适合需要图片链接的场景。
-         * @summary 动态生成二维码
+         * 无论是网址、文本还是联系方式，通通可以变成一个二维码！这是一个非常灵活的二维码生成工具。  ## 功能概述 你提供一段文本内容，我们为你生成对应的二维码图片。你可以自定义尺寸、前景色、背景色，还支持透明背景，并选择不同的返回格式以适应不同场景。  ## 使用须知  > [!IMPORTANT] > **关键参数 `format`** > 此参数决定了成功响应的内容类型和结构，请务必根据你的需求选择并正确处理响应： > - **`image`** (默认): 直接返回 `image/png` 格式的图片二进制数据，适合在 `<img>` 标签中直接使用。 > - **`json`**: 返回一个包含 Base64 Data URI 的 JSON 对象，适合需要在前端直接嵌入CSS或HTML的场景。 > - **`json_url`**: 返回一个包含图片临时URL的JSON对象，适合需要图片链接的场景。  > [!TIP] > **颜色参数说明** > - 颜色参数使用十六进制格式（如 `#FF0000`） > - URL 中需要对 `#` 进行编码，即 `%23`（例如：`fgcolor=%23FF0000`） > - 当 `transparent=true` 时，`bgcolor` 参数会被忽略
+         * @summary 生成二维码
          * @param {string} text 你希望编码到二维码中的任何文本内容，比如一个URL、一段话或者一个JSON字符串。
-         * @param {number} [size] 二维码图片的边长（正方形），单位是像素。有效范围是 256 到 1024 之间。
+         * @param {number} [size] 二维码图片的边长（正方形），单位是像素。有效范围是 256 到 2048 之间。
          * @param {GetImageQrcodeFormatEnum} [format] 指定响应内容的格式。可选值为 &#x60;image&#x60;, &#x60;json&#x60;, &#x60;json_url&#x60;。
+         * @param {boolean} [transparent] 是否使用透明背景。启用后生成的 PNG 图片将具有 alpha 通道，背景透明。
+         * @param {string} [fgcolor] 二维码前景色（即二维码本身的颜色），使用十六进制格式。URL 中需要将 &#x60;#&#x60; 编码为 &#x60;%23&#x60;。
+         * @param {string} [bgcolor] 二维码背景色，使用十六进制格式。当 &#x60;transparent&#x3D;true&#x60; 时此参数会被忽略。URL 中需要将 &#x60;#&#x60; 编码为 &#x60;%23&#x60;。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getImageQrcode(text: string, size?: number, format?: GetImageQrcodeFormatEnum, options?: RawAxiosRequestConfig): AxiosPromise<File> {
-            return localVarFp.getImageQrcode(text, size, format, options).then((request) => request(axios, basePath));
+        getImageQrcode(text: string, size?: number, format?: GetImageQrcodeFormatEnum, transparent?: boolean, fgcolor?: string, bgcolor?: string, options?: RawAxiosRequestConfig): AxiosPromise<File> {
+            return localVarFp.getImageQrcode(text, size, format, transparent, fgcolor, bgcolor, options).then((request) => request(axios, basePath));
         },
         /**
          * 看到一张网上的图片，想把它转换成 Base64 编码以便嵌入到你的 HTML 或 CSS 中？用这个接口就对了。  ## 功能概述 你提供一个公开可访问的图片 URL，我们帮你把它下载下来，并转换成包含 MIME 类型的 Base64 Data URI 字符串返回给你。
-         * @summary 将在线图片转换为Base64
+         * @summary 图片转 Base64
          * @param {string} url 需要转换为Base64的、可公开访问的图片URL地址。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -4444,7 +5865,7 @@ export const ImageApiFactory = function (configuration?: Configuration, basePath
             return localVarFp.getImageTobase64(url, options).then((request) => request(axios, basePath));
         },
         /**
-         * 还在为图片体积和加载速度发愁吗？体验一下我们强大的**无损压缩服务**，它能在几乎不牺牲任何肉眼可感知的画质的前提下，将图片体积压缩到极致。  ## 功能概述 你只需要上传一张常见的图片（如 PNG, JPG），选择一个压缩等级，就能获得一个体积小到惊人的压缩文件。这对于需要大量展示高清图片的网站、App 或小程序来说，是优化用户体验、节省带宽和存储成本的利器。  ## 使用须知 > [!TIP] > 为了给您最好的压缩效果，我们的算法需要进行复杂计算，处理时间可能会稍长一些，请耐心等待。  > [!WARNING] > **服务排队提醒** > 这是一个计算密集型服务。在高并发时，您的请求可能会被排队等待处理。如果您需要将其集成到对延迟敏感的生产服务中，请注意这一点。  ### 请求与响应格式 - 请求必须使用 `multipart/form-data` 格式上传文件。 - 成功响应将直接返回压缩后的文件二进制流 (`application/octet-stream`)，并附带 `Content-Disposition` 头，建议客户端根据此头信息保存文件。  ## 参数详解 ### `level` (压缩等级) 这是一个从 `1` 到 `5` 的整数，它决定了压缩的强度和策略，数字越小，压缩率越高。所有等级都经过精心调校，以在最大化压缩率的同时保证出色的视觉质量。 - `1`: **极限压缩** (推荐，体积最小，画质优异) - `2`: **高效压缩** - `3`: **智能均衡** (默认选项) - `4`: **画质优先** - `5`: **专业保真** (压缩率稍低，保留最多图像信息)  ## 错误处理指南 - **400 Bad Request**: 通常因为没有上传文件，或者 `level` 参数不在 1-5 的范围内。 - **500 Internal Server Error**: 如果在压缩过程中服务器发生内部错误，会返回此状态码。
+         * 还在为图片体积和加载速度发愁吗？体验一下我们强大的**无损压缩服务**，它能在几乎不牺牲任何肉眼可感知的画质的前提下，将图片体积压缩到极致。  ## 功能概述 你只需要上传一张常见的图片（如 PNG, JPG），选择一个压缩等级，就能获得一个体积小到惊人的压缩文件。这对于需要大量展示高清图片的网站、App 或小程序来说，是优化用户体验、节省带宽和存储成本的利器。  ## 使用须知 > [!TIP] > 为了给您最好的压缩效果，我们的算法需要进行复杂计算，处理时间可能会稍长一些，请耐心等待。  > [!WARNING] > **服务排队提醒** > 这是一个计算密集型服务。在高并发时，您的请求可能会被排队等待处理。如果您需要将其集成到对延迟敏感的生产服务中，请注意这一点。  ### 请求与响应格式 - 请求必须使用 `multipart/form-data` 格式上传文件。 - 成功响应将直接返回压缩后的文件二进制流 (`image/_*`)，并附带 `Content-Disposition` 头，建议客户端根据此头信息保存文件。  ## 参数详解 ### `level` (压缩等级) 这是一个从 `1` 到 `5` 的整数，它决定了压缩的强度和策略，数字越小，压缩率越高。所有等级都经过精心调校，以在最大化压缩率的同时保证出色的视觉质量。 - `1`: **极限压缩** (推荐，体积最小，画质优异) - `2`: **高效压缩** - `3`: **智能均衡** (默认选项) - `4`: **画质优先** - `5`: **专业保真** (压缩率稍低，保留最多图像信息)  ## 错误处理指南 - **400 Bad Request**: 通常因为没有上传文件，或者 `level` 参数不在 1-5 的范围内。 - **500 Internal Server Error**: 如果在压缩过程中服务器发生内部错误，会返回此状态码。
          * @summary 无损压缩图片
          * @param {File} file 支持PNG, JPG, JPEG等常见图片格式。文件大小不超过15MB。
          * @param {PostImageCompressLevelEnum} [level] 压缩强度 (1-5)，默认为 3。数字越小，压缩率越高。
@@ -4467,7 +5888,7 @@ export const ImageApiFactory = function (configuration?: Configuration, basePath
         },
         /**
          * 除了使用QQ头像，你还可以通过上传自己的图片或提供图片URL来制作独一无二的摸摸头GIF。  ## 功能概述 此接口通过POST方法，支持两种方式生成GIF： 1.  **图片URL**：在表单中提供 `image_url` 字段。 2.  **上传图片**：在表单中上传 `file` 文件。  ## 使用须知 - **响应格式**：接口成功时直接返回 `image/gif` 格式的二进制数据。 - **参数优先级**：如果同时提供了 `image_url` 和上传的 `file` 文件，系统将 **优先使用 `image_url`**。 - **背景颜色**：同样支持 `bg_color` 表单字段来控制GIF背景。
-         * @summary 生成摸摸头GIF (图片上传或URL方式)
+         * @summary 生成摸摸头GIF
          * @param {string} [imageUrl] 图片的URL地址。如果提供此项，将优先使用该URL的图片。
          * @param {File} [file] 上传的图片文件。支持JPG、PNG、GIF等常见格式。
          * @param {PostImageMotouBgColorEnum} [bgColor] GIF的背景颜色。可选值为 \\\&#39;white\\\&#39;, \\\&#39;black\\\&#39;, \\\&#39;transparent\\\&#39;。
@@ -4478,7 +5899,18 @@ export const ImageApiFactory = function (configuration?: Configuration, basePath
             return localVarFp.postImageMotou(imageUrl, file, bgColor, options).then((request) => request(axios, basePath));
         },
         /**
-         * 你们怎么不说话了？是不是都在偷偷玩Uapi，求求你们不要玩Uapi了  ## 效果展示 ![示例](https://uapis.cn/static/uploads/33580466897f1e5815296f235b582815.png)  ## 使用须知 - **响应格式**：接口成功时直接返回 `image/jpeg` 格式的二进制数据。 - **文字内容**：至少需要提供 `top_text`（上方文字）或 `bottom_text`（下方文字）之一。 - **梗图逻辑**：上方描述某个行为，下方通常以「们」开头表示劝阻，形成戏谑的对比效果。
+         * 这是一个图片内容审核接口，自动识别图片中的违规内容并返回处理建议。  > [!VIP] > 此接口限时免费开放，无需企业认证即可使用。  ## 功能概述 上传图片文件或提供图片URL，接口会自动分析图片内容，返回是否违规、风险等级和处理建议。适合对接到用户上传流程中，实现自动化内容审核。  ## 返回字段说明 - **is_nsfw**: 是否判定为违规内容，`true` 表示违规，`false` 表示正常 - **nsfw_score**: 违规内容置信度，0-1 之间，越高表示越可能违规 - **normal_score**: 正常内容置信度，0-1 之间，与 nsfw_score 互补 - **suggestion**: 处理建议   - `pass`: 内容正常，可以直接放行   - `review`: 存在风险，建议转人工复核   - `block`: 高风险内容，建议直接拦截 - **risk_level**: 风险等级   - `low`: 低风险   - `medium`: 中风险   - `high`: 高风险 - **label**: 内容标签，`nsfw` 或 `normal` - **confidence**: 模型对当前判断的整体置信度 - **inference_time_ms**: 模型推理耗时，单位毫秒
+         * @summary 图片敏感检测
+         * @param {File} [file] 要检测的图片文件。支持 JPG、JPEG、PNG、GIF、WebP 格式，最大 20MB。
+         * @param {string} [url] 图片的 URL 地址。如果同时提供 file 和 url，将优先使用 file。
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postImageNsfw(file?: File, url?: string, options?: RawAxiosRequestConfig): AxiosPromise<PostImageNsfw200Response> {
+            return localVarFp.postImageNsfw(file, url, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 你们怎么不说话了？是不是都在偷偷玩Uapi，求求你们不要玩Uapi了  ## 使用须知 - **响应格式**：接口成功时直接返回 `image/png` 格式的二进制数据。 - **文字内容**：至少需要提供 `top_text`（上方文字）或 `bottom_text`（下方文字）之一。 - **梗图逻辑**：上方描述某个行为，下方通常以「们」开头表示劝阻，形成戏谑的对比效果。
          * @summary 生成你们怎么不说话了表情包
          * @param {PostImageSpeechlessRequest} postImageSpeechlessRequest 包含表情包文字内容的JSON对象。至少需要提供上方或下方文字之一。
          * @param {*} [options] Override http request option.
@@ -4525,7 +5957,7 @@ export class ImageApi extends BaseAPI {
 
     /**
      * 每天都想换张新壁纸？让必应的美图点亮你的一天吧！  ## 功能概述 这个接口会获取 Bing 搜索引擎当天全球同步的每日壁纸，并直接以图片形式返回。你可以用它来做应用的启动页、网站背景，或者任何需要每日更新精美图片的地方。  ## 使用须知  > [!NOTE] > **响应格式是图片** > 请注意，此接口成功时直接返回图片二进制数据（通常为 `image/jpeg`），而非 JSON 格式。请确保客户端能够正确处理。  我们内置了备用方案：如果从必应官方获取图片失败，系统会尝试返回一张预存的高质量风景图，以保证服务的稳定性。
-     * @summary 获取必应每日壁纸
+     * @summary 必应壁纸
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -4535,7 +5967,7 @@ export class ImageApi extends BaseAPI {
 
     /**
      * 想在线rua一下好友的头像吗？这个趣味接口可以满足你。  ## 功能概述 此接口通过GET方法，专门用于通过QQ号生成摸摸头GIF。你只需要提供一个QQ号码，我们就会自动获取其公开头像，并制作成一个可爱的动图。  ## 使用须知 - **响应格式**：接口成功时直接返回 `image/gif` 格式的二进制数据。 - **背景颜色**：你可以通过 `bg_color` 参数来控制GIF的背景。使用 `transparent` 选项可以让它更好地融入各种聊天背景中。
-     * @summary 生成摸摸头GIF (QQ号方式)
+     * @summary 生成摸摸头GIF (QQ号)
      * @param {string} qq 你想要摸头的对象的QQ号码。
      * @param {GetImageMotouBgColorEnum} [bgColor] GIF的背景颜色。留空则由后端服务决定默认值。
      * @param {*} [options] Override http request option.
@@ -4546,21 +5978,24 @@ export class ImageApi extends BaseAPI {
     }
 
     /**
-     * 无论是网址、文本还是联系方式，通通可以变成一个二维码！这是一个非常灵活的二维码生成工具。  ## 功能概述 你提供一段文本内容，我们为你生成对应的二维码图片。你可以自定义尺寸，并选择不同的返回格式以适应不同场景。  ## 使用须知  > [!IMPORTANT] > **关键参数 `format`** > 此参数决定了成功响应的内容类型和结构，请务必根据你的需求选择并正确处理响应： > - **`image`** (默认): 直接返回 `image/png` 格式的图片二进制数据，适合在 `<img>` 标签中直接使用。 > - **`json`**: 返回一个包含 Base64 Data URI 的 JSON 对象，适合需要在前端直接嵌入CSS或HTML的场景。 > - **`json_url`**: 返回一个包含图片临时URL的JSON对象，适合需要图片链接的场景。
-     * @summary 动态生成二维码
+     * 无论是网址、文本还是联系方式，通通可以变成一个二维码！这是一个非常灵活的二维码生成工具。  ## 功能概述 你提供一段文本内容，我们为你生成对应的二维码图片。你可以自定义尺寸、前景色、背景色，还支持透明背景，并选择不同的返回格式以适应不同场景。  ## 使用须知  > [!IMPORTANT] > **关键参数 `format`** > 此参数决定了成功响应的内容类型和结构，请务必根据你的需求选择并正确处理响应： > - **`image`** (默认): 直接返回 `image/png` 格式的图片二进制数据，适合在 `<img>` 标签中直接使用。 > - **`json`**: 返回一个包含 Base64 Data URI 的 JSON 对象，适合需要在前端直接嵌入CSS或HTML的场景。 > - **`json_url`**: 返回一个包含图片临时URL的JSON对象，适合需要图片链接的场景。  > [!TIP] > **颜色参数说明** > - 颜色参数使用十六进制格式（如 `#FF0000`） > - URL 中需要对 `#` 进行编码，即 `%23`（例如：`fgcolor=%23FF0000`） > - 当 `transparent=true` 时，`bgcolor` 参数会被忽略
+     * @summary 生成二维码
      * @param {string} text 你希望编码到二维码中的任何文本内容，比如一个URL、一段话或者一个JSON字符串。
-     * @param {number} [size] 二维码图片的边长（正方形），单位是像素。有效范围是 256 到 1024 之间。
+     * @param {number} [size] 二维码图片的边长（正方形），单位是像素。有效范围是 256 到 2048 之间。
      * @param {GetImageQrcodeFormatEnum} [format] 指定响应内容的格式。可选值为 &#x60;image&#x60;, &#x60;json&#x60;, &#x60;json_url&#x60;。
+     * @param {boolean} [transparent] 是否使用透明背景。启用后生成的 PNG 图片将具有 alpha 通道，背景透明。
+     * @param {string} [fgcolor] 二维码前景色（即二维码本身的颜色），使用十六进制格式。URL 中需要将 &#x60;#&#x60; 编码为 &#x60;%23&#x60;。
+     * @param {string} [bgcolor] 二维码背景色，使用十六进制格式。当 &#x60;transparent&#x3D;true&#x60; 时此参数会被忽略。URL 中需要将 &#x60;#&#x60; 编码为 &#x60;%23&#x60;。
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public getImageQrcode(text: string, size?: number, format?: GetImageQrcodeFormatEnum, options?: RawAxiosRequestConfig) {
-        return ImageApiFp(this.configuration).getImageQrcode(text, size, format, options).then((request) => request(this.axios, this.basePath));
+    public getImageQrcode(text: string, size?: number, format?: GetImageQrcodeFormatEnum, transparent?: boolean, fgcolor?: string, bgcolor?: string, options?: RawAxiosRequestConfig) {
+        return ImageApiFp(this.configuration).getImageQrcode(text, size, format, transparent, fgcolor, bgcolor, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 看到一张网上的图片，想把它转换成 Base64 编码以便嵌入到你的 HTML 或 CSS 中？用这个接口就对了。  ## 功能概述 你提供一个公开可访问的图片 URL，我们帮你把它下载下来，并转换成包含 MIME 类型的 Base64 Data URI 字符串返回给你。
-     * @summary 将在线图片转换为Base64
+     * @summary 图片转 Base64
      * @param {string} url 需要转换为Base64的、可公开访问的图片URL地址。
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -4570,7 +6005,7 @@ export class ImageApi extends BaseAPI {
     }
 
     /**
-     * 还在为图片体积和加载速度发愁吗？体验一下我们强大的**无损压缩服务**，它能在几乎不牺牲任何肉眼可感知的画质的前提下，将图片体积压缩到极致。  ## 功能概述 你只需要上传一张常见的图片（如 PNG, JPG），选择一个压缩等级，就能获得一个体积小到惊人的压缩文件。这对于需要大量展示高清图片的网站、App 或小程序来说，是优化用户体验、节省带宽和存储成本的利器。  ## 使用须知 > [!TIP] > 为了给您最好的压缩效果，我们的算法需要进行复杂计算，处理时间可能会稍长一些，请耐心等待。  > [!WARNING] > **服务排队提醒** > 这是一个计算密集型服务。在高并发时，您的请求可能会被排队等待处理。如果您需要将其集成到对延迟敏感的生产服务中，请注意这一点。  ### 请求与响应格式 - 请求必须使用 `multipart/form-data` 格式上传文件。 - 成功响应将直接返回压缩后的文件二进制流 (`application/octet-stream`)，并附带 `Content-Disposition` 头，建议客户端根据此头信息保存文件。  ## 参数详解 ### `level` (压缩等级) 这是一个从 `1` 到 `5` 的整数，它决定了压缩的强度和策略，数字越小，压缩率越高。所有等级都经过精心调校，以在最大化压缩率的同时保证出色的视觉质量。 - `1`: **极限压缩** (推荐，体积最小，画质优异) - `2`: **高效压缩** - `3`: **智能均衡** (默认选项) - `4`: **画质优先** - `5`: **专业保真** (压缩率稍低，保留最多图像信息)  ## 错误处理指南 - **400 Bad Request**: 通常因为没有上传文件，或者 `level` 参数不在 1-5 的范围内。 - **500 Internal Server Error**: 如果在压缩过程中服务器发生内部错误，会返回此状态码。
+     * 还在为图片体积和加载速度发愁吗？体验一下我们强大的**无损压缩服务**，它能在几乎不牺牲任何肉眼可感知的画质的前提下，将图片体积压缩到极致。  ## 功能概述 你只需要上传一张常见的图片（如 PNG, JPG），选择一个压缩等级，就能获得一个体积小到惊人的压缩文件。这对于需要大量展示高清图片的网站、App 或小程序来说，是优化用户体验、节省带宽和存储成本的利器。  ## 使用须知 > [!TIP] > 为了给您最好的压缩效果，我们的算法需要进行复杂计算，处理时间可能会稍长一些，请耐心等待。  > [!WARNING] > **服务排队提醒** > 这是一个计算密集型服务。在高并发时，您的请求可能会被排队等待处理。如果您需要将其集成到对延迟敏感的生产服务中，请注意这一点。  ### 请求与响应格式 - 请求必须使用 `multipart/form-data` 格式上传文件。 - 成功响应将直接返回压缩后的文件二进制流 (`image/_*`)，并附带 `Content-Disposition` 头，建议客户端根据此头信息保存文件。  ## 参数详解 ### `level` (压缩等级) 这是一个从 `1` 到 `5` 的整数，它决定了压缩的强度和策略，数字越小，压缩率越高。所有等级都经过精心调校，以在最大化压缩率的同时保证出色的视觉质量。 - `1`: **极限压缩** (推荐，体积最小，画质优异) - `2`: **高效压缩** - `3`: **智能均衡** (默认选项) - `4`: **画质优先** - `5`: **专业保真** (压缩率稍低，保留最多图像信息)  ## 错误处理指南 - **400 Bad Request**: 通常因为没有上传文件，或者 `level` 参数不在 1-5 的范围内。 - **500 Internal Server Error**: 如果在压缩过程中服务器发生内部错误，会返回此状态码。
      * @summary 无损压缩图片
      * @param {File} file 支持PNG, JPG, JPEG等常见图片格式。文件大小不超过15MB。
      * @param {PostImageCompressLevelEnum} [level] 压缩强度 (1-5)，默认为 3。数字越小，压缩率越高。
@@ -4595,7 +6030,7 @@ export class ImageApi extends BaseAPI {
 
     /**
      * 除了使用QQ头像，你还可以通过上传自己的图片或提供图片URL来制作独一无二的摸摸头GIF。  ## 功能概述 此接口通过POST方法，支持两种方式生成GIF： 1.  **图片URL**：在表单中提供 `image_url` 字段。 2.  **上传图片**：在表单中上传 `file` 文件。  ## 使用须知 - **响应格式**：接口成功时直接返回 `image/gif` 格式的二进制数据。 - **参数优先级**：如果同时提供了 `image_url` 和上传的 `file` 文件，系统将 **优先使用 `image_url`**。 - **背景颜色**：同样支持 `bg_color` 表单字段来控制GIF背景。
-     * @summary 生成摸摸头GIF (图片上传或URL方式)
+     * @summary 生成摸摸头GIF
      * @param {string} [imageUrl] 图片的URL地址。如果提供此项，将优先使用该URL的图片。
      * @param {File} [file] 上传的图片文件。支持JPG、PNG、GIF等常见格式。
      * @param {PostImageMotouBgColorEnum} [bgColor] GIF的背景颜色。可选值为 \\\&#39;white\\\&#39;, \\\&#39;black\\\&#39;, \\\&#39;transparent\\\&#39;。
@@ -4607,7 +6042,19 @@ export class ImageApi extends BaseAPI {
     }
 
     /**
-     * 你们怎么不说话了？是不是都在偷偷玩Uapi，求求你们不要玩Uapi了  ## 效果展示 ![示例](https://uapis.cn/static/uploads/33580466897f1e5815296f235b582815.png)  ## 使用须知 - **响应格式**：接口成功时直接返回 `image/jpeg` 格式的二进制数据。 - **文字内容**：至少需要提供 `top_text`（上方文字）或 `bottom_text`（下方文字）之一。 - **梗图逻辑**：上方描述某个行为，下方通常以「们」开头表示劝阻，形成戏谑的对比效果。
+     * 这是一个图片内容审核接口，自动识别图片中的违规内容并返回处理建议。  > [!VIP] > 此接口限时免费开放，无需企业认证即可使用。  ## 功能概述 上传图片文件或提供图片URL，接口会自动分析图片内容，返回是否违规、风险等级和处理建议。适合对接到用户上传流程中，实现自动化内容审核。  ## 返回字段说明 - **is_nsfw**: 是否判定为违规内容，`true` 表示违规，`false` 表示正常 - **nsfw_score**: 违规内容置信度，0-1 之间，越高表示越可能违规 - **normal_score**: 正常内容置信度，0-1 之间，与 nsfw_score 互补 - **suggestion**: 处理建议   - `pass`: 内容正常，可以直接放行   - `review`: 存在风险，建议转人工复核   - `block`: 高风险内容，建议直接拦截 - **risk_level**: 风险等级   - `low`: 低风险   - `medium`: 中风险   - `high`: 高风险 - **label**: 内容标签，`nsfw` 或 `normal` - **confidence**: 模型对当前判断的整体置信度 - **inference_time_ms**: 模型推理耗时，单位毫秒
+     * @summary 图片敏感检测
+     * @param {File} [file] 要检测的图片文件。支持 JPG、JPEG、PNG、GIF、WebP 格式，最大 20MB。
+     * @param {string} [url] 图片的 URL 地址。如果同时提供 file 和 url，将优先使用 file。
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public postImageNsfw(file?: File, url?: string, options?: RawAxiosRequestConfig) {
+        return ImageApiFp(this.configuration).postImageNsfw(file, url, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 你们怎么不说话了？是不是都在偷偷玩Uapi，求求你们不要玩Uapi了  ## 使用须知 - **响应格式**：接口成功时直接返回 `image/png` 格式的二进制数据。 - **文字内容**：至少需要提供 `top_text`（上方文字）或 `bottom_text`（下方文字）之一。 - **梗图逻辑**：上方描述某个行为，下方通常以「们」开头表示劝阻，形成戏谑的对比效果。
      * @summary 生成你们怎么不说话了表情包
      * @param {PostImageSpeechlessRequest} postImageSpeechlessRequest 包含表情包文字内容的JSON对象。至少需要提供上方或下方文字之一。
      * @param {*} [options] Override http request option.
@@ -4682,7 +6129,7 @@ export const MiscApiAxiosParamCreator = function (configuration?: Configuration)
     return {
         /**
          * 想查看程序员历史上某个特定日期发生的大事件？指定月份和日期，我们就能告诉你！  ## 功能概述 通过指定月份和日期，获取该日发生的程序员相关历史事件。同样使用AI智能筛选，确保事件的相关性和重要性。
-         * @summary 获取指定日期的程序员历史事件
+         * @summary 程序员历史事件
          * @param {number} month 月份，1-12之间的整数。
          * @param {number} day 日期，1-31之间的整数。
          * @param {*} [options] Override http request option.
@@ -4726,7 +6173,7 @@ export const MiscApiAxiosParamCreator = function (configuration?: Configuration)
         },
         /**
          * 想知道程序员历史上的今天发生了什么大事吗？这个接口告诉你答案！  ## 功能概述 我们使用AI智能筛选从海量历史事件中挑选出与程序员、计算机科学相关的重要事件。每个事件都经过重要性评分和相关性评分，确保内容质量。
-         * @summary 获取今天的程序员历史事件
+         * @summary 程序员历史上的今天
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -4755,13 +6202,149 @@ export const MiscApiAxiosParamCreator = function (configuration?: Configuration)
             };
         },
         /**
-         * 想快速跟上网络热点？这个接口让你一网打尽各大主流平台的实时热榜/热搜！  ## 功能概述 你只需要指定一个平台类型，就能获取到该平台当前的热榜数据列表。每个热榜条目都包含标题、热度值和原始链接。非常适合用于制作信息聚合类应用或看板。  ## 可选值 `type` 参数接受多种不同的值，每种值对应一个不同的热榜来源。以下是目前支持的所有值：  | 分类       | 支持的 type 值 | |------------|-----------------------------------------------------------------------------------------------------------------------------------| | 视频/社区  | bilibili（哔哩哔哩弹幕网）, acfun（A站弹幕视频网站）, weibo（新浪微博热搜）, zhihu（知乎热榜）, zhihu-daily（知乎日报热榜）, douyin（抖音热榜）, kuaishou（快手热榜）, douban-movie（豆瓣电影榜单）, douban-group（豆瓣小组话题）, tieba（百度贴吧热帖）, hupu（虎扑热帖）, miyoushe（米游社话题榜）, ngabbs（NGA游戏论坛热帖）, v2ex（V2EX技术社区热帖）, 52pojie（吾爱破解热帖）, hostloc（全球主机交流论坛）, coolapk（酷安热榜） | | 新闻/资讯  | baidu（百度热搜）, thepaper（澎湃新闻热榜）, toutiao（今日头条热榜）, qq-news（腾讯新闻热榜）, sina（新浪热搜）, sina-news（新浪新闻热榜）, netease-news（网易新闻热榜）, huxiu（虎嗅网热榜）, ifanr（爱范儿热榜） | | 技术/IT    | sspai（少数派热榜）, ithome（IT之家热榜）, ithome-xijiayi（IT之家·喜加一栏目）, juejin（掘金社区热榜）, jianshu（简书热榜）, guokr（果壳热榜）, 36kr（36氪热榜）, 51cto（51CTO热榜）, csdn（CSDN博客热榜）, nodeseek（NodeSeek 技术社区）, hellogithub（HelloGitHub 项目推荐） | | 游戏       | lol（英雄联盟热帖）, genshin（原神热榜）, honkai（崩坏3热榜）, starrail（星穹铁道热榜） | | 其他       | weread（微信读书热门书籍）, weatheralarm（天气预警信息）, earthquake（地震速报）, history（历史上的今天） | 
-         * @summary 获取多平台实时热榜
-         * @param {GetMiscHotboardTypeEnum} type 你想要查询的热榜平台。支持多种主流平台类型，详见下方[可选值](#可选值)表格。
+         * 一个接口，覆盖全球 243 个国家、中国省/市/区/街道四级行政区划，支持关键词搜索、行政编码查询、坐标反查三种查询模式（必须至少传入一种查询参数）。  ## 功能概述 根据用户输入的搜索条件快速查找行政区域信息。例如：中国 > 山东省 > 济南市 > 历下区 > 舜华路街道。  无需注册、无需密钥，直接调用即可获取结构化的行政区域数据。支持三种查询方式： - 传 `adcode`，按行政编码精确查询，同时返回下级区划列表 - 传 `lat` + `lng`，坐标反查附近地点 - 传 `keywords`，按关键词搜索，支持中英文  ## 中国与国际数据差异 中国数据包含 `adcode`、`citycode` 等字段，支持省/市/区/街道四级逐级查询；国际城市数据不含这些字段，但额外提供 `population`（人口）和 `timezone`（时区）。  > [!NOTE] > 部分城市（如东莞、文昌）没有区县层级，市级下方直接显示街道。街道级别的 `adcode` 返回的是所属区县的 `adcode`。
+         * @summary Adcode 国内外行政区域查询
+         * @param {string} [keywords] 关键词搜索（城市名、区县名，支持中英文）。
+         * @param {string} [adcode] 中国行政区划代码精确查询（如 &#x60;110000&#x60;），同时返回下级行政区。
+         * @param {number} [lat] 纬度，与 &#x60;lng&#x60; 配合使用，坐标反查附近地点。
+         * @param {number} [lng] 经度，与 &#x60;lat&#x60; 配合使用。
+         * @param {GetMiscDistrictLevelEnum} [level] 过滤行政级别。
+         * @param {string} [country] 过滤国家代码（ISO 3166-1 alpha-2），如 &#x60;CN&#x60;、&#x60;JP&#x60;、&#x60;US&#x60;、&#x60;GB&#x60;。
+         * @param {number} [limit] 返回数量上限，默认 &#x60;20&#x60;，最大 &#x60;100&#x60;。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getMiscHotboard: async (type: GetMiscHotboardTypeEnum, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getMiscDistrict: async (keywords?: string, adcode?: string, lat?: number, lng?: number, level?: GetMiscDistrictLevelEnum, country?: string, limit?: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/misc/district`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (keywords !== undefined) {
+                localVarQueryParameter['keywords'] = keywords;
+            }
+
+            if (adcode !== undefined) {
+                localVarQueryParameter['adcode'] = adcode;
+            }
+
+            if (lat !== undefined) {
+                localVarQueryParameter['lat'] = lat;
+            }
+
+            if (lng !== undefined) {
+                localVarQueryParameter['lng'] = lng;
+            }
+
+            if (level !== undefined) {
+                localVarQueryParameter['level'] = level;
+            }
+
+            if (country !== undefined) {
+                localVarQueryParameter['country'] = country;
+            }
+
+            if (limit !== undefined) {
+                localVarQueryParameter['limit'] = limit;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 查询指定日期、月份或年份的万年历与节假日信息。  ## 功能概述 这个接口支持三种查询方式：按天（`date`）、按月（`month`）和按年（`year`）。调用时三者选一个传入即可。  如果你只关心某一类事件，可以通过 `holiday_type` 进行筛选，例如只看法定休假/调休、公历节日、农历节日或节气。  在 `date` 模式下，传 `include_nearby=true` 可以额外返回该日期前后最近的节日；返回数量由 `nearby_limit` 控制，默认 7，最大 30。
+         * @summary 查询节假日与万年历
+         * @param {string} [date] 按天查询时填写这个参数，例如查某一天。格式：&#x60;YYYY-MM-DD&#x60;。和 &#x60;month&#x60;、&#x60;year&#x60; 三选一。
+         * @param {string} [month] 按月查询时填写这个参数，例如查某个月。格式：&#x60;YYYY-MM&#x60;。和 &#x60;date&#x60;、&#x60;year&#x60; 三选一。
+         * @param {string} [year] 按年查询时填写这个参数，例如查某一年。格式：&#x60;YYYY&#x60;。和 &#x60;date&#x60;、&#x60;month&#x60; 三选一。
+         * @param {string} [timezone] 时区名称，默认 Asia/Shanghai。
+         * @param {GetMiscHolidayCalendarHolidayTypeEnum} [holidayType] 节日筛选类型，默认 all。
+         * @param {boolean} [includeNearby] 是否返回前后最近节日，仅 date 模式生效，默认 false。month/year 模式会忽略此参数。
+         * @param {number} [nearbyLimit] 返回最近节日数量限制，默认 7，最大 30。仅 date 模式 + include_nearby&#x3D;true 生效。
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getMiscHolidayCalendar: async (date?: string, month?: string, year?: string, timezone?: string, holidayType?: GetMiscHolidayCalendarHolidayTypeEnum, includeNearby?: boolean, nearbyLimit?: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/misc/holiday-calendar`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (date !== undefined) {
+                localVarQueryParameter['date'] = date;
+            }
+
+            if (month !== undefined) {
+                localVarQueryParameter['month'] = month;
+            }
+
+            if (year !== undefined) {
+                localVarQueryParameter['year'] = year;
+            }
+
+            if (timezone !== undefined) {
+                localVarQueryParameter['timezone'] = timezone;
+            }
+
+            if (holidayType !== undefined) {
+                localVarQueryParameter['holiday_type'] = holidayType;
+            }
+
+            if (includeNearby !== undefined) {
+                localVarQueryParameter['include_nearby'] = includeNearby;
+            }
+
+            if (nearbyLimit !== undefined) {
+                localVarQueryParameter['nearby_limit'] = nearbyLimit;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 想快速跟上网络热点？这个接口让你一网打尽各大主流平台的实时热榜/热搜！  ## 功能概述 你只需要指定一个平台类型，就能获取到该平台当前的热榜数据列表。每个热榜条目都包含标题、热度值和原始链接。非常适合用于制作信息聚合类应用或看板。  ## 三种使用模式  ### 默认模式 只传 `type` 参数，返回该平台当前的实时热榜。  ### 时光机模式 传 `type` + `time` 参数，返回最接近指定时间的热榜快照。如果不可用或无数据，会返回空。  ### 搜索模式 传 `type` + `keyword` + `time_start` + `time_end` 参数，在指定时间范围内搜索包含关键词的热榜条目。可选传 `limit` 限制返回数量。  ### 数据源列表 传 `sources=true`，返回所有支持历史数据的平台列表。  ## 可选值 `type` 参数接受多种不同的值，每种值对应一个不同的热榜来源。以下是目前支持的所有值：  | 分类       | 支持的 type 值 | |------------|-----------------------------------------------------------------------------------------------------------------------------------| | 视频/社区  | bilibili（哔哩哔哩弹幕网）, acfun（A站弹幕视频网站）, weibo（新浪微博热搜）, zhihu（知乎热榜）, zhihu-daily（知乎日报热榜）, douyin（抖音热榜）, kuaishou（快手热榜）, douban-movie（豆瓣电影榜单）, douban-group（豆瓣小组话题）, tieba（百度贴吧热帖）, hupu（虎扑热帖）, ngabbs（NGA游戏论坛热帖）, v2ex（V2EX技术社区热帖）, 52pojie（吾爱破解热帖）, hostloc（全球主机交流论坛）, coolapk（酷安热榜） | | 新闻/资讯  | baidu（百度热搜）, thepaper（澎湃新闻热榜）, toutiao（今日头条热榜）, qq-news（腾讯新闻热榜）, sina（新浪热搜）, sina-news（新浪新闻热榜）, netease-news（网易新闻热榜）, huxiu（虎嗅网热榜）, ifanr（爱范儿热榜） | | 技术/IT    | sspai（少数派热榜）, ithome（IT之家热榜）, ithome-xijiayi（IT之家·喜加一栏目）, juejin（掘金社区热榜）, jianshu（简书热榜）, guokr（果壳热榜）, 36kr（36氪热榜）, 51cto（51CTO热榜）, csdn（CSDN博客热榜）, nodeseek（NodeSeek 技术社区）, hellogithub（HelloGitHub 项目推荐） | | 游戏       | lol（英雄联盟热帖）, genshin（原神热榜）, honkai（崩坏3热榜）, starrail（星穹铁道热榜） | | 音乐       | netease-music（网易云音乐热歌榜）, qq-music（QQ音乐热歌榜） | | 其他       | weread（微信读书热门书籍）, weatheralarm（天气预警信息）, earthquake（地震速报）, history（历史上的今天） | 
+         * @summary 查询热榜
+         * @param {GetMiscHotboardTypeEnum} type 你想要查询的热榜平台。支持多种主流平台类型，详见下方[可选值](#可选值)表格。
+         * @param {number} [time] 时光机模式：毫秒时间戳，返回最接近该时间的热榜快照。不传则返回当前实时热榜。
+         * @param {string} [keyword] 搜索模式：搜索关键词，在历史热榜中搜索包含该关键词的条目。需配合 time_start 和 time_end 使用。
+         * @param {number} [timeStart] 搜索模式必填：搜索起始时间戳（毫秒）。
+         * @param {number} [timeEnd] 搜索模式必填：搜索结束时间戳（毫秒）。
+         * @param {number} [limit] 搜索模式下最大返回条数，默认 50，最大 200。
+         * @param {boolean} [sources] 设为 true 时列出所有可用的历史数据源，忽略其他参数。
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getMiscHotboard: async (type: GetMiscHotboardTypeEnum, time?: number, keyword?: string, timeStart?: number, timeEnd?: number, limit?: number, sources?: boolean, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'type' is not null or undefined
             assertParamExists('getMiscHotboard', 'type', type)
             const localVarPath = `/misc/hotboard`;
@@ -4780,6 +6363,70 @@ export const MiscApiAxiosParamCreator = function (configuration?: Configuration)
                 localVarQueryParameter['type'] = type;
             }
 
+            if (time !== undefined) {
+                localVarQueryParameter['time'] = time;
+            }
+
+            if (keyword !== undefined) {
+                localVarQueryParameter['keyword'] = keyword;
+            }
+
+            if (timeStart !== undefined) {
+                localVarQueryParameter['time_start'] = timeStart;
+            }
+
+            if (timeEnd !== undefined) {
+                localVarQueryParameter['time_end'] = timeEnd;
+            }
+
+            if (limit !== undefined) {
+                localVarQueryParameter['limit'] = limit;
+            }
+
+            if (sources !== undefined) {
+                localVarQueryParameter['sources'] = sources;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 需要在指定时区下查看某个时间点的农历信息？这个接口可以直接返回完整结果。  ## 功能概述 支持传入 Unix 时间戳（秒或毫秒）和 IANA 时区名，返回公历时间、星期、农历年月日、干支、生肖、节气与节日信息。不传 `ts` 时默认使用当前时间，不传 `timezone` 时默认 `Asia/Shanghai`。  ## 时区说明 - 支持标准 IANA 时区，例如 `Asia/Shanghai`、`Asia/Tokyo` - 也支持别名：`Shanghai`、`Beijing` - 时区非法时返回 400 并提示 `invalid timezone: xxx`
+         * @summary 查询农历时间
+         * @param {string} [ts] Unix 时间戳，支持 10 位秒级或 13 位毫秒级。不传则默认当前时间。
+         * @param {string} [timezone] 时区名称。支持 IANA 时区（如 Asia/Shanghai）和别名（Shanghai、Beijing）。默认 Asia/Shanghai。
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getMiscLunartime: async (ts?: string, timezone?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/misc/lunartime`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (ts !== undefined) {
+                localVarQueryParameter['ts'] = ts;
+            }
+
+            if (timezone !== undefined) {
+                localVarQueryParameter['timezone'] = timezone;
+            }
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -4793,7 +6440,7 @@ export const MiscApiAxiosParamCreator = function (configuration?: Configuration)
         },
         /**
          * 想知道一个手机号码来自哪里？是移动、联通还是电信？这个接口可以告诉你答案。  ## 功能概述 提供一个国内的手机号码，我们会查询并返回它的归属地（省份和城市）以及所属的运营商信息。
-         * @summary 查询手机号码归属地信息
+         * @summary 查询手机归属地
          * @param {string} phone 需要查询的11位中国大陆手机号码。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -4830,7 +6477,7 @@ export const MiscApiAxiosParamCreator = function (configuration?: Configuration)
         },
         /**
          * 需要一个简单的随机数，还是需要一串不重复的、带小数的随机数？这个接口都能满足你！  ## 功能概述 这是一个强大的随机数生成器。你可以指定生成的范围（最大/最小值）、数量、是否允许重复、以及是否生成小数（并指定小数位数）。  ## 流程图 ```mermaid graph TD     A[开始] --> B{参数校验};     B --> |通过| C{是否允许小数?};     C --> |是| D[生成随机小数];     C --> |否| E[生成随机整数];     D --> F{是否允许重复?};     E --> F;     F --> |是| G[直接生成指定数量];     F --> |否| H[生成不重复的数字];     G --> I[返回结果];     H --> I;     B --> |失败| J[返回 400 错误]; ``` ## 使用须知 > [!WARNING] > **不重复生成的逻辑限制** > 当设置 `allow_repeat=false` 时，请确保取值范围 `(max - min + 1)` 大于或等于你请求的数量 `count`。否则，系统将无法生成足够的不重复数字，请求会失败并返回 400 错误。
-         * @summary 生成高度可定制的随机数
+         * @summary 随机数生成
          * @param {number} [min] 生成随机数的最小值（包含）。
          * @param {number} [max] 生成随机数的最大值（包含）。
          * @param {number} [count] 需要生成的随机数的数量。
@@ -4889,7 +6536,7 @@ export const MiscApiAxiosParamCreator = function (configuration?: Configuration)
             };
         },
         /**
-         * 这是一个用于将Unix时间戳转换为人类可读日期时间的旧版接口。  ## 功能概述 输入一个秒级或毫秒级的时间戳，返回其对应的本地时间和UTC时间。  > [!WARNING] > **接口已过时**：这个接口已被新的 `/convert/unixtime` 取代。新接口功能更强大，支持双向转换。我们建议你迁移到新接口。  [👉 前往新版接口文档](/docs/api-reference/get-convert-unixtime)
+         * 这是一个用于将Unix时间戳转换为人类可读日期时间的旧版接口。  ## 功能概述 输入一个秒级或毫秒级的时间戳，返回其对应的本地时间和UTC时间。  > [!WARNING] > **接口已过时**：这个接口已被新的 `/convert/unixtime` 取代。新接口功能更强大，支持双向转换。我们建议你迁移到新接口。  [➡️ 前往新版接口文档](/docs/api-reference/get-convert-unixtime)
          * @summary 转换时间戳 (旧版，推荐使用/convert/unixtime)
          * @param {string} ts 需要转换的Unix时间戳，支持10位（秒）或13位（毫秒）。
          * @param {*} [options] Override http request option.
@@ -4993,14 +6640,15 @@ export const MiscApiAxiosParamCreator = function (configuration?: Configuration)
             };
         },
         /**
-         * 买了东西想知道快递到哪儿了？这个接口帮你实时追踪物流状态。  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者集成和测试。未来，它将转为付费API，为用户提供更稳定和强大的服务。  ## 功能概述 提供一个快递单号，系统会自动识别快递公司并返回完整的物流轨迹信息。支持中通、圆通、韵达、申通、极兔、顺丰、京东、EMS、德邦等60+国内外主流快递公司。  ## 使用须知 - **自动识别**：不知道是哪家快递？系统会根据单号规则自动识别快递公司（推荐使用） - **手动指定**：如果已知快递公司，可以传递 `carrier_code` 参数，查询速度会更快 - **查询时效**：物流信息实时查询，响应时间通常在1-2秒内
+         * 买了东西想知道快递到哪儿了？这个接口帮你实时追踪物流状态。  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者集成和测试。未来，它将转为付费API，为用户提供更稳定和强大的服务。  ## 功能概述 提供一个快递单号，系统会自动识别快递公司并返回完整的物流轨迹信息。支持中通、圆通、韵达、申通、极兔、顺丰、京东、EMS、德邦等60+国内外主流快递公司。  ## 使用须知 - **自动识别**：不知道是哪家快递？系统会根据单号规则自动识别快递公司（推荐使用） - **手动指定**：如果已知快递公司，可以传递 `carrier_code` 参数，查询速度会更快 - **手机尾号验证**：部分快递公司需要验证收件人手机尾号才能查询详细物流，如果返回「暂无物流信息」，建议尝试传入 `phone` 参数 - **查询时效**：物流信息实时查询，响应时间通常在1-2秒内
          * @summary 查询快递物流信息
          * @param {string} trackingNumber 快递单号，通常是一串10-20位的数字或字母数字组合。
          * @param {string} [carrierCode] 快递公司编码（可选）。不填写时系统会自动识别，填写后可加快查询速度。
+         * @param {string} [phone] 收件人手机尾号，4位数字（可选）。部分快递公司需要验证手机尾号才能查询详细物流信息。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getMiscTrackingQuery: async (trackingNumber: string, carrierCode?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getMiscTrackingQuery: async (trackingNumber: string, carrierCode?: string, phone?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'trackingNumber' is not null or undefined
             assertParamExists('getMiscTrackingQuery', 'trackingNumber', trackingNumber)
             const localVarPath = `/misc/tracking/query`;
@@ -5023,6 +6671,10 @@ export const MiscApiAxiosParamCreator = function (configuration?: Configuration)
                 localVarQueryParameter['carrier_code'] = carrierCode;
             }
 
+            if (phone !== undefined) {
+                localVarQueryParameter['phone'] = phone;
+            }
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -5035,14 +6687,20 @@ export const MiscApiAxiosParamCreator = function (configuration?: Configuration)
             };
         },
         /**
-         * 出门前，查一下天气总是个好习惯。这个接口为你提供精准、实时的天气数据。  ## 功能概述 你可以通过城市名称或高德地图的Adcode来查询指定地区的实时天气状况，包括天气现象、温度、湿度、风向和风力等。  ## 使用须知 - **参数优先级**：当你同时提供了 `city` (城市名) 和 `adcode` (城市编码) 两个参数时，系统会 **优先使用 `adcode`** 进行查询，因为它更精确。 - **查询范围**：为了保证查询的准确性，我们的服务仅支持标准的“省”、“市”、“区/县”级别的行政区划名称查询，不保证能查询到乡镇或具体地点。  ## 错误处理指南 - **410 Gone**: 这个特殊的错误码意味着你查询的地区无效或不受我们支持。比如你输入了“火星”，或者某个我们无法识别的村庄名称。这个状态码告诉你，这个“资源”是永久性地不可用了。
-         * @summary 查询实时天气信息
-         * @param {string} [city] 标准的城市名称，如 \&#39;北京\&#39;, \&#39;上海市\&#39;, \&#39;福田区\&#39;。请使用官方的省、市、区县行政区划名称。
-         * @param {string} [adcode] 高德地图的6位数字城市编码。例如，北京市的Adcode是 \&#39;110000\&#39;。使用Adcode查询更准确、更快速。
+         * 出门前，查一下天气总是个好习惯。这个接口为你提供精准、实时的天气数据，支持国内和国际城市。  ## 功能概述 这个接口支持三种查询方式： - 可以传 `adcode`，按行政区编码查询（优先级最高） - 可以传 `city`，按城市名称查询，支持中文（`北京`）和英文（`Tokyo`） - 两个都不传时，按客户端 IP 自动定位查询  支持 `lang` 参数，可选 `zh`（默认）和 `en`，城市名翻译覆盖 7000+ 城市。  ## 可选功能模块 - `extended=true`：扩展气象字段（体感温度、能见度、气压、紫外线、空气质量及污染物分项数据） - `forecast=true`：多天预报（最多7天，含日出日落、风速等详细数据） - `hourly=true`：逐小时预报（24小时） - `minutely=true`：分钟级降水预报（仅国内城市） - `indices=true`：18项生活指数（穿衣、紫外线、洗车、运动、花粉等）  ## 天气字段说明 `weather` 是天气现象文本，不是固定枚举。  常见值包括：晴、多云、阴、小雨、中雨、大雨、雷阵雨、小雪、中雪、大雪、雨夹雪、雾、霾、沙尘。  如果你的业务需要稳定分类，建议结合 `weather_code` 做自己的映射归类。
+         * @summary 查询天气
+         * @param {string} [city] 城市名称，支持中文（&#x60;北京&#x60;）和英文（&#x60;Tokyo&#x60;）。可选参数，不传时会尝试 IP 自动定位。
+         * @param {string} [adcode] 城市行政区划代码（如 &#x60;110000&#x60;），优先级高于 city。可选参数，不传时会尝试 IP 自动定位。
+         * @param {boolean} [extended] 返回扩展气象字段（体感温度、能见度、气压、紫外线、降水量、云量、空气质量指数及污染物分项数据）。
+         * @param {boolean} [forecast] 返回多天预报数据（最多7天），含白天夜间天气、风向风力、日出日落等。
+         * @param {boolean} [hourly] 返回逐小时预报（24小时），含温度、天气、风向风速、湿度、降水概率等。
+         * @param {boolean} [minutely] 返回分钟级降水预报（仅国内城市），每5分钟一个数据点，共24个。
+         * @param {boolean} [indices] 返回18项生活指数（穿衣、紫外线、洗车、晾晒、空调、感冒、运动、舒适度、出行、钓鱼、过敏、防晒、心情、啤酒、雨伞、交通、空气净化器、花粉）。
+         * @param {GetMiscWeatherLangEnum} [lang] 返回语言。&#x60;zh&#x60; 返回中文（默认），&#x60;en&#x60; 返回英文。城市名翻译覆盖 7000+ 城市。生活指数（&#x60;indices&#x60;）目前仅支持中文。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getMiscWeather: async (city?: string, adcode?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getMiscWeather: async (city?: string, adcode?: string, extended?: boolean, forecast?: boolean, hourly?: boolean, minutely?: boolean, indices?: boolean, lang?: GetMiscWeatherLangEnum, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/misc/weather`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -5063,6 +6721,30 @@ export const MiscApiAxiosParamCreator = function (configuration?: Configuration)
                 localVarQueryParameter['adcode'] = adcode;
             }
 
+            if (extended !== undefined) {
+                localVarQueryParameter['extended'] = extended;
+            }
+
+            if (forecast !== undefined) {
+                localVarQueryParameter['forecast'] = forecast;
+            }
+
+            if (hourly !== undefined) {
+                localVarQueryParameter['hourly'] = hourly;
+            }
+
+            if (minutely !== undefined) {
+                localVarQueryParameter['minutely'] = minutely;
+            }
+
+            if (indices !== undefined) {
+                localVarQueryParameter['indices'] = indices;
+            }
+
+            if (lang !== undefined) {
+                localVarQueryParameter['lang'] = lang;
+            }
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -5076,7 +6758,7 @@ export const MiscApiAxiosParamCreator = function (configuration?: Configuration)
         },
         /**
          * 需要和国外的朋友开会，想知道他那边现在几点？用这个接口一查便知。  ## 功能概述 根据标准的时区名称（例如 \'Asia/Shanghai\' 或 \'Europe/London\'），获取该时区的当前准确时间、UTC偏移量、星期等信息。
-         * @summary 查询全球任意时区的时间
+         * @summary 查询世界时间
          * @param {string} city 你需要查询的城市或地区，请使用标准的 IANA 时区数据库名称，例如 \&#39;Shanghai\&#39;, \&#39;Asia/Tokyo\&#39;, \&#39;America/New_York\&#39;。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -5111,6 +6793,42 @@ export const MiscApiAxiosParamCreator = function (configuration?: Configuration)
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 想知道两个日期之间相差多久？这个接口帮你精确计算时间差值。  ## 功能概述 输入开始日期和结束日期，返回它们之间的时间差，包括总天数、总小时数、总分钟数、总秒数、总周数，以及人性化显示格式（如\"1年2月3天\"）。  ## 日期格式 接口支持自动识别常见日期格式，包括：YYYY-MM-DD、YYYY/MM/DD、DD-MM-YYYY、ISO 8601（带时区）等。也可以通过`format`参数显式指定格式（如DD-MM-YYYY）。  > [!NOTE] > 当结束日期早于开始日期时，返回的数值为负数。
+         * @summary 计算两个日期之间的时间差值
+         * @param {PostMiscDateDiffRequest} postMiscDateDiffRequest 包含日期信息的JSON对象
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postMiscDateDiff: async (postMiscDateDiffRequest: PostMiscDateDiffRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'postMiscDateDiffRequest' is not null or undefined
+            assertParamExists('postMiscDateDiff', 'postMiscDateDiffRequest', postMiscDateDiffRequest)
+            const localVarPath = `/misc/date-diff`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postMiscDateDiffRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -5122,7 +6840,7 @@ export const MiscApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 想查看程序员历史上某个特定日期发生的大事件？指定月份和日期，我们就能告诉你！  ## 功能概述 通过指定月份和日期，获取该日发生的程序员相关历史事件。同样使用AI智能筛选，确保事件的相关性和重要性。
-         * @summary 获取指定日期的程序员历史事件
+         * @summary 程序员历史事件
          * @param {number} month 月份，1-12之间的整数。
          * @param {number} day 日期，1-31之间的整数。
          * @param {*} [options] Override http request option.
@@ -5136,7 +6854,7 @@ export const MiscApiFp = function(configuration?: Configuration) {
         },
         /**
          * 想知道程序员历史上的今天发生了什么大事吗？这个接口告诉你答案！  ## 功能概述 我们使用AI智能筛选从海量历史事件中挑选出与程序员、计算机科学相关的重要事件。每个事件都经过重要性评分和相关性评分，确保内容质量。
-         * @summary 获取今天的程序员历史事件
+         * @summary 程序员历史上的今天
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -5147,21 +6865,79 @@ export const MiscApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * 想快速跟上网络热点？这个接口让你一网打尽各大主流平台的实时热榜/热搜！  ## 功能概述 你只需要指定一个平台类型，就能获取到该平台当前的热榜数据列表。每个热榜条目都包含标题、热度值和原始链接。非常适合用于制作信息聚合类应用或看板。  ## 可选值 `type` 参数接受多种不同的值，每种值对应一个不同的热榜来源。以下是目前支持的所有值：  | 分类       | 支持的 type 值 | |------------|-----------------------------------------------------------------------------------------------------------------------------------| | 视频/社区  | bilibili（哔哩哔哩弹幕网）, acfun（A站弹幕视频网站）, weibo（新浪微博热搜）, zhihu（知乎热榜）, zhihu-daily（知乎日报热榜）, douyin（抖音热榜）, kuaishou（快手热榜）, douban-movie（豆瓣电影榜单）, douban-group（豆瓣小组话题）, tieba（百度贴吧热帖）, hupu（虎扑热帖）, miyoushe（米游社话题榜）, ngabbs（NGA游戏论坛热帖）, v2ex（V2EX技术社区热帖）, 52pojie（吾爱破解热帖）, hostloc（全球主机交流论坛）, coolapk（酷安热榜） | | 新闻/资讯  | baidu（百度热搜）, thepaper（澎湃新闻热榜）, toutiao（今日头条热榜）, qq-news（腾讯新闻热榜）, sina（新浪热搜）, sina-news（新浪新闻热榜）, netease-news（网易新闻热榜）, huxiu（虎嗅网热榜）, ifanr（爱范儿热榜） | | 技术/IT    | sspai（少数派热榜）, ithome（IT之家热榜）, ithome-xijiayi（IT之家·喜加一栏目）, juejin（掘金社区热榜）, jianshu（简书热榜）, guokr（果壳热榜）, 36kr（36氪热榜）, 51cto（51CTO热榜）, csdn（CSDN博客热榜）, nodeseek（NodeSeek 技术社区）, hellogithub（HelloGitHub 项目推荐） | | 游戏       | lol（英雄联盟热帖）, genshin（原神热榜）, honkai（崩坏3热榜）, starrail（星穹铁道热榜） | | 其他       | weread（微信读书热门书籍）, weatheralarm（天气预警信息）, earthquake（地震速报）, history（历史上的今天） | 
-         * @summary 获取多平台实时热榜
-         * @param {GetMiscHotboardTypeEnum} type 你想要查询的热榜平台。支持多种主流平台类型，详见下方[可选值](#可选值)表格。
+         * 一个接口，覆盖全球 243 个国家、中国省/市/区/街道四级行政区划，支持关键词搜索、行政编码查询、坐标反查三种查询模式（必须至少传入一种查询参数）。  ## 功能概述 根据用户输入的搜索条件快速查找行政区域信息。例如：中国 > 山东省 > 济南市 > 历下区 > 舜华路街道。  无需注册、无需密钥，直接调用即可获取结构化的行政区域数据。支持三种查询方式： - 传 `adcode`，按行政编码精确查询，同时返回下级区划列表 - 传 `lat` + `lng`，坐标反查附近地点 - 传 `keywords`，按关键词搜索，支持中英文  ## 中国与国际数据差异 中国数据包含 `adcode`、`citycode` 等字段，支持省/市/区/街道四级逐级查询；国际城市数据不含这些字段，但额外提供 `population`（人口）和 `timezone`（时区）。  > [!NOTE] > 部分城市（如东莞、文昌）没有区县层级，市级下方直接显示街道。街道级别的 `adcode` 返回的是所属区县的 `adcode`。
+         * @summary Adcode 国内外行政区域查询
+         * @param {string} [keywords] 关键词搜索（城市名、区县名，支持中英文）。
+         * @param {string} [adcode] 中国行政区划代码精确查询（如 &#x60;110000&#x60;），同时返回下级行政区。
+         * @param {number} [lat] 纬度，与 &#x60;lng&#x60; 配合使用，坐标反查附近地点。
+         * @param {number} [lng] 经度，与 &#x60;lat&#x60; 配合使用。
+         * @param {GetMiscDistrictLevelEnum} [level] 过滤行政级别。
+         * @param {string} [country] 过滤国家代码（ISO 3166-1 alpha-2），如 &#x60;CN&#x60;、&#x60;JP&#x60;、&#x60;US&#x60;、&#x60;GB&#x60;。
+         * @param {number} [limit] 返回数量上限，默认 &#x60;20&#x60;，最大 &#x60;100&#x60;。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getMiscHotboard(type: GetMiscHotboardTypeEnum, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetMiscHotboard200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getMiscHotboard(type, options);
+        async getMiscDistrict(keywords?: string, adcode?: string, lat?: number, lng?: number, level?: GetMiscDistrictLevelEnum, country?: string, limit?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetMiscDistrict200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getMiscDistrict(keywords, adcode, lat, lng, level, country, limit, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['MiscApi.getMiscDistrict']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 查询指定日期、月份或年份的万年历与节假日信息。  ## 功能概述 这个接口支持三种查询方式：按天（`date`）、按月（`month`）和按年（`year`）。调用时三者选一个传入即可。  如果你只关心某一类事件，可以通过 `holiday_type` 进行筛选，例如只看法定休假/调休、公历节日、农历节日或节气。  在 `date` 模式下，传 `include_nearby=true` 可以额外返回该日期前后最近的节日；返回数量由 `nearby_limit` 控制，默认 7，最大 30。
+         * @summary 查询节假日与万年历
+         * @param {string} [date] 按天查询时填写这个参数，例如查某一天。格式：&#x60;YYYY-MM-DD&#x60;。和 &#x60;month&#x60;、&#x60;year&#x60; 三选一。
+         * @param {string} [month] 按月查询时填写这个参数，例如查某个月。格式：&#x60;YYYY-MM&#x60;。和 &#x60;date&#x60;、&#x60;year&#x60; 三选一。
+         * @param {string} [year] 按年查询时填写这个参数，例如查某一年。格式：&#x60;YYYY&#x60;。和 &#x60;date&#x60;、&#x60;month&#x60; 三选一。
+         * @param {string} [timezone] 时区名称，默认 Asia/Shanghai。
+         * @param {GetMiscHolidayCalendarHolidayTypeEnum} [holidayType] 节日筛选类型，默认 all。
+         * @param {boolean} [includeNearby] 是否返回前后最近节日，仅 date 模式生效，默认 false。month/year 模式会忽略此参数。
+         * @param {number} [nearbyLimit] 返回最近节日数量限制，默认 7，最大 30。仅 date 模式 + include_nearby&#x3D;true 生效。
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getMiscHolidayCalendar(date?: string, month?: string, year?: string, timezone?: string, holidayType?: GetMiscHolidayCalendarHolidayTypeEnum, includeNearby?: boolean, nearbyLimit?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetMiscHolidayCalendar200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getMiscHolidayCalendar(date, month, year, timezone, holidayType, includeNearby, nearbyLimit, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['MiscApi.getMiscHolidayCalendar']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 想快速跟上网络热点？这个接口让你一网打尽各大主流平台的实时热榜/热搜！  ## 功能概述 你只需要指定一个平台类型，就能获取到该平台当前的热榜数据列表。每个热榜条目都包含标题、热度值和原始链接。非常适合用于制作信息聚合类应用或看板。  ## 三种使用模式  ### 默认模式 只传 `type` 参数，返回该平台当前的实时热榜。  ### 时光机模式 传 `type` + `time` 参数，返回最接近指定时间的热榜快照。如果不可用或无数据，会返回空。  ### 搜索模式 传 `type` + `keyword` + `time_start` + `time_end` 参数，在指定时间范围内搜索包含关键词的热榜条目。可选传 `limit` 限制返回数量。  ### 数据源列表 传 `sources=true`，返回所有支持历史数据的平台列表。  ## 可选值 `type` 参数接受多种不同的值，每种值对应一个不同的热榜来源。以下是目前支持的所有值：  | 分类       | 支持的 type 值 | |------------|-----------------------------------------------------------------------------------------------------------------------------------| | 视频/社区  | bilibili（哔哩哔哩弹幕网）, acfun（A站弹幕视频网站）, weibo（新浪微博热搜）, zhihu（知乎热榜）, zhihu-daily（知乎日报热榜）, douyin（抖音热榜）, kuaishou（快手热榜）, douban-movie（豆瓣电影榜单）, douban-group（豆瓣小组话题）, tieba（百度贴吧热帖）, hupu（虎扑热帖）, ngabbs（NGA游戏论坛热帖）, v2ex（V2EX技术社区热帖）, 52pojie（吾爱破解热帖）, hostloc（全球主机交流论坛）, coolapk（酷安热榜） | | 新闻/资讯  | baidu（百度热搜）, thepaper（澎湃新闻热榜）, toutiao（今日头条热榜）, qq-news（腾讯新闻热榜）, sina（新浪热搜）, sina-news（新浪新闻热榜）, netease-news（网易新闻热榜）, huxiu（虎嗅网热榜）, ifanr（爱范儿热榜） | | 技术/IT    | sspai（少数派热榜）, ithome（IT之家热榜）, ithome-xijiayi（IT之家·喜加一栏目）, juejin（掘金社区热榜）, jianshu（简书热榜）, guokr（果壳热榜）, 36kr（36氪热榜）, 51cto（51CTO热榜）, csdn（CSDN博客热榜）, nodeseek（NodeSeek 技术社区）, hellogithub（HelloGitHub 项目推荐） | | 游戏       | lol（英雄联盟热帖）, genshin（原神热榜）, honkai（崩坏3热榜）, starrail（星穹铁道热榜） | | 音乐       | netease-music（网易云音乐热歌榜）, qq-music（QQ音乐热歌榜） | | 其他       | weread（微信读书热门书籍）, weatheralarm（天气预警信息）, earthquake（地震速报）, history（历史上的今天） | 
+         * @summary 查询热榜
+         * @param {GetMiscHotboardTypeEnum} type 你想要查询的热榜平台。支持多种主流平台类型，详见下方[可选值](#可选值)表格。
+         * @param {number} [time] 时光机模式：毫秒时间戳，返回最接近该时间的热榜快照。不传则返回当前实时热榜。
+         * @param {string} [keyword] 搜索模式：搜索关键词，在历史热榜中搜索包含该关键词的条目。需配合 time_start 和 time_end 使用。
+         * @param {number} [timeStart] 搜索模式必填：搜索起始时间戳（毫秒）。
+         * @param {number} [timeEnd] 搜索模式必填：搜索结束时间戳（毫秒）。
+         * @param {number} [limit] 搜索模式下最大返回条数，默认 50，最大 200。
+         * @param {boolean} [sources] 设为 true 时列出所有可用的历史数据源，忽略其他参数。
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getMiscHotboard(type: GetMiscHotboardTypeEnum, time?: number, keyword?: string, timeStart?: number, timeEnd?: number, limit?: number, sources?: boolean, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetMiscHotboard200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getMiscHotboard(type, time, keyword, timeStart, timeEnd, limit, sources, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['MiscApi.getMiscHotboard']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
+         * 需要在指定时区下查看某个时间点的农历信息？这个接口可以直接返回完整结果。  ## 功能概述 支持传入 Unix 时间戳（秒或毫秒）和 IANA 时区名，返回公历时间、星期、农历年月日、干支、生肖、节气与节日信息。不传 `ts` 时默认使用当前时间，不传 `timezone` 时默认 `Asia/Shanghai`。  ## 时区说明 - 支持标准 IANA 时区，例如 `Asia/Shanghai`、`Asia/Tokyo` - 也支持别名：`Shanghai`、`Beijing` - 时区非法时返回 400 并提示 `invalid timezone: xxx`
+         * @summary 查询农历时间
+         * @param {string} [ts] Unix 时间戳，支持 10 位秒级或 13 位毫秒级。不传则默认当前时间。
+         * @param {string} [timezone] 时区名称。支持 IANA 时区（如 Asia/Shanghai）和别名（Shanghai、Beijing）。默认 Asia/Shanghai。
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getMiscLunartime(ts?: string, timezone?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetMiscLunartime200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getMiscLunartime(ts, timezone, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['MiscApi.getMiscLunartime']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
          * 想知道一个手机号码来自哪里？是移动、联通还是电信？这个接口可以告诉你答案。  ## 功能概述 提供一个国内的手机号码，我们会查询并返回它的归属地（省份和城市）以及所属的运营商信息。
-         * @summary 查询手机号码归属地信息
+         * @summary 查询手机归属地
          * @param {string} phone 需要查询的11位中国大陆手机号码。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -5174,7 +6950,7 @@ export const MiscApiFp = function(configuration?: Configuration) {
         },
         /**
          * 需要一个简单的随机数，还是需要一串不重复的、带小数的随机数？这个接口都能满足你！  ## 功能概述 这是一个强大的随机数生成器。你可以指定生成的范围（最大/最小值）、数量、是否允许重复、以及是否生成小数（并指定小数位数）。  ## 流程图 ```mermaid graph TD     A[开始] --> B{参数校验};     B --> |通过| C{是否允许小数?};     C --> |是| D[生成随机小数];     C --> |否| E[生成随机整数];     D --> F{是否允许重复?};     E --> F;     F --> |是| G[直接生成指定数量];     F --> |否| H[生成不重复的数字];     G --> I[返回结果];     H --> I;     B --> |失败| J[返回 400 错误]; ``` ## 使用须知 > [!WARNING] > **不重复生成的逻辑限制** > 当设置 `allow_repeat=false` 时，请确保取值范围 `(max - min + 1)` 大于或等于你请求的数量 `count`。否则，系统将无法生成足够的不重复数字，请求会失败并返回 400 错误。
-         * @summary 生成高度可定制的随机数
+         * @summary 随机数生成
          * @param {number} [min] 生成随机数的最小值（包含）。
          * @param {number} [max] 生成随机数的最大值（包含）。
          * @param {number} [count] 需要生成的随机数的数量。
@@ -5191,7 +6967,7 @@ export const MiscApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * 这是一个用于将Unix时间戳转换为人类可读日期时间的旧版接口。  ## 功能概述 输入一个秒级或毫秒级的时间戳，返回其对应的本地时间和UTC时间。  > [!WARNING] > **接口已过时**：这个接口已被新的 `/convert/unixtime` 取代。新接口功能更强大，支持双向转换。我们建议你迁移到新接口。  [👉 前往新版接口文档](/docs/api-reference/get-convert-unixtime)
+         * 这是一个用于将Unix时间戳转换为人类可读日期时间的旧版接口。  ## 功能概述 输入一个秒级或毫秒级的时间戳，返回其对应的本地时间和UTC时间。  > [!WARNING] > **接口已过时**：这个接口已被新的 `/convert/unixtime` 取代。新接口功能更强大，支持双向转换。我们建议你迁移到新接口。  [➡️ 前往新版接口文档](/docs/api-reference/get-convert-unixtime)
          * @summary 转换时间戳 (旧版，推荐使用/convert/unixtime)
          * @param {string} ts 需要转换的Unix时间戳，支持10位（秒）或13位（毫秒）。
          * @param {*} [options] Override http request option.
@@ -5229,36 +7005,43 @@ export const MiscApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * 买了东西想知道快递到哪儿了？这个接口帮你实时追踪物流状态。  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者集成和测试。未来，它将转为付费API，为用户提供更稳定和强大的服务。  ## 功能概述 提供一个快递单号，系统会自动识别快递公司并返回完整的物流轨迹信息。支持中通、圆通、韵达、申通、极兔、顺丰、京东、EMS、德邦等60+国内外主流快递公司。  ## 使用须知 - **自动识别**：不知道是哪家快递？系统会根据单号规则自动识别快递公司（推荐使用） - **手动指定**：如果已知快递公司，可以传递 `carrier_code` 参数，查询速度会更快 - **查询时效**：物流信息实时查询，响应时间通常在1-2秒内
+         * 买了东西想知道快递到哪儿了？这个接口帮你实时追踪物流状态。  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者集成和测试。未来，它将转为付费API，为用户提供更稳定和强大的服务。  ## 功能概述 提供一个快递单号，系统会自动识别快递公司并返回完整的物流轨迹信息。支持中通、圆通、韵达、申通、极兔、顺丰、京东、EMS、德邦等60+国内外主流快递公司。  ## 使用须知 - **自动识别**：不知道是哪家快递？系统会根据单号规则自动识别快递公司（推荐使用） - **手动指定**：如果已知快递公司，可以传递 `carrier_code` 参数，查询速度会更快 - **手机尾号验证**：部分快递公司需要验证收件人手机尾号才能查询详细物流，如果返回「暂无物流信息」，建议尝试传入 `phone` 参数 - **查询时效**：物流信息实时查询，响应时间通常在1-2秒内
          * @summary 查询快递物流信息
          * @param {string} trackingNumber 快递单号，通常是一串10-20位的数字或字母数字组合。
          * @param {string} [carrierCode] 快递公司编码（可选）。不填写时系统会自动识别，填写后可加快查询速度。
+         * @param {string} [phone] 收件人手机尾号，4位数字（可选）。部分快递公司需要验证手机尾号才能查询详细物流信息。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getMiscTrackingQuery(trackingNumber: string, carrierCode?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetMiscTrackingQuery200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getMiscTrackingQuery(trackingNumber, carrierCode, options);
+        async getMiscTrackingQuery(trackingNumber: string, carrierCode?: string, phone?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetMiscTrackingQuery200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getMiscTrackingQuery(trackingNumber, carrierCode, phone, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['MiscApi.getMiscTrackingQuery']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * 出门前，查一下天气总是个好习惯。这个接口为你提供精准、实时的天气数据。  ## 功能概述 你可以通过城市名称或高德地图的Adcode来查询指定地区的实时天气状况，包括天气现象、温度、湿度、风向和风力等。  ## 使用须知 - **参数优先级**：当你同时提供了 `city` (城市名) 和 `adcode` (城市编码) 两个参数时，系统会 **优先使用 `adcode`** 进行查询，因为它更精确。 - **查询范围**：为了保证查询的准确性，我们的服务仅支持标准的“省”、“市”、“区/县”级别的行政区划名称查询，不保证能查询到乡镇或具体地点。  ## 错误处理指南 - **410 Gone**: 这个特殊的错误码意味着你查询的地区无效或不受我们支持。比如你输入了“火星”，或者某个我们无法识别的村庄名称。这个状态码告诉你，这个“资源”是永久性地不可用了。
-         * @summary 查询实时天气信息
-         * @param {string} [city] 标准的城市名称，如 \&#39;北京\&#39;, \&#39;上海市\&#39;, \&#39;福田区\&#39;。请使用官方的省、市、区县行政区划名称。
-         * @param {string} [adcode] 高德地图的6位数字城市编码。例如，北京市的Adcode是 \&#39;110000\&#39;。使用Adcode查询更准确、更快速。
+         * 出门前，查一下天气总是个好习惯。这个接口为你提供精准、实时的天气数据，支持国内和国际城市。  ## 功能概述 这个接口支持三种查询方式： - 可以传 `adcode`，按行政区编码查询（优先级最高） - 可以传 `city`，按城市名称查询，支持中文（`北京`）和英文（`Tokyo`） - 两个都不传时，按客户端 IP 自动定位查询  支持 `lang` 参数，可选 `zh`（默认）和 `en`，城市名翻译覆盖 7000+ 城市。  ## 可选功能模块 - `extended=true`：扩展气象字段（体感温度、能见度、气压、紫外线、空气质量及污染物分项数据） - `forecast=true`：多天预报（最多7天，含日出日落、风速等详细数据） - `hourly=true`：逐小时预报（24小时） - `minutely=true`：分钟级降水预报（仅国内城市） - `indices=true`：18项生活指数（穿衣、紫外线、洗车、运动、花粉等）  ## 天气字段说明 `weather` 是天气现象文本，不是固定枚举。  常见值包括：晴、多云、阴、小雨、中雨、大雨、雷阵雨、小雪、中雪、大雪、雨夹雪、雾、霾、沙尘。  如果你的业务需要稳定分类，建议结合 `weather_code` 做自己的映射归类。
+         * @summary 查询天气
+         * @param {string} [city] 城市名称，支持中文（&#x60;北京&#x60;）和英文（&#x60;Tokyo&#x60;）。可选参数，不传时会尝试 IP 自动定位。
+         * @param {string} [adcode] 城市行政区划代码（如 &#x60;110000&#x60;），优先级高于 city。可选参数，不传时会尝试 IP 自动定位。
+         * @param {boolean} [extended] 返回扩展气象字段（体感温度、能见度、气压、紫外线、降水量、云量、空气质量指数及污染物分项数据）。
+         * @param {boolean} [forecast] 返回多天预报数据（最多7天），含白天夜间天气、风向风力、日出日落等。
+         * @param {boolean} [hourly] 返回逐小时预报（24小时），含温度、天气、风向风速、湿度、降水概率等。
+         * @param {boolean} [minutely] 返回分钟级降水预报（仅国内城市），每5分钟一个数据点，共24个。
+         * @param {boolean} [indices] 返回18项生活指数（穿衣、紫外线、洗车、晾晒、空调、感冒、运动、舒适度、出行、钓鱼、过敏、防晒、心情、啤酒、雨伞、交通、空气净化器、花粉）。
+         * @param {GetMiscWeatherLangEnum} [lang] 返回语言。&#x60;zh&#x60; 返回中文（默认），&#x60;en&#x60; 返回英文。城市名翻译覆盖 7000+ 城市。生活指数（&#x60;indices&#x60;）目前仅支持中文。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getMiscWeather(city?: string, adcode?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetMiscWeather200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getMiscWeather(city, adcode, options);
+        async getMiscWeather(city?: string, adcode?: string, extended?: boolean, forecast?: boolean, hourly?: boolean, minutely?: boolean, indices?: boolean, lang?: GetMiscWeatherLangEnum, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetMiscWeather200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getMiscWeather(city, adcode, extended, forecast, hourly, minutely, indices, lang, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['MiscApi.getMiscWeather']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
          * 需要和国外的朋友开会，想知道他那边现在几点？用这个接口一查便知。  ## 功能概述 根据标准的时区名称（例如 \'Asia/Shanghai\' 或 \'Europe/London\'），获取该时区的当前准确时间、UTC偏移量、星期等信息。
-         * @summary 查询全球任意时区的时间
+         * @summary 查询世界时间
          * @param {string} city 你需要查询的城市或地区，请使用标准的 IANA 时区数据库名称，例如 \&#39;Shanghai\&#39;, \&#39;Asia/Tokyo\&#39;, \&#39;America/New_York\&#39;。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -5267,6 +7050,19 @@ export const MiscApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getMiscWorldtime(city, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['MiscApi.getMiscWorldtime']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 想知道两个日期之间相差多久？这个接口帮你精确计算时间差值。  ## 功能概述 输入开始日期和结束日期，返回它们之间的时间差，包括总天数、总小时数、总分钟数、总秒数、总周数，以及人性化显示格式（如\"1年2月3天\"）。  ## 日期格式 接口支持自动识别常见日期格式，包括：YYYY-MM-DD、YYYY/MM/DD、DD-MM-YYYY、ISO 8601（带时区）等。也可以通过`format`参数显式指定格式（如DD-MM-YYYY）。  > [!NOTE] > 当结束日期早于开始日期时，返回的数值为负数。
+         * @summary 计算两个日期之间的时间差值
+         * @param {PostMiscDateDiffRequest} postMiscDateDiffRequest 包含日期信息的JSON对象
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postMiscDateDiff(postMiscDateDiffRequest: PostMiscDateDiffRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PostMiscDateDiff200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postMiscDateDiff(postMiscDateDiffRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['MiscApi.postMiscDateDiff']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
     }
@@ -5280,7 +7076,7 @@ export const MiscApiFactory = function (configuration?: Configuration, basePath?
     return {
         /**
          * 想查看程序员历史上某个特定日期发生的大事件？指定月份和日期，我们就能告诉你！  ## 功能概述 通过指定月份和日期，获取该日发生的程序员相关历史事件。同样使用AI智能筛选，确保事件的相关性和重要性。
-         * @summary 获取指定日期的程序员历史事件
+         * @summary 程序员历史事件
          * @param {number} month 月份，1-12之间的整数。
          * @param {number} day 日期，1-31之间的整数。
          * @param {*} [options] Override http request option.
@@ -5291,7 +7087,7 @@ export const MiscApiFactory = function (configuration?: Configuration, basePath?
         },
         /**
          * 想知道程序员历史上的今天发生了什么大事吗？这个接口告诉你答案！  ## 功能概述 我们使用AI智能筛选从海量历史事件中挑选出与程序员、计算机科学相关的重要事件。每个事件都经过重要性评分和相关性评分，确保内容质量。
-         * @summary 获取今天的程序员历史事件
+         * @summary 程序员历史上的今天
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -5299,18 +7095,67 @@ export const MiscApiFactory = function (configuration?: Configuration, basePath?
             return localVarFp.getHistoryProgrammerToday(options).then((request) => request(axios, basePath));
         },
         /**
-         * 想快速跟上网络热点？这个接口让你一网打尽各大主流平台的实时热榜/热搜！  ## 功能概述 你只需要指定一个平台类型，就能获取到该平台当前的热榜数据列表。每个热榜条目都包含标题、热度值和原始链接。非常适合用于制作信息聚合类应用或看板。  ## 可选值 `type` 参数接受多种不同的值，每种值对应一个不同的热榜来源。以下是目前支持的所有值：  | 分类       | 支持的 type 值 | |------------|-----------------------------------------------------------------------------------------------------------------------------------| | 视频/社区  | bilibili（哔哩哔哩弹幕网）, acfun（A站弹幕视频网站）, weibo（新浪微博热搜）, zhihu（知乎热榜）, zhihu-daily（知乎日报热榜）, douyin（抖音热榜）, kuaishou（快手热榜）, douban-movie（豆瓣电影榜单）, douban-group（豆瓣小组话题）, tieba（百度贴吧热帖）, hupu（虎扑热帖）, miyoushe（米游社话题榜）, ngabbs（NGA游戏论坛热帖）, v2ex（V2EX技术社区热帖）, 52pojie（吾爱破解热帖）, hostloc（全球主机交流论坛）, coolapk（酷安热榜） | | 新闻/资讯  | baidu（百度热搜）, thepaper（澎湃新闻热榜）, toutiao（今日头条热榜）, qq-news（腾讯新闻热榜）, sina（新浪热搜）, sina-news（新浪新闻热榜）, netease-news（网易新闻热榜）, huxiu（虎嗅网热榜）, ifanr（爱范儿热榜） | | 技术/IT    | sspai（少数派热榜）, ithome（IT之家热榜）, ithome-xijiayi（IT之家·喜加一栏目）, juejin（掘金社区热榜）, jianshu（简书热榜）, guokr（果壳热榜）, 36kr（36氪热榜）, 51cto（51CTO热榜）, csdn（CSDN博客热榜）, nodeseek（NodeSeek 技术社区）, hellogithub（HelloGitHub 项目推荐） | | 游戏       | lol（英雄联盟热帖）, genshin（原神热榜）, honkai（崩坏3热榜）, starrail（星穹铁道热榜） | | 其他       | weread（微信读书热门书籍）, weatheralarm（天气预警信息）, earthquake（地震速报）, history（历史上的今天） | 
-         * @summary 获取多平台实时热榜
-         * @param {GetMiscHotboardTypeEnum} type 你想要查询的热榜平台。支持多种主流平台类型，详见下方[可选值](#可选值)表格。
+         * 一个接口，覆盖全球 243 个国家、中国省/市/区/街道四级行政区划，支持关键词搜索、行政编码查询、坐标反查三种查询模式（必须至少传入一种查询参数）。  ## 功能概述 根据用户输入的搜索条件快速查找行政区域信息。例如：中国 > 山东省 > 济南市 > 历下区 > 舜华路街道。  无需注册、无需密钥，直接调用即可获取结构化的行政区域数据。支持三种查询方式： - 传 `adcode`，按行政编码精确查询，同时返回下级区划列表 - 传 `lat` + `lng`，坐标反查附近地点 - 传 `keywords`，按关键词搜索，支持中英文  ## 中国与国际数据差异 中国数据包含 `adcode`、`citycode` 等字段，支持省/市/区/街道四级逐级查询；国际城市数据不含这些字段，但额外提供 `population`（人口）和 `timezone`（时区）。  > [!NOTE] > 部分城市（如东莞、文昌）没有区县层级，市级下方直接显示街道。街道级别的 `adcode` 返回的是所属区县的 `adcode`。
+         * @summary Adcode 国内外行政区域查询
+         * @param {string} [keywords] 关键词搜索（城市名、区县名，支持中英文）。
+         * @param {string} [adcode] 中国行政区划代码精确查询（如 &#x60;110000&#x60;），同时返回下级行政区。
+         * @param {number} [lat] 纬度，与 &#x60;lng&#x60; 配合使用，坐标反查附近地点。
+         * @param {number} [lng] 经度，与 &#x60;lat&#x60; 配合使用。
+         * @param {GetMiscDistrictLevelEnum} [level] 过滤行政级别。
+         * @param {string} [country] 过滤国家代码（ISO 3166-1 alpha-2），如 &#x60;CN&#x60;、&#x60;JP&#x60;、&#x60;US&#x60;、&#x60;GB&#x60;。
+         * @param {number} [limit] 返回数量上限，默认 &#x60;20&#x60;，最大 &#x60;100&#x60;。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getMiscHotboard(type: GetMiscHotboardTypeEnum, options?: RawAxiosRequestConfig): AxiosPromise<GetMiscHotboard200Response> {
-            return localVarFp.getMiscHotboard(type, options).then((request) => request(axios, basePath));
+        getMiscDistrict(keywords?: string, adcode?: string, lat?: number, lng?: number, level?: GetMiscDistrictLevelEnum, country?: string, limit?: number, options?: RawAxiosRequestConfig): AxiosPromise<GetMiscDistrict200Response> {
+            return localVarFp.getMiscDistrict(keywords, adcode, lat, lng, level, country, limit, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 查询指定日期、月份或年份的万年历与节假日信息。  ## 功能概述 这个接口支持三种查询方式：按天（`date`）、按月（`month`）和按年（`year`）。调用时三者选一个传入即可。  如果你只关心某一类事件，可以通过 `holiday_type` 进行筛选，例如只看法定休假/调休、公历节日、农历节日或节气。  在 `date` 模式下，传 `include_nearby=true` 可以额外返回该日期前后最近的节日；返回数量由 `nearby_limit` 控制，默认 7，最大 30。
+         * @summary 查询节假日与万年历
+         * @param {string} [date] 按天查询时填写这个参数，例如查某一天。格式：&#x60;YYYY-MM-DD&#x60;。和 &#x60;month&#x60;、&#x60;year&#x60; 三选一。
+         * @param {string} [month] 按月查询时填写这个参数，例如查某个月。格式：&#x60;YYYY-MM&#x60;。和 &#x60;date&#x60;、&#x60;year&#x60; 三选一。
+         * @param {string} [year] 按年查询时填写这个参数，例如查某一年。格式：&#x60;YYYY&#x60;。和 &#x60;date&#x60;、&#x60;month&#x60; 三选一。
+         * @param {string} [timezone] 时区名称，默认 Asia/Shanghai。
+         * @param {GetMiscHolidayCalendarHolidayTypeEnum} [holidayType] 节日筛选类型，默认 all。
+         * @param {boolean} [includeNearby] 是否返回前后最近节日，仅 date 模式生效，默认 false。month/year 模式会忽略此参数。
+         * @param {number} [nearbyLimit] 返回最近节日数量限制，默认 7，最大 30。仅 date 模式 + include_nearby&#x3D;true 生效。
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getMiscHolidayCalendar(date?: string, month?: string, year?: string, timezone?: string, holidayType?: GetMiscHolidayCalendarHolidayTypeEnum, includeNearby?: boolean, nearbyLimit?: number, options?: RawAxiosRequestConfig): AxiosPromise<GetMiscHolidayCalendar200Response> {
+            return localVarFp.getMiscHolidayCalendar(date, month, year, timezone, holidayType, includeNearby, nearbyLimit, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 想快速跟上网络热点？这个接口让你一网打尽各大主流平台的实时热榜/热搜！  ## 功能概述 你只需要指定一个平台类型，就能获取到该平台当前的热榜数据列表。每个热榜条目都包含标题、热度值和原始链接。非常适合用于制作信息聚合类应用或看板。  ## 三种使用模式  ### 默认模式 只传 `type` 参数，返回该平台当前的实时热榜。  ### 时光机模式 传 `type` + `time` 参数，返回最接近指定时间的热榜快照。如果不可用或无数据，会返回空。  ### 搜索模式 传 `type` + `keyword` + `time_start` + `time_end` 参数，在指定时间范围内搜索包含关键词的热榜条目。可选传 `limit` 限制返回数量。  ### 数据源列表 传 `sources=true`，返回所有支持历史数据的平台列表。  ## 可选值 `type` 参数接受多种不同的值，每种值对应一个不同的热榜来源。以下是目前支持的所有值：  | 分类       | 支持的 type 值 | |------------|-----------------------------------------------------------------------------------------------------------------------------------| | 视频/社区  | bilibili（哔哩哔哩弹幕网）, acfun（A站弹幕视频网站）, weibo（新浪微博热搜）, zhihu（知乎热榜）, zhihu-daily（知乎日报热榜）, douyin（抖音热榜）, kuaishou（快手热榜）, douban-movie（豆瓣电影榜单）, douban-group（豆瓣小组话题）, tieba（百度贴吧热帖）, hupu（虎扑热帖）, ngabbs（NGA游戏论坛热帖）, v2ex（V2EX技术社区热帖）, 52pojie（吾爱破解热帖）, hostloc（全球主机交流论坛）, coolapk（酷安热榜） | | 新闻/资讯  | baidu（百度热搜）, thepaper（澎湃新闻热榜）, toutiao（今日头条热榜）, qq-news（腾讯新闻热榜）, sina（新浪热搜）, sina-news（新浪新闻热榜）, netease-news（网易新闻热榜）, huxiu（虎嗅网热榜）, ifanr（爱范儿热榜） | | 技术/IT    | sspai（少数派热榜）, ithome（IT之家热榜）, ithome-xijiayi（IT之家·喜加一栏目）, juejin（掘金社区热榜）, jianshu（简书热榜）, guokr（果壳热榜）, 36kr（36氪热榜）, 51cto（51CTO热榜）, csdn（CSDN博客热榜）, nodeseek（NodeSeek 技术社区）, hellogithub（HelloGitHub 项目推荐） | | 游戏       | lol（英雄联盟热帖）, genshin（原神热榜）, honkai（崩坏3热榜）, starrail（星穹铁道热榜） | | 音乐       | netease-music（网易云音乐热歌榜）, qq-music（QQ音乐热歌榜） | | 其他       | weread（微信读书热门书籍）, weatheralarm（天气预警信息）, earthquake（地震速报）, history（历史上的今天） | 
+         * @summary 查询热榜
+         * @param {GetMiscHotboardTypeEnum} type 你想要查询的热榜平台。支持多种主流平台类型，详见下方[可选值](#可选值)表格。
+         * @param {number} [time] 时光机模式：毫秒时间戳，返回最接近该时间的热榜快照。不传则返回当前实时热榜。
+         * @param {string} [keyword] 搜索模式：搜索关键词，在历史热榜中搜索包含该关键词的条目。需配合 time_start 和 time_end 使用。
+         * @param {number} [timeStart] 搜索模式必填：搜索起始时间戳（毫秒）。
+         * @param {number} [timeEnd] 搜索模式必填：搜索结束时间戳（毫秒）。
+         * @param {number} [limit] 搜索模式下最大返回条数，默认 50，最大 200。
+         * @param {boolean} [sources] 设为 true 时列出所有可用的历史数据源，忽略其他参数。
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getMiscHotboard(type: GetMiscHotboardTypeEnum, time?: number, keyword?: string, timeStart?: number, timeEnd?: number, limit?: number, sources?: boolean, options?: RawAxiosRequestConfig): AxiosPromise<GetMiscHotboard200Response> {
+            return localVarFp.getMiscHotboard(type, time, keyword, timeStart, timeEnd, limit, sources, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 需要在指定时区下查看某个时间点的农历信息？这个接口可以直接返回完整结果。  ## 功能概述 支持传入 Unix 时间戳（秒或毫秒）和 IANA 时区名，返回公历时间、星期、农历年月日、干支、生肖、节气与节日信息。不传 `ts` 时默认使用当前时间，不传 `timezone` 时默认 `Asia/Shanghai`。  ## 时区说明 - 支持标准 IANA 时区，例如 `Asia/Shanghai`、`Asia/Tokyo` - 也支持别名：`Shanghai`、`Beijing` - 时区非法时返回 400 并提示 `invalid timezone: xxx`
+         * @summary 查询农历时间
+         * @param {string} [ts] Unix 时间戳，支持 10 位秒级或 13 位毫秒级。不传则默认当前时间。
+         * @param {string} [timezone] 时区名称。支持 IANA 时区（如 Asia/Shanghai）和别名（Shanghai、Beijing）。默认 Asia/Shanghai。
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getMiscLunartime(ts?: string, timezone?: string, options?: RawAxiosRequestConfig): AxiosPromise<GetMiscLunartime200Response> {
+            return localVarFp.getMiscLunartime(ts, timezone, options).then((request) => request(axios, basePath));
         },
         /**
          * 想知道一个手机号码来自哪里？是移动、联通还是电信？这个接口可以告诉你答案。  ## 功能概述 提供一个国内的手机号码，我们会查询并返回它的归属地（省份和城市）以及所属的运营商信息。
-         * @summary 查询手机号码归属地信息
+         * @summary 查询手机归属地
          * @param {string} phone 需要查询的11位中国大陆手机号码。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -5320,7 +7165,7 @@ export const MiscApiFactory = function (configuration?: Configuration, basePath?
         },
         /**
          * 需要一个简单的随机数，还是需要一串不重复的、带小数的随机数？这个接口都能满足你！  ## 功能概述 这是一个强大的随机数生成器。你可以指定生成的范围（最大/最小值）、数量、是否允许重复、以及是否生成小数（并指定小数位数）。  ## 流程图 ```mermaid graph TD     A[开始] --> B{参数校验};     B --> |通过| C{是否允许小数?};     C --> |是| D[生成随机小数];     C --> |否| E[生成随机整数];     D --> F{是否允许重复?};     E --> F;     F --> |是| G[直接生成指定数量];     F --> |否| H[生成不重复的数字];     G --> I[返回结果];     H --> I;     B --> |失败| J[返回 400 错误]; ``` ## 使用须知 > [!WARNING] > **不重复生成的逻辑限制** > 当设置 `allow_repeat=false` 时，请确保取值范围 `(max - min + 1)` 大于或等于你请求的数量 `count`。否则，系统将无法生成足够的不重复数字，请求会失败并返回 400 错误。
-         * @summary 生成高度可定制的随机数
+         * @summary 随机数生成
          * @param {number} [min] 生成随机数的最小值（包含）。
          * @param {number} [max] 生成随机数的最大值（包含）。
          * @param {number} [count] 需要生成的随机数的数量。
@@ -5334,7 +7179,7 @@ export const MiscApiFactory = function (configuration?: Configuration, basePath?
             return localVarFp.getMiscRandomnumber(min, max, count, allowRepeat, allowDecimal, decimalPlaces, options).then((request) => request(axios, basePath));
         },
         /**
-         * 这是一个用于将Unix时间戳转换为人类可读日期时间的旧版接口。  ## 功能概述 输入一个秒级或毫秒级的时间戳，返回其对应的本地时间和UTC时间。  > [!WARNING] > **接口已过时**：这个接口已被新的 `/convert/unixtime` 取代。新接口功能更强大，支持双向转换。我们建议你迁移到新接口。  [👉 前往新版接口文档](/docs/api-reference/get-convert-unixtime)
+         * 这是一个用于将Unix时间戳转换为人类可读日期时间的旧版接口。  ## 功能概述 输入一个秒级或毫秒级的时间戳，返回其对应的本地时间和UTC时间。  > [!WARNING] > **接口已过时**：这个接口已被新的 `/convert/unixtime` 取代。新接口功能更强大，支持双向转换。我们建议你迁移到新接口。  [➡️ 前往新版接口文档](/docs/api-reference/get-convert-unixtime)
          * @summary 转换时间戳 (旧版，推荐使用/convert/unixtime)
          * @param {string} ts 需要转换的Unix时间戳，支持10位（秒）或13位（毫秒）。
          * @param {*} [options] Override http request option.
@@ -5363,36 +7208,53 @@ export const MiscApiFactory = function (configuration?: Configuration, basePath?
             return localVarFp.getMiscTrackingDetect(trackingNumber, options).then((request) => request(axios, basePath));
         },
         /**
-         * 买了东西想知道快递到哪儿了？这个接口帮你实时追踪物流状态。  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者集成和测试。未来，它将转为付费API，为用户提供更稳定和强大的服务。  ## 功能概述 提供一个快递单号，系统会自动识别快递公司并返回完整的物流轨迹信息。支持中通、圆通、韵达、申通、极兔、顺丰、京东、EMS、德邦等60+国内外主流快递公司。  ## 使用须知 - **自动识别**：不知道是哪家快递？系统会根据单号规则自动识别快递公司（推荐使用） - **手动指定**：如果已知快递公司，可以传递 `carrier_code` 参数，查询速度会更快 - **查询时效**：物流信息实时查询，响应时间通常在1-2秒内
+         * 买了东西想知道快递到哪儿了？这个接口帮你实时追踪物流状态。  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者集成和测试。未来，它将转为付费API，为用户提供更稳定和强大的服务。  ## 功能概述 提供一个快递单号，系统会自动识别快递公司并返回完整的物流轨迹信息。支持中通、圆通、韵达、申通、极兔、顺丰、京东、EMS、德邦等60+国内外主流快递公司。  ## 使用须知 - **自动识别**：不知道是哪家快递？系统会根据单号规则自动识别快递公司（推荐使用） - **手动指定**：如果已知快递公司，可以传递 `carrier_code` 参数，查询速度会更快 - **手机尾号验证**：部分快递公司需要验证收件人手机尾号才能查询详细物流，如果返回「暂无物流信息」，建议尝试传入 `phone` 参数 - **查询时效**：物流信息实时查询，响应时间通常在1-2秒内
          * @summary 查询快递物流信息
          * @param {string} trackingNumber 快递单号，通常是一串10-20位的数字或字母数字组合。
          * @param {string} [carrierCode] 快递公司编码（可选）。不填写时系统会自动识别，填写后可加快查询速度。
+         * @param {string} [phone] 收件人手机尾号，4位数字（可选）。部分快递公司需要验证手机尾号才能查询详细物流信息。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getMiscTrackingQuery(trackingNumber: string, carrierCode?: string, options?: RawAxiosRequestConfig): AxiosPromise<GetMiscTrackingQuery200Response> {
-            return localVarFp.getMiscTrackingQuery(trackingNumber, carrierCode, options).then((request) => request(axios, basePath));
+        getMiscTrackingQuery(trackingNumber: string, carrierCode?: string, phone?: string, options?: RawAxiosRequestConfig): AxiosPromise<GetMiscTrackingQuery200Response> {
+            return localVarFp.getMiscTrackingQuery(trackingNumber, carrierCode, phone, options).then((request) => request(axios, basePath));
         },
         /**
-         * 出门前，查一下天气总是个好习惯。这个接口为你提供精准、实时的天气数据。  ## 功能概述 你可以通过城市名称或高德地图的Adcode来查询指定地区的实时天气状况，包括天气现象、温度、湿度、风向和风力等。  ## 使用须知 - **参数优先级**：当你同时提供了 `city` (城市名) 和 `adcode` (城市编码) 两个参数时，系统会 **优先使用 `adcode`** 进行查询，因为它更精确。 - **查询范围**：为了保证查询的准确性，我们的服务仅支持标准的“省”、“市”、“区/县”级别的行政区划名称查询，不保证能查询到乡镇或具体地点。  ## 错误处理指南 - **410 Gone**: 这个特殊的错误码意味着你查询的地区无效或不受我们支持。比如你输入了“火星”，或者某个我们无法识别的村庄名称。这个状态码告诉你，这个“资源”是永久性地不可用了。
-         * @summary 查询实时天气信息
-         * @param {string} [city] 标准的城市名称，如 \&#39;北京\&#39;, \&#39;上海市\&#39;, \&#39;福田区\&#39;。请使用官方的省、市、区县行政区划名称。
-         * @param {string} [adcode] 高德地图的6位数字城市编码。例如，北京市的Adcode是 \&#39;110000\&#39;。使用Adcode查询更准确、更快速。
+         * 出门前，查一下天气总是个好习惯。这个接口为你提供精准、实时的天气数据，支持国内和国际城市。  ## 功能概述 这个接口支持三种查询方式： - 可以传 `adcode`，按行政区编码查询（优先级最高） - 可以传 `city`，按城市名称查询，支持中文（`北京`）和英文（`Tokyo`） - 两个都不传时，按客户端 IP 自动定位查询  支持 `lang` 参数，可选 `zh`（默认）和 `en`，城市名翻译覆盖 7000+ 城市。  ## 可选功能模块 - `extended=true`：扩展气象字段（体感温度、能见度、气压、紫外线、空气质量及污染物分项数据） - `forecast=true`：多天预报（最多7天，含日出日落、风速等详细数据） - `hourly=true`：逐小时预报（24小时） - `minutely=true`：分钟级降水预报（仅国内城市） - `indices=true`：18项生活指数（穿衣、紫外线、洗车、运动、花粉等）  ## 天气字段说明 `weather` 是天气现象文本，不是固定枚举。  常见值包括：晴、多云、阴、小雨、中雨、大雨、雷阵雨、小雪、中雪、大雪、雨夹雪、雾、霾、沙尘。  如果你的业务需要稳定分类，建议结合 `weather_code` 做自己的映射归类。
+         * @summary 查询天气
+         * @param {string} [city] 城市名称，支持中文（&#x60;北京&#x60;）和英文（&#x60;Tokyo&#x60;）。可选参数，不传时会尝试 IP 自动定位。
+         * @param {string} [adcode] 城市行政区划代码（如 &#x60;110000&#x60;），优先级高于 city。可选参数，不传时会尝试 IP 自动定位。
+         * @param {boolean} [extended] 返回扩展气象字段（体感温度、能见度、气压、紫外线、降水量、云量、空气质量指数及污染物分项数据）。
+         * @param {boolean} [forecast] 返回多天预报数据（最多7天），含白天夜间天气、风向风力、日出日落等。
+         * @param {boolean} [hourly] 返回逐小时预报（24小时），含温度、天气、风向风速、湿度、降水概率等。
+         * @param {boolean} [minutely] 返回分钟级降水预报（仅国内城市），每5分钟一个数据点，共24个。
+         * @param {boolean} [indices] 返回18项生活指数（穿衣、紫外线、洗车、晾晒、空调、感冒、运动、舒适度、出行、钓鱼、过敏、防晒、心情、啤酒、雨伞、交通、空气净化器、花粉）。
+         * @param {GetMiscWeatherLangEnum} [lang] 返回语言。&#x60;zh&#x60; 返回中文（默认），&#x60;en&#x60; 返回英文。城市名翻译覆盖 7000+ 城市。生活指数（&#x60;indices&#x60;）目前仅支持中文。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getMiscWeather(city?: string, adcode?: string, options?: RawAxiosRequestConfig): AxiosPromise<GetMiscWeather200Response> {
-            return localVarFp.getMiscWeather(city, adcode, options).then((request) => request(axios, basePath));
+        getMiscWeather(city?: string, adcode?: string, extended?: boolean, forecast?: boolean, hourly?: boolean, minutely?: boolean, indices?: boolean, lang?: GetMiscWeatherLangEnum, options?: RawAxiosRequestConfig): AxiosPromise<GetMiscWeather200Response> {
+            return localVarFp.getMiscWeather(city, adcode, extended, forecast, hourly, minutely, indices, lang, options).then((request) => request(axios, basePath));
         },
         /**
          * 需要和国外的朋友开会，想知道他那边现在几点？用这个接口一查便知。  ## 功能概述 根据标准的时区名称（例如 \'Asia/Shanghai\' 或 \'Europe/London\'），获取该时区的当前准确时间、UTC偏移量、星期等信息。
-         * @summary 查询全球任意时区的时间
+         * @summary 查询世界时间
          * @param {string} city 你需要查询的城市或地区，请使用标准的 IANA 时区数据库名称，例如 \&#39;Shanghai\&#39;, \&#39;Asia/Tokyo\&#39;, \&#39;America/New_York\&#39;。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         getMiscWorldtime(city: string, options?: RawAxiosRequestConfig): AxiosPromise<GetMiscWorldtime200Response> {
             return localVarFp.getMiscWorldtime(city, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 想知道两个日期之间相差多久？这个接口帮你精确计算时间差值。  ## 功能概述 输入开始日期和结束日期，返回它们之间的时间差，包括总天数、总小时数、总分钟数、总秒数、总周数，以及人性化显示格式（如\"1年2月3天\"）。  ## 日期格式 接口支持自动识别常见日期格式，包括：YYYY-MM-DD、YYYY/MM/DD、DD-MM-YYYY、ISO 8601（带时区）等。也可以通过`format`参数显式指定格式（如DD-MM-YYYY）。  > [!NOTE] > 当结束日期早于开始日期时，返回的数值为负数。
+         * @summary 计算两个日期之间的时间差值
+         * @param {PostMiscDateDiffRequest} postMiscDateDiffRequest 包含日期信息的JSON对象
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postMiscDateDiff(postMiscDateDiffRequest: PostMiscDateDiffRequest, options?: RawAxiosRequestConfig): AxiosPromise<PostMiscDateDiff200Response> {
+            return localVarFp.postMiscDateDiff(postMiscDateDiffRequest, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -5403,7 +7265,7 @@ export const MiscApiFactory = function (configuration?: Configuration, basePath?
 export class MiscApi extends BaseAPI {
     /**
      * 想查看程序员历史上某个特定日期发生的大事件？指定月份和日期，我们就能告诉你！  ## 功能概述 通过指定月份和日期，获取该日发生的程序员相关历史事件。同样使用AI智能筛选，确保事件的相关性和重要性。
-     * @summary 获取指定日期的程序员历史事件
+     * @summary 程序员历史事件
      * @param {number} month 月份，1-12之间的整数。
      * @param {number} day 日期，1-31之间的整数。
      * @param {*} [options] Override http request option.
@@ -5415,7 +7277,7 @@ export class MiscApi extends BaseAPI {
 
     /**
      * 想知道程序员历史上的今天发生了什么大事吗？这个接口告诉你答案！  ## 功能概述 我们使用AI智能筛选从海量历史事件中挑选出与程序员、计算机科学相关的重要事件。每个事件都经过重要性评分和相关性评分，确保内容质量。
-     * @summary 获取今天的程序员历史事件
+     * @summary 程序员历史上的今天
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -5424,19 +7286,71 @@ export class MiscApi extends BaseAPI {
     }
 
     /**
-     * 想快速跟上网络热点？这个接口让你一网打尽各大主流平台的实时热榜/热搜！  ## 功能概述 你只需要指定一个平台类型，就能获取到该平台当前的热榜数据列表。每个热榜条目都包含标题、热度值和原始链接。非常适合用于制作信息聚合类应用或看板。  ## 可选值 `type` 参数接受多种不同的值，每种值对应一个不同的热榜来源。以下是目前支持的所有值：  | 分类       | 支持的 type 值 | |------------|-----------------------------------------------------------------------------------------------------------------------------------| | 视频/社区  | bilibili（哔哩哔哩弹幕网）, acfun（A站弹幕视频网站）, weibo（新浪微博热搜）, zhihu（知乎热榜）, zhihu-daily（知乎日报热榜）, douyin（抖音热榜）, kuaishou（快手热榜）, douban-movie（豆瓣电影榜单）, douban-group（豆瓣小组话题）, tieba（百度贴吧热帖）, hupu（虎扑热帖）, miyoushe（米游社话题榜）, ngabbs（NGA游戏论坛热帖）, v2ex（V2EX技术社区热帖）, 52pojie（吾爱破解热帖）, hostloc（全球主机交流论坛）, coolapk（酷安热榜） | | 新闻/资讯  | baidu（百度热搜）, thepaper（澎湃新闻热榜）, toutiao（今日头条热榜）, qq-news（腾讯新闻热榜）, sina（新浪热搜）, sina-news（新浪新闻热榜）, netease-news（网易新闻热榜）, huxiu（虎嗅网热榜）, ifanr（爱范儿热榜） | | 技术/IT    | sspai（少数派热榜）, ithome（IT之家热榜）, ithome-xijiayi（IT之家·喜加一栏目）, juejin（掘金社区热榜）, jianshu（简书热榜）, guokr（果壳热榜）, 36kr（36氪热榜）, 51cto（51CTO热榜）, csdn（CSDN博客热榜）, nodeseek（NodeSeek 技术社区）, hellogithub（HelloGitHub 项目推荐） | | 游戏       | lol（英雄联盟热帖）, genshin（原神热榜）, honkai（崩坏3热榜）, starrail（星穹铁道热榜） | | 其他       | weread（微信读书热门书籍）, weatheralarm（天气预警信息）, earthquake（地震速报）, history（历史上的今天） | 
-     * @summary 获取多平台实时热榜
-     * @param {GetMiscHotboardTypeEnum} type 你想要查询的热榜平台。支持多种主流平台类型，详见下方[可选值](#可选值)表格。
+     * 一个接口，覆盖全球 243 个国家、中国省/市/区/街道四级行政区划，支持关键词搜索、行政编码查询、坐标反查三种查询模式（必须至少传入一种查询参数）。  ## 功能概述 根据用户输入的搜索条件快速查找行政区域信息。例如：中国 > 山东省 > 济南市 > 历下区 > 舜华路街道。  无需注册、无需密钥，直接调用即可获取结构化的行政区域数据。支持三种查询方式： - 传 `adcode`，按行政编码精确查询，同时返回下级区划列表 - 传 `lat` + `lng`，坐标反查附近地点 - 传 `keywords`，按关键词搜索，支持中英文  ## 中国与国际数据差异 中国数据包含 `adcode`、`citycode` 等字段，支持省/市/区/街道四级逐级查询；国际城市数据不含这些字段，但额外提供 `population`（人口）和 `timezone`（时区）。  > [!NOTE] > 部分城市（如东莞、文昌）没有区县层级，市级下方直接显示街道。街道级别的 `adcode` 返回的是所属区县的 `adcode`。
+     * @summary Adcode 国内外行政区域查询
+     * @param {string} [keywords] 关键词搜索（城市名、区县名，支持中英文）。
+     * @param {string} [adcode] 中国行政区划代码精确查询（如 &#x60;110000&#x60;），同时返回下级行政区。
+     * @param {number} [lat] 纬度，与 &#x60;lng&#x60; 配合使用，坐标反查附近地点。
+     * @param {number} [lng] 经度，与 &#x60;lat&#x60; 配合使用。
+     * @param {GetMiscDistrictLevelEnum} [level] 过滤行政级别。
+     * @param {string} [country] 过滤国家代码（ISO 3166-1 alpha-2），如 &#x60;CN&#x60;、&#x60;JP&#x60;、&#x60;US&#x60;、&#x60;GB&#x60;。
+     * @param {number} [limit] 返回数量上限，默认 &#x60;20&#x60;，最大 &#x60;100&#x60;。
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public getMiscHotboard(type: GetMiscHotboardTypeEnum, options?: RawAxiosRequestConfig) {
-        return MiscApiFp(this.configuration).getMiscHotboard(type, options).then((request) => request(this.axios, this.basePath));
+    public getMiscDistrict(keywords?: string, adcode?: string, lat?: number, lng?: number, level?: GetMiscDistrictLevelEnum, country?: string, limit?: number, options?: RawAxiosRequestConfig) {
+        return MiscApiFp(this.configuration).getMiscDistrict(keywords, adcode, lat, lng, level, country, limit, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 查询指定日期、月份或年份的万年历与节假日信息。  ## 功能概述 这个接口支持三种查询方式：按天（`date`）、按月（`month`）和按年（`year`）。调用时三者选一个传入即可。  如果你只关心某一类事件，可以通过 `holiday_type` 进行筛选，例如只看法定休假/调休、公历节日、农历节日或节气。  在 `date` 模式下，传 `include_nearby=true` 可以额外返回该日期前后最近的节日；返回数量由 `nearby_limit` 控制，默认 7，最大 30。
+     * @summary 查询节假日与万年历
+     * @param {string} [date] 按天查询时填写这个参数，例如查某一天。格式：&#x60;YYYY-MM-DD&#x60;。和 &#x60;month&#x60;、&#x60;year&#x60; 三选一。
+     * @param {string} [month] 按月查询时填写这个参数，例如查某个月。格式：&#x60;YYYY-MM&#x60;。和 &#x60;date&#x60;、&#x60;year&#x60; 三选一。
+     * @param {string} [year] 按年查询时填写这个参数，例如查某一年。格式：&#x60;YYYY&#x60;。和 &#x60;date&#x60;、&#x60;month&#x60; 三选一。
+     * @param {string} [timezone] 时区名称，默认 Asia/Shanghai。
+     * @param {GetMiscHolidayCalendarHolidayTypeEnum} [holidayType] 节日筛选类型，默认 all。
+     * @param {boolean} [includeNearby] 是否返回前后最近节日，仅 date 模式生效，默认 false。month/year 模式会忽略此参数。
+     * @param {number} [nearbyLimit] 返回最近节日数量限制，默认 7，最大 30。仅 date 模式 + include_nearby&#x3D;true 生效。
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public getMiscHolidayCalendar(date?: string, month?: string, year?: string, timezone?: string, holidayType?: GetMiscHolidayCalendarHolidayTypeEnum, includeNearby?: boolean, nearbyLimit?: number, options?: RawAxiosRequestConfig) {
+        return MiscApiFp(this.configuration).getMiscHolidayCalendar(date, month, year, timezone, holidayType, includeNearby, nearbyLimit, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 想快速跟上网络热点？这个接口让你一网打尽各大主流平台的实时热榜/热搜！  ## 功能概述 你只需要指定一个平台类型，就能获取到该平台当前的热榜数据列表。每个热榜条目都包含标题、热度值和原始链接。非常适合用于制作信息聚合类应用或看板。  ## 三种使用模式  ### 默认模式 只传 `type` 参数，返回该平台当前的实时热榜。  ### 时光机模式 传 `type` + `time` 参数，返回最接近指定时间的热榜快照。如果不可用或无数据，会返回空。  ### 搜索模式 传 `type` + `keyword` + `time_start` + `time_end` 参数，在指定时间范围内搜索包含关键词的热榜条目。可选传 `limit` 限制返回数量。  ### 数据源列表 传 `sources=true`，返回所有支持历史数据的平台列表。  ## 可选值 `type` 参数接受多种不同的值，每种值对应一个不同的热榜来源。以下是目前支持的所有值：  | 分类       | 支持的 type 值 | |------------|-----------------------------------------------------------------------------------------------------------------------------------| | 视频/社区  | bilibili（哔哩哔哩弹幕网）, acfun（A站弹幕视频网站）, weibo（新浪微博热搜）, zhihu（知乎热榜）, zhihu-daily（知乎日报热榜）, douyin（抖音热榜）, kuaishou（快手热榜）, douban-movie（豆瓣电影榜单）, douban-group（豆瓣小组话题）, tieba（百度贴吧热帖）, hupu（虎扑热帖）, ngabbs（NGA游戏论坛热帖）, v2ex（V2EX技术社区热帖）, 52pojie（吾爱破解热帖）, hostloc（全球主机交流论坛）, coolapk（酷安热榜） | | 新闻/资讯  | baidu（百度热搜）, thepaper（澎湃新闻热榜）, toutiao（今日头条热榜）, qq-news（腾讯新闻热榜）, sina（新浪热搜）, sina-news（新浪新闻热榜）, netease-news（网易新闻热榜）, huxiu（虎嗅网热榜）, ifanr（爱范儿热榜） | | 技术/IT    | sspai（少数派热榜）, ithome（IT之家热榜）, ithome-xijiayi（IT之家·喜加一栏目）, juejin（掘金社区热榜）, jianshu（简书热榜）, guokr（果壳热榜）, 36kr（36氪热榜）, 51cto（51CTO热榜）, csdn（CSDN博客热榜）, nodeseek（NodeSeek 技术社区）, hellogithub（HelloGitHub 项目推荐） | | 游戏       | lol（英雄联盟热帖）, genshin（原神热榜）, honkai（崩坏3热榜）, starrail（星穹铁道热榜） | | 音乐       | netease-music（网易云音乐热歌榜）, qq-music（QQ音乐热歌榜） | | 其他       | weread（微信读书热门书籍）, weatheralarm（天气预警信息）, earthquake（地震速报）, history（历史上的今天） | 
+     * @summary 查询热榜
+     * @param {GetMiscHotboardTypeEnum} type 你想要查询的热榜平台。支持多种主流平台类型，详见下方[可选值](#可选值)表格。
+     * @param {number} [time] 时光机模式：毫秒时间戳，返回最接近该时间的热榜快照。不传则返回当前实时热榜。
+     * @param {string} [keyword] 搜索模式：搜索关键词，在历史热榜中搜索包含该关键词的条目。需配合 time_start 和 time_end 使用。
+     * @param {number} [timeStart] 搜索模式必填：搜索起始时间戳（毫秒）。
+     * @param {number} [timeEnd] 搜索模式必填：搜索结束时间戳（毫秒）。
+     * @param {number} [limit] 搜索模式下最大返回条数，默认 50，最大 200。
+     * @param {boolean} [sources] 设为 true 时列出所有可用的历史数据源，忽略其他参数。
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public getMiscHotboard(type: GetMiscHotboardTypeEnum, time?: number, keyword?: string, timeStart?: number, timeEnd?: number, limit?: number, sources?: boolean, options?: RawAxiosRequestConfig) {
+        return MiscApiFp(this.configuration).getMiscHotboard(type, time, keyword, timeStart, timeEnd, limit, sources, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 需要在指定时区下查看某个时间点的农历信息？这个接口可以直接返回完整结果。  ## 功能概述 支持传入 Unix 时间戳（秒或毫秒）和 IANA 时区名，返回公历时间、星期、农历年月日、干支、生肖、节气与节日信息。不传 `ts` 时默认使用当前时间，不传 `timezone` 时默认 `Asia/Shanghai`。  ## 时区说明 - 支持标准 IANA 时区，例如 `Asia/Shanghai`、`Asia/Tokyo` - 也支持别名：`Shanghai`、`Beijing` - 时区非法时返回 400 并提示 `invalid timezone: xxx`
+     * @summary 查询农历时间
+     * @param {string} [ts] Unix 时间戳，支持 10 位秒级或 13 位毫秒级。不传则默认当前时间。
+     * @param {string} [timezone] 时区名称。支持 IANA 时区（如 Asia/Shanghai）和别名（Shanghai、Beijing）。默认 Asia/Shanghai。
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public getMiscLunartime(ts?: string, timezone?: string, options?: RawAxiosRequestConfig) {
+        return MiscApiFp(this.configuration).getMiscLunartime(ts, timezone, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 想知道一个手机号码来自哪里？是移动、联通还是电信？这个接口可以告诉你答案。  ## 功能概述 提供一个国内的手机号码，我们会查询并返回它的归属地（省份和城市）以及所属的运营商信息。
-     * @summary 查询手机号码归属地信息
+     * @summary 查询手机归属地
      * @param {string} phone 需要查询的11位中国大陆手机号码。
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -5447,7 +7361,7 @@ export class MiscApi extends BaseAPI {
 
     /**
      * 需要一个简单的随机数，还是需要一串不重复的、带小数的随机数？这个接口都能满足你！  ## 功能概述 这是一个强大的随机数生成器。你可以指定生成的范围（最大/最小值）、数量、是否允许重复、以及是否生成小数（并指定小数位数）。  ## 流程图 ```mermaid graph TD     A[开始] --> B{参数校验};     B --> |通过| C{是否允许小数?};     C --> |是| D[生成随机小数];     C --> |否| E[生成随机整数];     D --> F{是否允许重复?};     E --> F;     F --> |是| G[直接生成指定数量];     F --> |否| H[生成不重复的数字];     G --> I[返回结果];     H --> I;     B --> |失败| J[返回 400 错误]; ``` ## 使用须知 > [!WARNING] > **不重复生成的逻辑限制** > 当设置 `allow_repeat=false` 时，请确保取值范围 `(max - min + 1)` 大于或等于你请求的数量 `count`。否则，系统将无法生成足够的不重复数字，请求会失败并返回 400 错误。
-     * @summary 生成高度可定制的随机数
+     * @summary 随机数生成
      * @param {number} [min] 生成随机数的最小值（包含）。
      * @param {number} [max] 生成随机数的最大值（包含）。
      * @param {number} [count] 需要生成的随机数的数量。
@@ -5462,7 +7376,7 @@ export class MiscApi extends BaseAPI {
     }
 
     /**
-     * 这是一个用于将Unix时间戳转换为人类可读日期时间的旧版接口。  ## 功能概述 输入一个秒级或毫秒级的时间戳，返回其对应的本地时间和UTC时间。  > [!WARNING] > **接口已过时**：这个接口已被新的 `/convert/unixtime` 取代。新接口功能更强大，支持双向转换。我们建议你迁移到新接口。  [👉 前往新版接口文档](/docs/api-reference/get-convert-unixtime)
+     * 这是一个用于将Unix时间戳转换为人类可读日期时间的旧版接口。  ## 功能概述 输入一个秒级或毫秒级的时间戳，返回其对应的本地时间和UTC时间。  > [!WARNING] > **接口已过时**：这个接口已被新的 `/convert/unixtime` 取代。新接口功能更强大，支持双向转换。我们建议你迁移到新接口。  [➡️ 前往新版接口文档](/docs/api-reference/get-convert-unixtime)
      * @summary 转换时间戳 (旧版，推荐使用/convert/unixtime)
      * @param {string} ts 需要转换的Unix时间戳，支持10位（秒）或13位（毫秒）。
      * @param {*} [options] Override http request option.
@@ -5494,32 +7408,39 @@ export class MiscApi extends BaseAPI {
     }
 
     /**
-     * 买了东西想知道快递到哪儿了？这个接口帮你实时追踪物流状态。  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者集成和测试。未来，它将转为付费API，为用户提供更稳定和强大的服务。  ## 功能概述 提供一个快递单号，系统会自动识别快递公司并返回完整的物流轨迹信息。支持中通、圆通、韵达、申通、极兔、顺丰、京东、EMS、德邦等60+国内外主流快递公司。  ## 使用须知 - **自动识别**：不知道是哪家快递？系统会根据单号规则自动识别快递公司（推荐使用） - **手动指定**：如果已知快递公司，可以传递 `carrier_code` 参数，查询速度会更快 - **查询时效**：物流信息实时查询，响应时间通常在1-2秒内
+     * 买了东西想知道快递到哪儿了？这个接口帮你实时追踪物流状态。  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者集成和测试。未来，它将转为付费API，为用户提供更稳定和强大的服务。  ## 功能概述 提供一个快递单号，系统会自动识别快递公司并返回完整的物流轨迹信息。支持中通、圆通、韵达、申通、极兔、顺丰、京东、EMS、德邦等60+国内外主流快递公司。  ## 使用须知 - **自动识别**：不知道是哪家快递？系统会根据单号规则自动识别快递公司（推荐使用） - **手动指定**：如果已知快递公司，可以传递 `carrier_code` 参数，查询速度会更快 - **手机尾号验证**：部分快递公司需要验证收件人手机尾号才能查询详细物流，如果返回「暂无物流信息」，建议尝试传入 `phone` 参数 - **查询时效**：物流信息实时查询，响应时间通常在1-2秒内
      * @summary 查询快递物流信息
      * @param {string} trackingNumber 快递单号，通常是一串10-20位的数字或字母数字组合。
      * @param {string} [carrierCode] 快递公司编码（可选）。不填写时系统会自动识别，填写后可加快查询速度。
+     * @param {string} [phone] 收件人手机尾号，4位数字（可选）。部分快递公司需要验证手机尾号才能查询详细物流信息。
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public getMiscTrackingQuery(trackingNumber: string, carrierCode?: string, options?: RawAxiosRequestConfig) {
-        return MiscApiFp(this.configuration).getMiscTrackingQuery(trackingNumber, carrierCode, options).then((request) => request(this.axios, this.basePath));
+    public getMiscTrackingQuery(trackingNumber: string, carrierCode?: string, phone?: string, options?: RawAxiosRequestConfig) {
+        return MiscApiFp(this.configuration).getMiscTrackingQuery(trackingNumber, carrierCode, phone, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
-     * 出门前，查一下天气总是个好习惯。这个接口为你提供精准、实时的天气数据。  ## 功能概述 你可以通过城市名称或高德地图的Adcode来查询指定地区的实时天气状况，包括天气现象、温度、湿度、风向和风力等。  ## 使用须知 - **参数优先级**：当你同时提供了 `city` (城市名) 和 `adcode` (城市编码) 两个参数时，系统会 **优先使用 `adcode`** 进行查询，因为它更精确。 - **查询范围**：为了保证查询的准确性，我们的服务仅支持标准的“省”、“市”、“区/县”级别的行政区划名称查询，不保证能查询到乡镇或具体地点。  ## 错误处理指南 - **410 Gone**: 这个特殊的错误码意味着你查询的地区无效或不受我们支持。比如你输入了“火星”，或者某个我们无法识别的村庄名称。这个状态码告诉你，这个“资源”是永久性地不可用了。
-     * @summary 查询实时天气信息
-     * @param {string} [city] 标准的城市名称，如 \&#39;北京\&#39;, \&#39;上海市\&#39;, \&#39;福田区\&#39;。请使用官方的省、市、区县行政区划名称。
-     * @param {string} [adcode] 高德地图的6位数字城市编码。例如，北京市的Adcode是 \&#39;110000\&#39;。使用Adcode查询更准确、更快速。
+     * 出门前，查一下天气总是个好习惯。这个接口为你提供精准、实时的天气数据，支持国内和国际城市。  ## 功能概述 这个接口支持三种查询方式： - 可以传 `adcode`，按行政区编码查询（优先级最高） - 可以传 `city`，按城市名称查询，支持中文（`北京`）和英文（`Tokyo`） - 两个都不传时，按客户端 IP 自动定位查询  支持 `lang` 参数，可选 `zh`（默认）和 `en`，城市名翻译覆盖 7000+ 城市。  ## 可选功能模块 - `extended=true`：扩展气象字段（体感温度、能见度、气压、紫外线、空气质量及污染物分项数据） - `forecast=true`：多天预报（最多7天，含日出日落、风速等详细数据） - `hourly=true`：逐小时预报（24小时） - `minutely=true`：分钟级降水预报（仅国内城市） - `indices=true`：18项生活指数（穿衣、紫外线、洗车、运动、花粉等）  ## 天气字段说明 `weather` 是天气现象文本，不是固定枚举。  常见值包括：晴、多云、阴、小雨、中雨、大雨、雷阵雨、小雪、中雪、大雪、雨夹雪、雾、霾、沙尘。  如果你的业务需要稳定分类，建议结合 `weather_code` 做自己的映射归类。
+     * @summary 查询天气
+     * @param {string} [city] 城市名称，支持中文（&#x60;北京&#x60;）和英文（&#x60;Tokyo&#x60;）。可选参数，不传时会尝试 IP 自动定位。
+     * @param {string} [adcode] 城市行政区划代码（如 &#x60;110000&#x60;），优先级高于 city。可选参数，不传时会尝试 IP 自动定位。
+     * @param {boolean} [extended] 返回扩展气象字段（体感温度、能见度、气压、紫外线、降水量、云量、空气质量指数及污染物分项数据）。
+     * @param {boolean} [forecast] 返回多天预报数据（最多7天），含白天夜间天气、风向风力、日出日落等。
+     * @param {boolean} [hourly] 返回逐小时预报（24小时），含温度、天气、风向风速、湿度、降水概率等。
+     * @param {boolean} [minutely] 返回分钟级降水预报（仅国内城市），每5分钟一个数据点，共24个。
+     * @param {boolean} [indices] 返回18项生活指数（穿衣、紫外线、洗车、晾晒、空调、感冒、运动、舒适度、出行、钓鱼、过敏、防晒、心情、啤酒、雨伞、交通、空气净化器、花粉）。
+     * @param {GetMiscWeatherLangEnum} [lang] 返回语言。&#x60;zh&#x60; 返回中文（默认），&#x60;en&#x60; 返回英文。城市名翻译覆盖 7000+ 城市。生活指数（&#x60;indices&#x60;）目前仅支持中文。
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public getMiscWeather(city?: string, adcode?: string, options?: RawAxiosRequestConfig) {
-        return MiscApiFp(this.configuration).getMiscWeather(city, adcode, options).then((request) => request(this.axios, this.basePath));
+    public getMiscWeather(city?: string, adcode?: string, extended?: boolean, forecast?: boolean, hourly?: boolean, minutely?: boolean, indices?: boolean, lang?: GetMiscWeatherLangEnum, options?: RawAxiosRequestConfig) {
+        return MiscApiFp(this.configuration).getMiscWeather(city, adcode, extended, forecast, hourly, minutely, indices, lang, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 需要和国外的朋友开会，想知道他那边现在几点？用这个接口一查便知。  ## 功能概述 根据标准的时区名称（例如 \'Asia/Shanghai\' 或 \'Europe/London\'），获取该时区的当前准确时间、UTC偏移量、星期等信息。
-     * @summary 查询全球任意时区的时间
+     * @summary 查询世界时间
      * @param {string} city 你需要查询的城市或地区，请使用标准的 IANA 时区数据库名称，例如 \&#39;Shanghai\&#39;, \&#39;Asia/Tokyo\&#39;, \&#39;America/New_York\&#39;。
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -5527,8 +7448,36 @@ export class MiscApi extends BaseAPI {
     public getMiscWorldtime(city: string, options?: RawAxiosRequestConfig) {
         return MiscApiFp(this.configuration).getMiscWorldtime(city, options).then((request) => request(this.axios, this.basePath));
     }
+
+    /**
+     * 想知道两个日期之间相差多久？这个接口帮你精确计算时间差值。  ## 功能概述 输入开始日期和结束日期，返回它们之间的时间差，包括总天数、总小时数、总分钟数、总秒数、总周数，以及人性化显示格式（如\"1年2月3天\"）。  ## 日期格式 接口支持自动识别常见日期格式，包括：YYYY-MM-DD、YYYY/MM/DD、DD-MM-YYYY、ISO 8601（带时区）等。也可以通过`format`参数显式指定格式（如DD-MM-YYYY）。  > [!NOTE] > 当结束日期早于开始日期时，返回的数值为负数。
+     * @summary 计算两个日期之间的时间差值
+     * @param {PostMiscDateDiffRequest} postMiscDateDiffRequest 包含日期信息的JSON对象
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public postMiscDateDiff(postMiscDateDiffRequest: PostMiscDateDiffRequest, options?: RawAxiosRequestConfig) {
+        return MiscApiFp(this.configuration).postMiscDateDiff(postMiscDateDiffRequest, options).then((request) => request(this.axios, this.basePath));
+    }
 }
 
+export const GetMiscDistrictLevelEnum = {
+    Province: 'province',
+    City: 'city',
+    District: 'district',
+    Street: 'street'
+} as const;
+export type GetMiscDistrictLevelEnum = typeof GetMiscDistrictLevelEnum[keyof typeof GetMiscDistrictLevelEnum];
+export const GetMiscHolidayCalendarHolidayTypeEnum = {
+    All: 'all',
+    Legal: 'legal',
+    LegalRest: 'legal_rest',
+    LegalWorkday: 'legal_workday',
+    Solar: 'solar',
+    Lunar: 'lunar',
+    Term: 'term'
+} as const;
+export type GetMiscHolidayCalendarHolidayTypeEnum = typeof GetMiscHolidayCalendarHolidayTypeEnum[keyof typeof GetMiscHolidayCalendarHolidayTypeEnum];
 export const GetMiscHotboardTypeEnum = {
     Bilibili: 'bilibili',
     Acfun: 'acfun',
@@ -5541,7 +7490,6 @@ export const GetMiscHotboardTypeEnum = {
     DoubanGroup: 'douban-group',
     Tieba: 'tieba',
     Hupu: 'hupu',
-    Miyoushe: 'miyoushe',
     Ngabbs: 'ngabbs',
     V2ex: 'v2ex',
     _52pojie: '52pojie',
@@ -5571,12 +7519,19 @@ export const GetMiscHotboardTypeEnum = {
     Genshin: 'genshin',
     Honkai: 'honkai',
     Starrail: 'starrail',
+    NeteaseMusic: 'netease-music',
+    QqMusic: 'qq-music',
     Weread: 'weread',
     Weatheralarm: 'weatheralarm',
     Earthquake: 'earthquake',
     History: 'history'
 } as const;
 export type GetMiscHotboardTypeEnum = typeof GetMiscHotboardTypeEnum[keyof typeof GetMiscHotboardTypeEnum];
+export const GetMiscWeatherLangEnum = {
+    Zh: 'zh',
+    En: 'en'
+} as const;
+export type GetMiscWeatherLangEnum = typeof GetMiscWeatherLangEnum[keyof typeof GetMiscWeatherLangEnum];
 
 
 /**
@@ -5664,8 +7619,8 @@ export const NetworkApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
-         * 想知道一个IP地址或域名来自地球的哪个角落？这个接口可以帮你定位它。你可以选择使用默认的GeoIP数据库，也可以指定 `source=commercial` 参数来查询更详细的商业级IP归属信息。  ## 功能概述 提供一个公网IPv4、IPv6地址或域名，我们会利用GeoIP数据库查询并返回它的地理位置（国家、省份、城市）、经纬度、以及所属的运营商（ISP）和自治系统（ASN）信息。这在网络安全分析、访问来源统计等领域非常有用。  当使用 `source=commercial` 参数时，接口将调用高性能商业API，提供更精确的市、区、运营商、时区、海拔等信息。请注意，商业查询的响应时间可能会稍长。
-         * @summary 查询指定IP或域名的归属信息
+         * 想知道一个IP地址或域名来自地球的哪个角落？这个接口可以帮你定位它。你可以使用默认数据源，也可以指定 `source=commercial` 参数来查询更详细的商业级IP归属信息。  ## 功能概述 提供一个公网IPv4、IPv6地址或域名，我们会查询并返回它的地理位置（国家、省份、城市）、经纬度、以及所属的运营商（ISP）和自治系统（ASN）信息。这在网络安全分析、访问来源统计等领域非常有用。  当使用 `source=commercial` 参数时，接口将调用高性能商业API，提供更精确的市、区、运营商、时区、海拔等信息。请注意，商业查询的响应时间可能会稍长。
+         * @summary 查询 IP
          * @param {string} ip 你需要查询的公网IP地址或域名（支持IPv4和IPv6）。
          * @param {GetNetworkIpinfoSourceEnum} [source] 查询的数据源。如果留空，将使用默认的数据库。如果设置为 &#x60;commercial&#x60;，将调用商业级API，返回更详细的地理位置信息，但响应时间可能会稍长。
          * @param {*} [options] Override http request option.
@@ -5706,8 +7661,8 @@ export const NetworkApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
-         * 想知道你自己的出口公网IP是多少吗？这个接口就是你的“网络身份证”。你可以选择使用默认的GeoIP数据库，也可以指定 `source=commercial` 参数来查询更详细的商业级IP归属信息。  ## 功能概述 调用此接口，它会返回你（即发起请求的客户端）的公网IP地址，并附带与 `/network/ipinfo` 接口相同的地理位置和网络归属信息。非常适合用于在网页上向用户展示他们自己的IP和地理位置。  当使用 `source=commercial` 参数时，接口将调用高性能商业API，提供更精确的市、区、运营商、时区、海拔等信息。请注意，商业查询的响应时间可能会稍长。
-         * @summary 获取你的公网IP及归属信息
+         * 想知道你自己的出口公网IP是多少吗？这个接口就是你的“网络身份证”。你可以使用默认数据源，也可以指定 `source=commercial` 参数来查询更详细的商业级IP归属信息。  ## 功能概述 调用此接口，它会返回你（即发起请求的客户端）的公网IP地址，并附带与 `/network/ipinfo` 接口相同的地理位置和网络归属信息。非常适合用于在网页上向用户展示他们自己的IP和地理位置。  当使用 `source=commercial` 参数时，接口将调用高性能商业API，提供更精确的市、区、运营商、时区、海拔等信息。请注意，商业查询的响应时间可能会稍长。
+         * @summary 查询我的 IP
          * @param {GetNetworkMyipSourceEnum} [source] 查询的数据源。如果留空，将使用默认的数据库。如果设置为 &#x60;commercial&#x60;，将调用商业级API，返回更详细的地理位置信息，但响应时间可能会稍长。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -5742,7 +7697,7 @@ export const NetworkApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 想知道从我们的服务器到你的服务器网络延迟高不高？这个工具可以帮你测试网络连通性。  ## 功能概述 这个接口会从我们的服务器节点对你指定的主机（域名或IP地址）执行 ICMP Ping 操作。它会返回最小、最大、平均延迟以及丢包率等关键指标，是诊断网络问题的得力助手。
-         * @summary 从服务器Ping指定主机
+         * @summary Ping 主机
          * @param {string} host 你需要 Ping 的目标主机，可以是域名或IP地址。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -5779,7 +7734,7 @@ export const NetworkApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 这是一个非常方便的快捷接口，想知道你的网络到我们服务器的回程延迟吗？点一下就行！  ## 功能概述 这个接口是 `/network/myip` 和 `/network/ping` 的结合体。它会自动获取你客户端的公网IP，然后从我们的服务器Ping这个IP，并返回延迟数据。这对于快速判断你本地网络到服务器的连接质量非常有用。
-         * @summary 从服务器Ping你的客户端IP
+         * @summary Ping 我的 IP
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -5809,7 +7764,7 @@ export const NetworkApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 想检查一下你的服务器上某个端口（比如SSH的22端口或者Web的80端口）是否对外开放？这个工具可以帮你快速确认。  ## 功能概述 你可以指定一个主机和端口号，我们的服务器会尝试连接该端口，并告诉你它是开放的（open）、关闭的（closed）还是超时了（timeout）。这对于网络服务配置检查和基本的安全扫描很有用。
-         * @summary 扫描远程主机的指定端口
+         * @summary 端口扫描
          * @param {string} host 需要扫描的目标主机，可以是域名或IP地址。
          * @param {number} port 需要扫描的端口号，范围是 1 到 65535。
          * @param {GetNetworkPortscanProtocolEnum} [protocol] 扫描使用的协议，可以是 \&#39;tcp\&#39; 或 \&#39;udp\&#39;。
@@ -5857,7 +7812,7 @@ export const NetworkApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
-         * 你的网站或API还好吗？用这个接口给它做个快速“体检”吧。  ## 功能概述 提供一个URL，我们会向它发起一个请求，并返回其HTTP响应状态码。这是一种简单而有效的服务可用性监控方法。  > [!TIP] > **性能优化**：为了提高效率并减少对目标服务器的负载，我们实际发送的是 `HEAD` 请求，而不是 `GET` 请求。`HEAD` 请求只会获取响应头，而不会下载整个页面内容，因此速度更快。
+         * 你的网站或API还好吗？用这个接口给它做个快速“体检”吧。  ## 功能概述 提供一个URL，我们会向它发起一个请求，并返回其HTTP响应状态码。这是一种简单而有效的服务可用性监控方法。
          * @summary 检查URL的可访问性状态
          * @param {string} url 你需要检查其可访问性状态的完整URL。
          * @param {*} [options] Override http request option.
@@ -6009,8 +7964,8 @@ export const NetworkApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * 想知道一个IP地址或域名来自地球的哪个角落？这个接口可以帮你定位它。你可以选择使用默认的GeoIP数据库，也可以指定 `source=commercial` 参数来查询更详细的商业级IP归属信息。  ## 功能概述 提供一个公网IPv4、IPv6地址或域名，我们会利用GeoIP数据库查询并返回它的地理位置（国家、省份、城市）、经纬度、以及所属的运营商（ISP）和自治系统（ASN）信息。这在网络安全分析、访问来源统计等领域非常有用。  当使用 `source=commercial` 参数时，接口将调用高性能商业API，提供更精确的市、区、运营商、时区、海拔等信息。请注意，商业查询的响应时间可能会稍长。
-         * @summary 查询指定IP或域名的归属信息
+         * 想知道一个IP地址或域名来自地球的哪个角落？这个接口可以帮你定位它。你可以使用默认数据源，也可以指定 `source=commercial` 参数来查询更详细的商业级IP归属信息。  ## 功能概述 提供一个公网IPv4、IPv6地址或域名，我们会查询并返回它的地理位置（国家、省份、城市）、经纬度、以及所属的运营商（ISP）和自治系统（ASN）信息。这在网络安全分析、访问来源统计等领域非常有用。  当使用 `source=commercial` 参数时，接口将调用高性能商业API，提供更精确的市、区、运营商、时区、海拔等信息。请注意，商业查询的响应时间可能会稍长。
+         * @summary 查询 IP
          * @param {string} ip 你需要查询的公网IP地址或域名（支持IPv4和IPv6）。
          * @param {GetNetworkIpinfoSourceEnum} [source] 查询的数据源。如果留空，将使用默认的数据库。如果设置为 &#x60;commercial&#x60;，将调用商业级API，返回更详细的地理位置信息，但响应时间可能会稍长。
          * @param {*} [options] Override http request option.
@@ -6023,13 +7978,13 @@ export const NetworkApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * 想知道你自己的出口公网IP是多少吗？这个接口就是你的“网络身份证”。你可以选择使用默认的GeoIP数据库，也可以指定 `source=commercial` 参数来查询更详细的商业级IP归属信息。  ## 功能概述 调用此接口，它会返回你（即发起请求的客户端）的公网IP地址，并附带与 `/network/ipinfo` 接口相同的地理位置和网络归属信息。非常适合用于在网页上向用户展示他们自己的IP和地理位置。  当使用 `source=commercial` 参数时，接口将调用高性能商业API，提供更精确的市、区、运营商、时区、海拔等信息。请注意，商业查询的响应时间可能会稍长。
-         * @summary 获取你的公网IP及归属信息
+         * 想知道你自己的出口公网IP是多少吗？这个接口就是你的“网络身份证”。你可以使用默认数据源，也可以指定 `source=commercial` 参数来查询更详细的商业级IP归属信息。  ## 功能概述 调用此接口，它会返回你（即发起请求的客户端）的公网IP地址，并附带与 `/network/ipinfo` 接口相同的地理位置和网络归属信息。非常适合用于在网页上向用户展示他们自己的IP和地理位置。  当使用 `source=commercial` 参数时，接口将调用高性能商业API，提供更精确的市、区、运营商、时区、海拔等信息。请注意，商业查询的响应时间可能会稍长。
+         * @summary 查询我的 IP
          * @param {GetNetworkMyipSourceEnum} [source] 查询的数据源。如果留空，将使用默认的数据库。如果设置为 &#x60;commercial&#x60;，将调用商业级API，返回更详细的地理位置信息，但响应时间可能会稍长。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getNetworkMyip(source?: GetNetworkMyipSourceEnum, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetNetworkIpinfo200Response>> {
+        async getNetworkMyip(source?: GetNetworkMyipSourceEnum, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetNetworkMyip200Response>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getNetworkMyip(source, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['NetworkApi.getNetworkMyip']?.[localVarOperationServerIndex]?.url;
@@ -6037,7 +7992,7 @@ export const NetworkApiFp = function(configuration?: Configuration) {
         },
         /**
          * 想知道从我们的服务器到你的服务器网络延迟高不高？这个工具可以帮你测试网络连通性。  ## 功能概述 这个接口会从我们的服务器节点对你指定的主机（域名或IP地址）执行 ICMP Ping 操作。它会返回最小、最大、平均延迟以及丢包率等关键指标，是诊断网络问题的得力助手。
-         * @summary 从服务器Ping指定主机
+         * @summary Ping 主机
          * @param {string} host 你需要 Ping 的目标主机，可以是域名或IP地址。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -6050,7 +8005,7 @@ export const NetworkApiFp = function(configuration?: Configuration) {
         },
         /**
          * 这是一个非常方便的快捷接口，想知道你的网络到我们服务器的回程延迟吗？点一下就行！  ## 功能概述 这个接口是 `/network/myip` 和 `/network/ping` 的结合体。它会自动获取你客户端的公网IP，然后从我们的服务器Ping这个IP，并返回延迟数据。这对于快速判断你本地网络到服务器的连接质量非常有用。
-         * @summary 从服务器Ping你的客户端IP
+         * @summary Ping 我的 IP
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -6062,7 +8017,7 @@ export const NetworkApiFp = function(configuration?: Configuration) {
         },
         /**
          * 想检查一下你的服务器上某个端口（比如SSH的22端口或者Web的80端口）是否对外开放？这个工具可以帮你快速确认。  ## 功能概述 你可以指定一个主机和端口号，我们的服务器会尝试连接该端口，并告诉你它是开放的（open）、关闭的（closed）还是超时了（timeout）。这对于网络服务配置检查和基本的安全扫描很有用。
-         * @summary 扫描远程主机的指定端口
+         * @summary 端口扫描
          * @param {string} host 需要扫描的目标主机，可以是域名或IP地址。
          * @param {number} port 需要扫描的端口号，范围是 1 到 65535。
          * @param {GetNetworkPortscanProtocolEnum} [protocol] 扫描使用的协议，可以是 \&#39;tcp\&#39; 或 \&#39;udp\&#39;。
@@ -6076,7 +8031,7 @@ export const NetworkApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * 你的网站或API还好吗？用这个接口给它做个快速“体检”吧。  ## 功能概述 提供一个URL，我们会向它发起一个请求，并返回其HTTP响应状态码。这是一种简单而有效的服务可用性监控方法。  > [!TIP] > **性能优化**：为了提高效率并减少对目标服务器的负载，我们实际发送的是 `HEAD` 请求，而不是 `GET` 请求。`HEAD` 请求只会获取响应头，而不会下载整个页面内容，因此速度更快。
+         * 你的网站或API还好吗？用这个接口给它做个快速“体检”吧。  ## 功能概述 提供一个URL，我们会向它发起一个请求，并返回其HTTP响应状态码。这是一种简单而有效的服务可用性监控方法。
          * @summary 检查URL的可访问性状态
          * @param {string} url 你需要检查其可访问性状态的完整URL。
          * @param {*} [options] Override http request option.
@@ -6146,8 +8101,8 @@ export const NetworkApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.getNetworkIcp(domain, options).then((request) => request(axios, basePath));
         },
         /**
-         * 想知道一个IP地址或域名来自地球的哪个角落？这个接口可以帮你定位它。你可以选择使用默认的GeoIP数据库，也可以指定 `source=commercial` 参数来查询更详细的商业级IP归属信息。  ## 功能概述 提供一个公网IPv4、IPv6地址或域名，我们会利用GeoIP数据库查询并返回它的地理位置（国家、省份、城市）、经纬度、以及所属的运营商（ISP）和自治系统（ASN）信息。这在网络安全分析、访问来源统计等领域非常有用。  当使用 `source=commercial` 参数时，接口将调用高性能商业API，提供更精确的市、区、运营商、时区、海拔等信息。请注意，商业查询的响应时间可能会稍长。
-         * @summary 查询指定IP或域名的归属信息
+         * 想知道一个IP地址或域名来自地球的哪个角落？这个接口可以帮你定位它。你可以使用默认数据源，也可以指定 `source=commercial` 参数来查询更详细的商业级IP归属信息。  ## 功能概述 提供一个公网IPv4、IPv6地址或域名，我们会查询并返回它的地理位置（国家、省份、城市）、经纬度、以及所属的运营商（ISP）和自治系统（ASN）信息。这在网络安全分析、访问来源统计等领域非常有用。  当使用 `source=commercial` 参数时，接口将调用高性能商业API，提供更精确的市、区、运营商、时区、海拔等信息。请注意，商业查询的响应时间可能会稍长。
+         * @summary 查询 IP
          * @param {string} ip 你需要查询的公网IP地址或域名（支持IPv4和IPv6）。
          * @param {GetNetworkIpinfoSourceEnum} [source] 查询的数据源。如果留空，将使用默认的数据库。如果设置为 &#x60;commercial&#x60;，将调用商业级API，返回更详细的地理位置信息，但响应时间可能会稍长。
          * @param {*} [options] Override http request option.
@@ -6157,18 +8112,18 @@ export const NetworkApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.getNetworkIpinfo(ip, source, options).then((request) => request(axios, basePath));
         },
         /**
-         * 想知道你自己的出口公网IP是多少吗？这个接口就是你的“网络身份证”。你可以选择使用默认的GeoIP数据库，也可以指定 `source=commercial` 参数来查询更详细的商业级IP归属信息。  ## 功能概述 调用此接口，它会返回你（即发起请求的客户端）的公网IP地址，并附带与 `/network/ipinfo` 接口相同的地理位置和网络归属信息。非常适合用于在网页上向用户展示他们自己的IP和地理位置。  当使用 `source=commercial` 参数时，接口将调用高性能商业API，提供更精确的市、区、运营商、时区、海拔等信息。请注意，商业查询的响应时间可能会稍长。
-         * @summary 获取你的公网IP及归属信息
+         * 想知道你自己的出口公网IP是多少吗？这个接口就是你的“网络身份证”。你可以使用默认数据源，也可以指定 `source=commercial` 参数来查询更详细的商业级IP归属信息。  ## 功能概述 调用此接口，它会返回你（即发起请求的客户端）的公网IP地址，并附带与 `/network/ipinfo` 接口相同的地理位置和网络归属信息。非常适合用于在网页上向用户展示他们自己的IP和地理位置。  当使用 `source=commercial` 参数时，接口将调用高性能商业API，提供更精确的市、区、运营商、时区、海拔等信息。请注意，商业查询的响应时间可能会稍长。
+         * @summary 查询我的 IP
          * @param {GetNetworkMyipSourceEnum} [source] 查询的数据源。如果留空，将使用默认的数据库。如果设置为 &#x60;commercial&#x60;，将调用商业级API，返回更详细的地理位置信息，但响应时间可能会稍长。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getNetworkMyip(source?: GetNetworkMyipSourceEnum, options?: RawAxiosRequestConfig): AxiosPromise<GetNetworkIpinfo200Response> {
+        getNetworkMyip(source?: GetNetworkMyipSourceEnum, options?: RawAxiosRequestConfig): AxiosPromise<GetNetworkMyip200Response> {
             return localVarFp.getNetworkMyip(source, options).then((request) => request(axios, basePath));
         },
         /**
          * 想知道从我们的服务器到你的服务器网络延迟高不高？这个工具可以帮你测试网络连通性。  ## 功能概述 这个接口会从我们的服务器节点对你指定的主机（域名或IP地址）执行 ICMP Ping 操作。它会返回最小、最大、平均延迟以及丢包率等关键指标，是诊断网络问题的得力助手。
-         * @summary 从服务器Ping指定主机
+         * @summary Ping 主机
          * @param {string} host 你需要 Ping 的目标主机，可以是域名或IP地址。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -6178,7 +8133,7 @@ export const NetworkApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 这是一个非常方便的快捷接口，想知道你的网络到我们服务器的回程延迟吗？点一下就行！  ## 功能概述 这个接口是 `/network/myip` 和 `/network/ping` 的结合体。它会自动获取你客户端的公网IP，然后从我们的服务器Ping这个IP，并返回延迟数据。这对于快速判断你本地网络到服务器的连接质量非常有用。
-         * @summary 从服务器Ping你的客户端IP
+         * @summary Ping 我的 IP
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -6187,7 +8142,7 @@ export const NetworkApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 想检查一下你的服务器上某个端口（比如SSH的22端口或者Web的80端口）是否对外开放？这个工具可以帮你快速确认。  ## 功能概述 你可以指定一个主机和端口号，我们的服务器会尝试连接该端口，并告诉你它是开放的（open）、关闭的（closed）还是超时了（timeout）。这对于网络服务配置检查和基本的安全扫描很有用。
-         * @summary 扫描远程主机的指定端口
+         * @summary 端口扫描
          * @param {string} host 需要扫描的目标主机，可以是域名或IP地址。
          * @param {number} port 需要扫描的端口号，范围是 1 到 65535。
          * @param {GetNetworkPortscanProtocolEnum} [protocol] 扫描使用的协议，可以是 \&#39;tcp\&#39; 或 \&#39;udp\&#39;。
@@ -6198,7 +8153,7 @@ export const NetworkApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.getNetworkPortscan(host, port, protocol, options).then((request) => request(axios, basePath));
         },
         /**
-         * 你的网站或API还好吗？用这个接口给它做个快速“体检”吧。  ## 功能概述 提供一个URL，我们会向它发起一个请求，并返回其HTTP响应状态码。这是一种简单而有效的服务可用性监控方法。  > [!TIP] > **性能优化**：为了提高效率并减少对目标服务器的负载，我们实际发送的是 `HEAD` 请求，而不是 `GET` 请求。`HEAD` 请求只会获取响应头，而不会下载整个页面内容，因此速度更快。
+         * 你的网站或API还好吗？用这个接口给它做个快速“体检”吧。  ## 功能概述 提供一个URL，我们会向它发起一个请求，并返回其HTTP响应状态码。这是一种简单而有效的服务可用性监控方法。
          * @summary 检查URL的可访问性状态
          * @param {string} url 你需要检查其可访问性状态的完整URL。
          * @param {*} [options] Override http request option.
@@ -6259,8 +8214,8 @@ export class NetworkApi extends BaseAPI {
     }
 
     /**
-     * 想知道一个IP地址或域名来自地球的哪个角落？这个接口可以帮你定位它。你可以选择使用默认的GeoIP数据库，也可以指定 `source=commercial` 参数来查询更详细的商业级IP归属信息。  ## 功能概述 提供一个公网IPv4、IPv6地址或域名，我们会利用GeoIP数据库查询并返回它的地理位置（国家、省份、城市）、经纬度、以及所属的运营商（ISP）和自治系统（ASN）信息。这在网络安全分析、访问来源统计等领域非常有用。  当使用 `source=commercial` 参数时，接口将调用高性能商业API，提供更精确的市、区、运营商、时区、海拔等信息。请注意，商业查询的响应时间可能会稍长。
-     * @summary 查询指定IP或域名的归属信息
+     * 想知道一个IP地址或域名来自地球的哪个角落？这个接口可以帮你定位它。你可以使用默认数据源，也可以指定 `source=commercial` 参数来查询更详细的商业级IP归属信息。  ## 功能概述 提供一个公网IPv4、IPv6地址或域名，我们会查询并返回它的地理位置（国家、省份、城市）、经纬度、以及所属的运营商（ISP）和自治系统（ASN）信息。这在网络安全分析、访问来源统计等领域非常有用。  当使用 `source=commercial` 参数时，接口将调用高性能商业API，提供更精确的市、区、运营商、时区、海拔等信息。请注意，商业查询的响应时间可能会稍长。
+     * @summary 查询 IP
      * @param {string} ip 你需要查询的公网IP地址或域名（支持IPv4和IPv6）。
      * @param {GetNetworkIpinfoSourceEnum} [source] 查询的数据源。如果留空，将使用默认的数据库。如果设置为 &#x60;commercial&#x60;，将调用商业级API，返回更详细的地理位置信息，但响应时间可能会稍长。
      * @param {*} [options] Override http request option.
@@ -6271,8 +8226,8 @@ export class NetworkApi extends BaseAPI {
     }
 
     /**
-     * 想知道你自己的出口公网IP是多少吗？这个接口就是你的“网络身份证”。你可以选择使用默认的GeoIP数据库，也可以指定 `source=commercial` 参数来查询更详细的商业级IP归属信息。  ## 功能概述 调用此接口，它会返回你（即发起请求的客户端）的公网IP地址，并附带与 `/network/ipinfo` 接口相同的地理位置和网络归属信息。非常适合用于在网页上向用户展示他们自己的IP和地理位置。  当使用 `source=commercial` 参数时，接口将调用高性能商业API，提供更精确的市、区、运营商、时区、海拔等信息。请注意，商业查询的响应时间可能会稍长。
-     * @summary 获取你的公网IP及归属信息
+     * 想知道你自己的出口公网IP是多少吗？这个接口就是你的“网络身份证”。你可以使用默认数据源，也可以指定 `source=commercial` 参数来查询更详细的商业级IP归属信息。  ## 功能概述 调用此接口，它会返回你（即发起请求的客户端）的公网IP地址，并附带与 `/network/ipinfo` 接口相同的地理位置和网络归属信息。非常适合用于在网页上向用户展示他们自己的IP和地理位置。  当使用 `source=commercial` 参数时，接口将调用高性能商业API，提供更精确的市、区、运营商、时区、海拔等信息。请注意，商业查询的响应时间可能会稍长。
+     * @summary 查询我的 IP
      * @param {GetNetworkMyipSourceEnum} [source] 查询的数据源。如果留空，将使用默认的数据库。如果设置为 &#x60;commercial&#x60;，将调用商业级API，返回更详细的地理位置信息，但响应时间可能会稍长。
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -6283,7 +8238,7 @@ export class NetworkApi extends BaseAPI {
 
     /**
      * 想知道从我们的服务器到你的服务器网络延迟高不高？这个工具可以帮你测试网络连通性。  ## 功能概述 这个接口会从我们的服务器节点对你指定的主机（域名或IP地址）执行 ICMP Ping 操作。它会返回最小、最大、平均延迟以及丢包率等关键指标，是诊断网络问题的得力助手。
-     * @summary 从服务器Ping指定主机
+     * @summary Ping 主机
      * @param {string} host 你需要 Ping 的目标主机，可以是域名或IP地址。
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -6294,7 +8249,7 @@ export class NetworkApi extends BaseAPI {
 
     /**
      * 这是一个非常方便的快捷接口，想知道你的网络到我们服务器的回程延迟吗？点一下就行！  ## 功能概述 这个接口是 `/network/myip` 和 `/network/ping` 的结合体。它会自动获取你客户端的公网IP，然后从我们的服务器Ping这个IP，并返回延迟数据。这对于快速判断你本地网络到服务器的连接质量非常有用。
-     * @summary 从服务器Ping你的客户端IP
+     * @summary Ping 我的 IP
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -6304,7 +8259,7 @@ export class NetworkApi extends BaseAPI {
 
     /**
      * 想检查一下你的服务器上某个端口（比如SSH的22端口或者Web的80端口）是否对外开放？这个工具可以帮你快速确认。  ## 功能概述 你可以指定一个主机和端口号，我们的服务器会尝试连接该端口，并告诉你它是开放的（open）、关闭的（closed）还是超时了（timeout）。这对于网络服务配置检查和基本的安全扫描很有用。
-     * @summary 扫描远程主机的指定端口
+     * @summary 端口扫描
      * @param {string} host 需要扫描的目标主机，可以是域名或IP地址。
      * @param {number} port 需要扫描的端口号，范围是 1 到 65535。
      * @param {GetNetworkPortscanProtocolEnum} [protocol] 扫描使用的协议，可以是 \&#39;tcp\&#39; 或 \&#39;udp\&#39;。
@@ -6316,7 +8271,7 @@ export class NetworkApi extends BaseAPI {
     }
 
     /**
-     * 你的网站或API还好吗？用这个接口给它做个快速“体检”吧。  ## 功能概述 提供一个URL，我们会向它发起一个请求，并返回其HTTP响应状态码。这是一种简单而有效的服务可用性监控方法。  > [!TIP] > **性能优化**：为了提高效率并减少对目标服务器的负载，我们实际发送的是 `HEAD` 请求，而不是 `GET` 请求。`HEAD` 请求只会获取响应头，而不会下载整个页面内容，因此速度更快。
+     * 你的网站或API还好吗？用这个接口给它做个快速“体检”吧。  ## 功能概述 提供一个URL，我们会向它发起一个请求，并返回其HTTP响应状态码。这是一种简单而有效的服务可用性监控方法。
      * @summary 检查URL的可访问性状态
      * @param {string} url 你需要检查其可访问性状态的完整URL。
      * @param {*} [options] Override http request option.
@@ -6386,7 +8341,7 @@ export const PoemApiAxiosParamCreator = function (configuration?: Configuration)
     return {
         /**
          * 想在你的应用里每天展示一句不一样的话，给用户一点小小的惊喜吗？这个“一言”接口就是为此而生。  ## 功能概述 每次调用，它都会从我们精心收集的、包含数千条诗词、动漫台词、名人名言的语料库中，随机返回一条。你可以用它来做网站首页的Slogan、应用的启动语，或者任何需要灵感点缀的地方。
-         * @summary 随机获取一句诗词或名言
+         * @summary 一言
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -6425,7 +8380,7 @@ export const PoemApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 想在你的应用里每天展示一句不一样的话，给用户一点小小的惊喜吗？这个“一言”接口就是为此而生。  ## 功能概述 每次调用，它都会从我们精心收集的、包含数千条诗词、动漫台词、名人名言的语料库中，随机返回一条。你可以用它来做网站首页的Slogan、应用的启动语，或者任何需要灵感点缀的地方。
-         * @summary 随机获取一句诗词或名言
+         * @summary 一言
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -6446,7 +8401,7 @@ export const PoemApiFactory = function (configuration?: Configuration, basePath?
     return {
         /**
          * 想在你的应用里每天展示一句不一样的话，给用户一点小小的惊喜吗？这个“一言”接口就是为此而生。  ## 功能概述 每次调用，它都会从我们精心收集的、包含数千条诗词、动漫台词、名人名言的语料库中，随机返回一条。你可以用它来做网站首页的Slogan、应用的启动语，或者任何需要灵感点缀的地方。
-         * @summary 随机获取一句诗词或名言
+         * @summary 一言
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -6462,7 +8417,7 @@ export const PoemApiFactory = function (configuration?: Configuration, basePath?
 export class PoemApi extends BaseAPI {
     /**
      * 想在你的应用里每天展示一句不一样的话，给用户一点小小的惊喜吗？这个“一言”接口就是为此而生。  ## 功能概述 每次调用，它都会从我们精心收集的、包含数千条诗词、动漫台词、名人名言的语料库中，随机返回一条。你可以用它来做网站首页的Slogan、应用的启动语，或者任何需要灵感点缀的地方。
-     * @summary 随机获取一句诗词或名言
+     * @summary 一言
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -6480,7 +8435,7 @@ export const RandomApiAxiosParamCreator = function (configuration?: Configuratio
     return {
         /**
          * 想要获得人生问题的神秘答案吗？答案之书API提供了一个神奇8球风格的问答服务，你可以提问并获得随机的神秘答案。  ## 功能概述 通过向答案之书提问，你将获得一个充满智慧（或许）的随机答案。这个API支持通过查询参数或POST请求体两种方式提问。  ## 使用须知  > [!TIP] > **提问技巧** > - 提出明确的问题会获得更好的体验 > - 问题不能为空 > - 支持中文问题 > - 答案具有随机性，仅供娱乐参考
-         * @summary 获取答案之书的神秘答案 (GET)
+         * @summary 答案之书
          * @param {string} question 你想要提问的问题。问题不能为空。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -6516,10 +8471,10 @@ export const RandomApiAxiosParamCreator = function (configuration?: Configuratio
             };
         },
         /**
-         * 需要一张随机图片作为占位符或者背景吗？这个接口是你的不二之选。  ## 功能概述 这是一个非常简单的接口，它会从我们庞大的图库和精选外部图床中随机挑选一张图片，然后通过 302 重定向让你直接访问到它。这使得它可以非常方便地直接用在 HTML 的 `<img>` 标签中。  你可以通过 `/api/v1/random/image?category=acg&type=4k` 这样的请求获取由UapiPro服务器提供的图片，也可以通过 `/api/v1/random/image?category=ai_drawing` 获取由外部图床精选的图片。  如果你不提供任何 category 参数，程序会从所有图片（包括本地的和URL的）中随机抽取一张（**全局随机图片不包含ikun和AI绘画**）。  > [!TIP] > 如果你需要更精确地控制图片类型，请使用 `/image/random/{category}/{type}` 接口。  ### 支持的主类别与子类别 - **UapiPro服务器图片**   - **furry**（福瑞）     - z4k     - szs8k     - s4k     - 4k   - **bq**（表情包/趣图）     - youshou     - xiongmao     - waiguoren     - maomao     - ikun     - eciyuan   - **acg**（二次元动漫）     - pc     - mb - **外部图床精选图片**   - **ai_drawing**: AI绘画。   - **general_anime**: 动漫图。   - **landscape**: 风景图。   - **mobile_wallpaper**: 手机壁纸。   - **pc_wallpaper**: 电脑壁纸。 - **混合动漫**   - **anime**: 混合了UapiPro服务器的acg和外部图床的general_anime分类下的图片。  > [!NOTE] > 默认全局随机（未指定category参数）时，不会包含ikun和AI绘画（ai_drawing）类别的图片。 
-         * @summary 随机二次元、风景、动漫图片壁纸
-         * @param {GetRandomImageCategoryEnum} [category] （可选）指定图片主类别。  **支持的主类别：** - &#x60;furry&#x60;（福瑞，UapiPro服务器） - &#x60;bq&#x60;（表情包/趣图，UapiPro服务器） - &#x60;acg&#x60;（二次元动漫，UapiPro服务器） - &#x60;ai_drawing&#x60;（AI绘画，外部图床） - &#x60;general_anime&#x60;（动漫图，外部图床） - &#x60;landscape&#x60;（风景图，外部图床） - &#x60;mobile_wallpaper&#x60;（手机壁纸，外部图床） - &#x60;pc_wallpaper&#x60;（电脑壁纸，外部图床） - &#x60;anime&#x60;（混合动漫，UapiPro服务器acg + 外部图床general_anime）  &gt; [!TIP] &gt; 如果不指定，将从所有图片中随机抽取（不包含 &#x60;ikun&#x60; 和 &#x60;ai_drawing&#x60;）。 
-         * @param {GetRandomImageTypeEnum} [type] （可选，仅UapiPro服务器图片支持）指定图片子类别。  - **furry**: &#x60;z4k&#x60;, &#x60;szs8k&#x60;, &#x60;s4k&#x60;, &#x60;4k&#x60; - **bq**: &#x60;youshou&#x60;, &#x60;xiongmao&#x60;, &#x60;waiguoren&#x60;, &#x60;maomao&#x60;, &#x60;ikun&#x60;, &#x60;eciyuan&#x60; - **acg**: &#x60;pc&#x60;, &#x60;mb&#x60;  &gt; [!TIP] &gt; 外部图床类别和 &#x60;anime&#x60; 混合类别不支持 &#x60;type&#x60; 参数。 
+         * 需要一张随机图片作为占位符或者背景吗？这个接口是你的不二之选。  ## 功能概述 这是一个非常简单的接口，它会从我们庞大的图库和精选外部图床中随机挑选一张图片，然后通过 302 重定向让你直接访问到它。这使得它可以非常方便地直接用在 HTML 的 `<img>` 标签中。  你可以通过 `/api/v1/random/image?category=acg&type=4k` 这样的请求获取由UapiPro服务器提供的图片，也可以通过 `/api/v1/random/image?category=ai_drawing` 获取由外部图床精选的图片。  如果你不提供任何 category 参数，程序会从所有图片（包括本地的和URL的）中随机抽取一张（**全局随机图片不包含ikun和AI绘画**）。  > [!TIP] > 如果你需要更精确地控制图片类型，请使用 `/image/random/{category}/{type}` 接口。  ### 支持的主类别与子类别 - **acg**（二次元动漫）     - pc     - mb - **外部图床精选/混合动漫**   - **landscape**: 风景图。   - **anime**: 混合了UapiPro服务器的acg和外部图床的general_anime分类下的图片。   - **pc_wallpaper**: 电脑壁纸。   - **mobile_wallpaper**: 手机壁纸。   - **general_anime**: 动漫图。   - **ai_drawing**: AI绘画。 - **其他分类**   - **bq**（表情包/趣图）     - eciyuan     - ikun     - xiongmao     - waiguoren     - maomao   - **furry**（福瑞）     - z4k     - szs8k     - s4k     - 4k  > [!NOTE] > 默认全局随机（未指定category参数）时，不会包含ikun和AI绘画（ai_drawing）类别的图片。 
+         * @summary 随机图片
+         * @param {GetRandomImageCategoryEnum} [category] （可选）指定图片主类别。  **支持的主类别：** - &#x60;acg&#x60;（二次元动漫，UapiPro服务器） - &#x60;landscape&#x60;（风景图，外部图床） - &#x60;anime&#x60;（混合动漫） - &#x60;pc_wallpaper&#x60;（电脑壁纸，外部图床） - &#x60;mobile_wallpaper&#x60;（手机壁纸，外部图床） - &#x60;general_anime&#x60;（动漫图，外部图床） - &#x60;ai_drawing&#x60;（AI绘画，外部图床） - &#x60;bq&#x60;（表情包/趣图，UapiPro服务器） - &#x60;furry&#x60;（福瑞，UapiPro服务器）  &gt; [!TIP] &gt; 如果不指定，将从所有图片中随机抽取（不包含 &#x60;ikun&#x60; 和 &#x60;ai_drawing&#x60;）。 
+         * @param {GetRandomImageTypeEnum} [type] （可选，仅UapiPro服务器图片支持）指定图片子类别。  - **bq**: &#x60;xiongmao&#x60;, &#x60;waiguoren&#x60;, &#x60;maomao&#x60;, &#x60;ikun&#x60;, &#x60;eciyuan&#x60; - **acg**: &#x60;pc&#x60;, &#x60;mb&#x60; - **furry**: &#x60;z4k&#x60;, &#x60;szs8k&#x60;, &#x60;s4k&#x60;, &#x60;4k&#x60;  &gt; [!TIP] &gt; 外部图床类别和 &#x60;anime&#x60; 混合类别不支持 &#x60;type&#x60; 参数。 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -6557,7 +8512,7 @@ export const RandomApiAxiosParamCreator = function (configuration?: Configuratio
         },
         /**
          * 无论是需要生成一个安全的随机密码、一个唯一的Token，还是一个简单的随机ID，这个接口都能满足你。  ## 功能概述 你可以精确地控制生成字符串的长度和字符集类型，非常灵活。  ## 使用须知  > [!TIP] > **字符集类型 `type` 详解** > 你可以通过 `type` 参数精确控制生成的字符集： > - **`numeric`**: 纯数字 (0-9) > - **`lower`**: 纯小写字母 (a-z) > - **`upper`**: 纯大写字母 (A-Z) > - **`alpha`**: 大小写字母 (a-zA-Z) > - **`alphanumeric`** (默认): 数字和大小写字母 (0-9a-zA-Z) > - **`hex`**: 十六进制字符 (0-9a-f)
-         * @summary 生成高度可定制的随机字符串
+         * @summary 随机字符串
          * @param {number} [length] 你希望生成的字符串的长度。有效范围是 1 到 1024。
          * @param {GetRandomStringTypeEnum} [type] 指定构成字符串的字符类型。
          * @param {*} [options] Override http request option.
@@ -6597,7 +8552,7 @@ export const RandomApiAxiosParamCreator = function (configuration?: Configuratio
         },
         /**
          * 通过POST请求向答案之书提问并获得神秘答案。  ## 功能概述 与GET方式相同，但通过JSON请求体发送问题，适合在需要发送较长问题或希望避免URL编码问题的场景中使用。  ## 请求体格式 请求体必须是有效的JSON格式，包含question字段。
-         * @summary 获取答案之书的神秘答案 (POST)
+         * @summary 答案之书 (POST)
          * @param {PostAnswerbookAskRequest} postAnswerbookAskRequest 包含问题的JSON对象
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -6642,7 +8597,7 @@ export const RandomApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 想要获得人生问题的神秘答案吗？答案之书API提供了一个神奇8球风格的问答服务，你可以提问并获得随机的神秘答案。  ## 功能概述 通过向答案之书提问，你将获得一个充满智慧（或许）的随机答案。这个API支持通过查询参数或POST请求体两种方式提问。  ## 使用须知  > [!TIP] > **提问技巧** > - 提出明确的问题会获得更好的体验 > - 问题不能为空 > - 支持中文问题 > - 答案具有随机性，仅供娱乐参考
-         * @summary 获取答案之书的神秘答案 (GET)
+         * @summary 答案之书
          * @param {string} question 你想要提问的问题。问题不能为空。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -6654,10 +8609,10 @@ export const RandomApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * 需要一张随机图片作为占位符或者背景吗？这个接口是你的不二之选。  ## 功能概述 这是一个非常简单的接口，它会从我们庞大的图库和精选外部图床中随机挑选一张图片，然后通过 302 重定向让你直接访问到它。这使得它可以非常方便地直接用在 HTML 的 `<img>` 标签中。  你可以通过 `/api/v1/random/image?category=acg&type=4k` 这样的请求获取由UapiPro服务器提供的图片，也可以通过 `/api/v1/random/image?category=ai_drawing` 获取由外部图床精选的图片。  如果你不提供任何 category 参数，程序会从所有图片（包括本地的和URL的）中随机抽取一张（**全局随机图片不包含ikun和AI绘画**）。  > [!TIP] > 如果你需要更精确地控制图片类型，请使用 `/image/random/{category}/{type}` 接口。  ### 支持的主类别与子类别 - **UapiPro服务器图片**   - **furry**（福瑞）     - z4k     - szs8k     - s4k     - 4k   - **bq**（表情包/趣图）     - youshou     - xiongmao     - waiguoren     - maomao     - ikun     - eciyuan   - **acg**（二次元动漫）     - pc     - mb - **外部图床精选图片**   - **ai_drawing**: AI绘画。   - **general_anime**: 动漫图。   - **landscape**: 风景图。   - **mobile_wallpaper**: 手机壁纸。   - **pc_wallpaper**: 电脑壁纸。 - **混合动漫**   - **anime**: 混合了UapiPro服务器的acg和外部图床的general_anime分类下的图片。  > [!NOTE] > 默认全局随机（未指定category参数）时，不会包含ikun和AI绘画（ai_drawing）类别的图片。 
-         * @summary 随机二次元、风景、动漫图片壁纸
-         * @param {GetRandomImageCategoryEnum} [category] （可选）指定图片主类别。  **支持的主类别：** - &#x60;furry&#x60;（福瑞，UapiPro服务器） - &#x60;bq&#x60;（表情包/趣图，UapiPro服务器） - &#x60;acg&#x60;（二次元动漫，UapiPro服务器） - &#x60;ai_drawing&#x60;（AI绘画，外部图床） - &#x60;general_anime&#x60;（动漫图，外部图床） - &#x60;landscape&#x60;（风景图，外部图床） - &#x60;mobile_wallpaper&#x60;（手机壁纸，外部图床） - &#x60;pc_wallpaper&#x60;（电脑壁纸，外部图床） - &#x60;anime&#x60;（混合动漫，UapiPro服务器acg + 外部图床general_anime）  &gt; [!TIP] &gt; 如果不指定，将从所有图片中随机抽取（不包含 &#x60;ikun&#x60; 和 &#x60;ai_drawing&#x60;）。 
-         * @param {GetRandomImageTypeEnum} [type] （可选，仅UapiPro服务器图片支持）指定图片子类别。  - **furry**: &#x60;z4k&#x60;, &#x60;szs8k&#x60;, &#x60;s4k&#x60;, &#x60;4k&#x60; - **bq**: &#x60;youshou&#x60;, &#x60;xiongmao&#x60;, &#x60;waiguoren&#x60;, &#x60;maomao&#x60;, &#x60;ikun&#x60;, &#x60;eciyuan&#x60; - **acg**: &#x60;pc&#x60;, &#x60;mb&#x60;  &gt; [!TIP] &gt; 外部图床类别和 &#x60;anime&#x60; 混合类别不支持 &#x60;type&#x60; 参数。 
+         * 需要一张随机图片作为占位符或者背景吗？这个接口是你的不二之选。  ## 功能概述 这是一个非常简单的接口，它会从我们庞大的图库和精选外部图床中随机挑选一张图片，然后通过 302 重定向让你直接访问到它。这使得它可以非常方便地直接用在 HTML 的 `<img>` 标签中。  你可以通过 `/api/v1/random/image?category=acg&type=4k` 这样的请求获取由UapiPro服务器提供的图片，也可以通过 `/api/v1/random/image?category=ai_drawing` 获取由外部图床精选的图片。  如果你不提供任何 category 参数，程序会从所有图片（包括本地的和URL的）中随机抽取一张（**全局随机图片不包含ikun和AI绘画**）。  > [!TIP] > 如果你需要更精确地控制图片类型，请使用 `/image/random/{category}/{type}` 接口。  ### 支持的主类别与子类别 - **acg**（二次元动漫）     - pc     - mb - **外部图床精选/混合动漫**   - **landscape**: 风景图。   - **anime**: 混合了UapiPro服务器的acg和外部图床的general_anime分类下的图片。   - **pc_wallpaper**: 电脑壁纸。   - **mobile_wallpaper**: 手机壁纸。   - **general_anime**: 动漫图。   - **ai_drawing**: AI绘画。 - **其他分类**   - **bq**（表情包/趣图）     - eciyuan     - ikun     - xiongmao     - waiguoren     - maomao   - **furry**（福瑞）     - z4k     - szs8k     - s4k     - 4k  > [!NOTE] > 默认全局随机（未指定category参数）时，不会包含ikun和AI绘画（ai_drawing）类别的图片。 
+         * @summary 随机图片
+         * @param {GetRandomImageCategoryEnum} [category] （可选）指定图片主类别。  **支持的主类别：** - &#x60;acg&#x60;（二次元动漫，UapiPro服务器） - &#x60;landscape&#x60;（风景图，外部图床） - &#x60;anime&#x60;（混合动漫） - &#x60;pc_wallpaper&#x60;（电脑壁纸，外部图床） - &#x60;mobile_wallpaper&#x60;（手机壁纸，外部图床） - &#x60;general_anime&#x60;（动漫图，外部图床） - &#x60;ai_drawing&#x60;（AI绘画，外部图床） - &#x60;bq&#x60;（表情包/趣图，UapiPro服务器） - &#x60;furry&#x60;（福瑞，UapiPro服务器）  &gt; [!TIP] &gt; 如果不指定，将从所有图片中随机抽取（不包含 &#x60;ikun&#x60; 和 &#x60;ai_drawing&#x60;）。 
+         * @param {GetRandomImageTypeEnum} [type] （可选，仅UapiPro服务器图片支持）指定图片子类别。  - **bq**: &#x60;xiongmao&#x60;, &#x60;waiguoren&#x60;, &#x60;maomao&#x60;, &#x60;ikun&#x60;, &#x60;eciyuan&#x60; - **acg**: &#x60;pc&#x60;, &#x60;mb&#x60; - **furry**: &#x60;z4k&#x60;, &#x60;szs8k&#x60;, &#x60;s4k&#x60;, &#x60;4k&#x60;  &gt; [!TIP] &gt; 外部图床类别和 &#x60;anime&#x60; 混合类别不支持 &#x60;type&#x60; 参数。 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -6669,7 +8624,7 @@ export const RandomApiFp = function(configuration?: Configuration) {
         },
         /**
          * 无论是需要生成一个安全的随机密码、一个唯一的Token，还是一个简单的随机ID，这个接口都能满足你。  ## 功能概述 你可以精确地控制生成字符串的长度和字符集类型，非常灵活。  ## 使用须知  > [!TIP] > **字符集类型 `type` 详解** > 你可以通过 `type` 参数精确控制生成的字符集： > - **`numeric`**: 纯数字 (0-9) > - **`lower`**: 纯小写字母 (a-z) > - **`upper`**: 纯大写字母 (A-Z) > - **`alpha`**: 大小写字母 (a-zA-Z) > - **`alphanumeric`** (默认): 数字和大小写字母 (0-9a-zA-Z) > - **`hex`**: 十六进制字符 (0-9a-f)
-         * @summary 生成高度可定制的随机字符串
+         * @summary 随机字符串
          * @param {number} [length] 你希望生成的字符串的长度。有效范围是 1 到 1024。
          * @param {GetRandomStringTypeEnum} [type] 指定构成字符串的字符类型。
          * @param {*} [options] Override http request option.
@@ -6683,7 +8638,7 @@ export const RandomApiFp = function(configuration?: Configuration) {
         },
         /**
          * 通过POST请求向答案之书提问并获得神秘答案。  ## 功能概述 与GET方式相同，但通过JSON请求体发送问题，适合在需要发送较长问题或希望避免URL编码问题的场景中使用。  ## 请求体格式 请求体必须是有效的JSON格式，包含question字段。
-         * @summary 获取答案之书的神秘答案 (POST)
+         * @summary 答案之书 (POST)
          * @param {PostAnswerbookAskRequest} postAnswerbookAskRequest 包含问题的JSON对象
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -6705,7 +8660,7 @@ export const RandomApiFactory = function (configuration?: Configuration, basePat
     return {
         /**
          * 想要获得人生问题的神秘答案吗？答案之书API提供了一个神奇8球风格的问答服务，你可以提问并获得随机的神秘答案。  ## 功能概述 通过向答案之书提问，你将获得一个充满智慧（或许）的随机答案。这个API支持通过查询参数或POST请求体两种方式提问。  ## 使用须知  > [!TIP] > **提问技巧** > - 提出明确的问题会获得更好的体验 > - 问题不能为空 > - 支持中文问题 > - 答案具有随机性，仅供娱乐参考
-         * @summary 获取答案之书的神秘答案 (GET)
+         * @summary 答案之书
          * @param {string} question 你想要提问的问题。问题不能为空。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -6714,10 +8669,10 @@ export const RandomApiFactory = function (configuration?: Configuration, basePat
             return localVarFp.getAnswerbookAsk(question, options).then((request) => request(axios, basePath));
         },
         /**
-         * 需要一张随机图片作为占位符或者背景吗？这个接口是你的不二之选。  ## 功能概述 这是一个非常简单的接口，它会从我们庞大的图库和精选外部图床中随机挑选一张图片，然后通过 302 重定向让你直接访问到它。这使得它可以非常方便地直接用在 HTML 的 `<img>` 标签中。  你可以通过 `/api/v1/random/image?category=acg&type=4k` 这样的请求获取由UapiPro服务器提供的图片，也可以通过 `/api/v1/random/image?category=ai_drawing` 获取由外部图床精选的图片。  如果你不提供任何 category 参数，程序会从所有图片（包括本地的和URL的）中随机抽取一张（**全局随机图片不包含ikun和AI绘画**）。  > [!TIP] > 如果你需要更精确地控制图片类型，请使用 `/image/random/{category}/{type}` 接口。  ### 支持的主类别与子类别 - **UapiPro服务器图片**   - **furry**（福瑞）     - z4k     - szs8k     - s4k     - 4k   - **bq**（表情包/趣图）     - youshou     - xiongmao     - waiguoren     - maomao     - ikun     - eciyuan   - **acg**（二次元动漫）     - pc     - mb - **外部图床精选图片**   - **ai_drawing**: AI绘画。   - **general_anime**: 动漫图。   - **landscape**: 风景图。   - **mobile_wallpaper**: 手机壁纸。   - **pc_wallpaper**: 电脑壁纸。 - **混合动漫**   - **anime**: 混合了UapiPro服务器的acg和外部图床的general_anime分类下的图片。  > [!NOTE] > 默认全局随机（未指定category参数）时，不会包含ikun和AI绘画（ai_drawing）类别的图片。 
-         * @summary 随机二次元、风景、动漫图片壁纸
-         * @param {GetRandomImageCategoryEnum} [category] （可选）指定图片主类别。  **支持的主类别：** - &#x60;furry&#x60;（福瑞，UapiPro服务器） - &#x60;bq&#x60;（表情包/趣图，UapiPro服务器） - &#x60;acg&#x60;（二次元动漫，UapiPro服务器） - &#x60;ai_drawing&#x60;（AI绘画，外部图床） - &#x60;general_anime&#x60;（动漫图，外部图床） - &#x60;landscape&#x60;（风景图，外部图床） - &#x60;mobile_wallpaper&#x60;（手机壁纸，外部图床） - &#x60;pc_wallpaper&#x60;（电脑壁纸，外部图床） - &#x60;anime&#x60;（混合动漫，UapiPro服务器acg + 外部图床general_anime）  &gt; [!TIP] &gt; 如果不指定，将从所有图片中随机抽取（不包含 &#x60;ikun&#x60; 和 &#x60;ai_drawing&#x60;）。 
-         * @param {GetRandomImageTypeEnum} [type] （可选，仅UapiPro服务器图片支持）指定图片子类别。  - **furry**: &#x60;z4k&#x60;, &#x60;szs8k&#x60;, &#x60;s4k&#x60;, &#x60;4k&#x60; - **bq**: &#x60;youshou&#x60;, &#x60;xiongmao&#x60;, &#x60;waiguoren&#x60;, &#x60;maomao&#x60;, &#x60;ikun&#x60;, &#x60;eciyuan&#x60; - **acg**: &#x60;pc&#x60;, &#x60;mb&#x60;  &gt; [!TIP] &gt; 外部图床类别和 &#x60;anime&#x60; 混合类别不支持 &#x60;type&#x60; 参数。 
+         * 需要一张随机图片作为占位符或者背景吗？这个接口是你的不二之选。  ## 功能概述 这是一个非常简单的接口，它会从我们庞大的图库和精选外部图床中随机挑选一张图片，然后通过 302 重定向让你直接访问到它。这使得它可以非常方便地直接用在 HTML 的 `<img>` 标签中。  你可以通过 `/api/v1/random/image?category=acg&type=4k` 这样的请求获取由UapiPro服务器提供的图片，也可以通过 `/api/v1/random/image?category=ai_drawing` 获取由外部图床精选的图片。  如果你不提供任何 category 参数，程序会从所有图片（包括本地的和URL的）中随机抽取一张（**全局随机图片不包含ikun和AI绘画**）。  > [!TIP] > 如果你需要更精确地控制图片类型，请使用 `/image/random/{category}/{type}` 接口。  ### 支持的主类别与子类别 - **acg**（二次元动漫）     - pc     - mb - **外部图床精选/混合动漫**   - **landscape**: 风景图。   - **anime**: 混合了UapiPro服务器的acg和外部图床的general_anime分类下的图片。   - **pc_wallpaper**: 电脑壁纸。   - **mobile_wallpaper**: 手机壁纸。   - **general_anime**: 动漫图。   - **ai_drawing**: AI绘画。 - **其他分类**   - **bq**（表情包/趣图）     - eciyuan     - ikun     - xiongmao     - waiguoren     - maomao   - **furry**（福瑞）     - z4k     - szs8k     - s4k     - 4k  > [!NOTE] > 默认全局随机（未指定category参数）时，不会包含ikun和AI绘画（ai_drawing）类别的图片。 
+         * @summary 随机图片
+         * @param {GetRandomImageCategoryEnum} [category] （可选）指定图片主类别。  **支持的主类别：** - &#x60;acg&#x60;（二次元动漫，UapiPro服务器） - &#x60;landscape&#x60;（风景图，外部图床） - &#x60;anime&#x60;（混合动漫） - &#x60;pc_wallpaper&#x60;（电脑壁纸，外部图床） - &#x60;mobile_wallpaper&#x60;（手机壁纸，外部图床） - &#x60;general_anime&#x60;（动漫图，外部图床） - &#x60;ai_drawing&#x60;（AI绘画，外部图床） - &#x60;bq&#x60;（表情包/趣图，UapiPro服务器） - &#x60;furry&#x60;（福瑞，UapiPro服务器）  &gt; [!TIP] &gt; 如果不指定，将从所有图片中随机抽取（不包含 &#x60;ikun&#x60; 和 &#x60;ai_drawing&#x60;）。 
+         * @param {GetRandomImageTypeEnum} [type] （可选，仅UapiPro服务器图片支持）指定图片子类别。  - **bq**: &#x60;xiongmao&#x60;, &#x60;waiguoren&#x60;, &#x60;maomao&#x60;, &#x60;ikun&#x60;, &#x60;eciyuan&#x60; - **acg**: &#x60;pc&#x60;, &#x60;mb&#x60; - **furry**: &#x60;z4k&#x60;, &#x60;szs8k&#x60;, &#x60;s4k&#x60;, &#x60;4k&#x60;  &gt; [!TIP] &gt; 外部图床类别和 &#x60;anime&#x60; 混合类别不支持 &#x60;type&#x60; 参数。 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -6726,7 +8681,7 @@ export const RandomApiFactory = function (configuration?: Configuration, basePat
         },
         /**
          * 无论是需要生成一个安全的随机密码、一个唯一的Token，还是一个简单的随机ID，这个接口都能满足你。  ## 功能概述 你可以精确地控制生成字符串的长度和字符集类型，非常灵活。  ## 使用须知  > [!TIP] > **字符集类型 `type` 详解** > 你可以通过 `type` 参数精确控制生成的字符集： > - **`numeric`**: 纯数字 (0-9) > - **`lower`**: 纯小写字母 (a-z) > - **`upper`**: 纯大写字母 (A-Z) > - **`alpha`**: 大小写字母 (a-zA-Z) > - **`alphanumeric`** (默认): 数字和大小写字母 (0-9a-zA-Z) > - **`hex`**: 十六进制字符 (0-9a-f)
-         * @summary 生成高度可定制的随机字符串
+         * @summary 随机字符串
          * @param {number} [length] 你希望生成的字符串的长度。有效范围是 1 到 1024。
          * @param {GetRandomStringTypeEnum} [type] 指定构成字符串的字符类型。
          * @param {*} [options] Override http request option.
@@ -6737,7 +8692,7 @@ export const RandomApiFactory = function (configuration?: Configuration, basePat
         },
         /**
          * 通过POST请求向答案之书提问并获得神秘答案。  ## 功能概述 与GET方式相同，但通过JSON请求体发送问题，适合在需要发送较长问题或希望避免URL编码问题的场景中使用。  ## 请求体格式 请求体必须是有效的JSON格式，包含question字段。
-         * @summary 获取答案之书的神秘答案 (POST)
+         * @summary 答案之书 (POST)
          * @param {PostAnswerbookAskRequest} postAnswerbookAskRequest 包含问题的JSON对象
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -6754,7 +8709,7 @@ export const RandomApiFactory = function (configuration?: Configuration, basePat
 export class RandomApi extends BaseAPI {
     /**
      * 想要获得人生问题的神秘答案吗？答案之书API提供了一个神奇8球风格的问答服务，你可以提问并获得随机的神秘答案。  ## 功能概述 通过向答案之书提问，你将获得一个充满智慧（或许）的随机答案。这个API支持通过查询参数或POST请求体两种方式提问。  ## 使用须知  > [!TIP] > **提问技巧** > - 提出明确的问题会获得更好的体验 > - 问题不能为空 > - 支持中文问题 > - 答案具有随机性，仅供娱乐参考
-     * @summary 获取答案之书的神秘答案 (GET)
+     * @summary 答案之书
      * @param {string} question 你想要提问的问题。问题不能为空。
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -6764,10 +8719,10 @@ export class RandomApi extends BaseAPI {
     }
 
     /**
-     * 需要一张随机图片作为占位符或者背景吗？这个接口是你的不二之选。  ## 功能概述 这是一个非常简单的接口，它会从我们庞大的图库和精选外部图床中随机挑选一张图片，然后通过 302 重定向让你直接访问到它。这使得它可以非常方便地直接用在 HTML 的 `<img>` 标签中。  你可以通过 `/api/v1/random/image?category=acg&type=4k` 这样的请求获取由UapiPro服务器提供的图片，也可以通过 `/api/v1/random/image?category=ai_drawing` 获取由外部图床精选的图片。  如果你不提供任何 category 参数，程序会从所有图片（包括本地的和URL的）中随机抽取一张（**全局随机图片不包含ikun和AI绘画**）。  > [!TIP] > 如果你需要更精确地控制图片类型，请使用 `/image/random/{category}/{type}` 接口。  ### 支持的主类别与子类别 - **UapiPro服务器图片**   - **furry**（福瑞）     - z4k     - szs8k     - s4k     - 4k   - **bq**（表情包/趣图）     - youshou     - xiongmao     - waiguoren     - maomao     - ikun     - eciyuan   - **acg**（二次元动漫）     - pc     - mb - **外部图床精选图片**   - **ai_drawing**: AI绘画。   - **general_anime**: 动漫图。   - **landscape**: 风景图。   - **mobile_wallpaper**: 手机壁纸。   - **pc_wallpaper**: 电脑壁纸。 - **混合动漫**   - **anime**: 混合了UapiPro服务器的acg和外部图床的general_anime分类下的图片。  > [!NOTE] > 默认全局随机（未指定category参数）时，不会包含ikun和AI绘画（ai_drawing）类别的图片。 
-     * @summary 随机二次元、风景、动漫图片壁纸
-     * @param {GetRandomImageCategoryEnum} [category] （可选）指定图片主类别。  **支持的主类别：** - &#x60;furry&#x60;（福瑞，UapiPro服务器） - &#x60;bq&#x60;（表情包/趣图，UapiPro服务器） - &#x60;acg&#x60;（二次元动漫，UapiPro服务器） - &#x60;ai_drawing&#x60;（AI绘画，外部图床） - &#x60;general_anime&#x60;（动漫图，外部图床） - &#x60;landscape&#x60;（风景图，外部图床） - &#x60;mobile_wallpaper&#x60;（手机壁纸，外部图床） - &#x60;pc_wallpaper&#x60;（电脑壁纸，外部图床） - &#x60;anime&#x60;（混合动漫，UapiPro服务器acg + 外部图床general_anime）  &gt; [!TIP] &gt; 如果不指定，将从所有图片中随机抽取（不包含 &#x60;ikun&#x60; 和 &#x60;ai_drawing&#x60;）。 
-     * @param {GetRandomImageTypeEnum} [type] （可选，仅UapiPro服务器图片支持）指定图片子类别。  - **furry**: &#x60;z4k&#x60;, &#x60;szs8k&#x60;, &#x60;s4k&#x60;, &#x60;4k&#x60; - **bq**: &#x60;youshou&#x60;, &#x60;xiongmao&#x60;, &#x60;waiguoren&#x60;, &#x60;maomao&#x60;, &#x60;ikun&#x60;, &#x60;eciyuan&#x60; - **acg**: &#x60;pc&#x60;, &#x60;mb&#x60;  &gt; [!TIP] &gt; 外部图床类别和 &#x60;anime&#x60; 混合类别不支持 &#x60;type&#x60; 参数。 
+     * 需要一张随机图片作为占位符或者背景吗？这个接口是你的不二之选。  ## 功能概述 这是一个非常简单的接口，它会从我们庞大的图库和精选外部图床中随机挑选一张图片，然后通过 302 重定向让你直接访问到它。这使得它可以非常方便地直接用在 HTML 的 `<img>` 标签中。  你可以通过 `/api/v1/random/image?category=acg&type=4k` 这样的请求获取由UapiPro服务器提供的图片，也可以通过 `/api/v1/random/image?category=ai_drawing` 获取由外部图床精选的图片。  如果你不提供任何 category 参数，程序会从所有图片（包括本地的和URL的）中随机抽取一张（**全局随机图片不包含ikun和AI绘画**）。  > [!TIP] > 如果你需要更精确地控制图片类型，请使用 `/image/random/{category}/{type}` 接口。  ### 支持的主类别与子类别 - **acg**（二次元动漫）     - pc     - mb - **外部图床精选/混合动漫**   - **landscape**: 风景图。   - **anime**: 混合了UapiPro服务器的acg和外部图床的general_anime分类下的图片。   - **pc_wallpaper**: 电脑壁纸。   - **mobile_wallpaper**: 手机壁纸。   - **general_anime**: 动漫图。   - **ai_drawing**: AI绘画。 - **其他分类**   - **bq**（表情包/趣图）     - eciyuan     - ikun     - xiongmao     - waiguoren     - maomao   - **furry**（福瑞）     - z4k     - szs8k     - s4k     - 4k  > [!NOTE] > 默认全局随机（未指定category参数）时，不会包含ikun和AI绘画（ai_drawing）类别的图片。 
+     * @summary 随机图片
+     * @param {GetRandomImageCategoryEnum} [category] （可选）指定图片主类别。  **支持的主类别：** - &#x60;acg&#x60;（二次元动漫，UapiPro服务器） - &#x60;landscape&#x60;（风景图，外部图床） - &#x60;anime&#x60;（混合动漫） - &#x60;pc_wallpaper&#x60;（电脑壁纸，外部图床） - &#x60;mobile_wallpaper&#x60;（手机壁纸，外部图床） - &#x60;general_anime&#x60;（动漫图，外部图床） - &#x60;ai_drawing&#x60;（AI绘画，外部图床） - &#x60;bq&#x60;（表情包/趣图，UapiPro服务器） - &#x60;furry&#x60;（福瑞，UapiPro服务器）  &gt; [!TIP] &gt; 如果不指定，将从所有图片中随机抽取（不包含 &#x60;ikun&#x60; 和 &#x60;ai_drawing&#x60;）。 
+     * @param {GetRandomImageTypeEnum} [type] （可选，仅UapiPro服务器图片支持）指定图片子类别。  - **bq**: &#x60;xiongmao&#x60;, &#x60;waiguoren&#x60;, &#x60;maomao&#x60;, &#x60;ikun&#x60;, &#x60;eciyuan&#x60; - **acg**: &#x60;pc&#x60;, &#x60;mb&#x60; - **furry**: &#x60;z4k&#x60;, &#x60;szs8k&#x60;, &#x60;s4k&#x60;, &#x60;4k&#x60;  &gt; [!TIP] &gt; 外部图床类别和 &#x60;anime&#x60; 混合类别不支持 &#x60;type&#x60; 参数。 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -6777,7 +8732,7 @@ export class RandomApi extends BaseAPI {
 
     /**
      * 无论是需要生成一个安全的随机密码、一个唯一的Token，还是一个简单的随机ID，这个接口都能满足你。  ## 功能概述 你可以精确地控制生成字符串的长度和字符集类型，非常灵活。  ## 使用须知  > [!TIP] > **字符集类型 `type` 详解** > 你可以通过 `type` 参数精确控制生成的字符集： > - **`numeric`**: 纯数字 (0-9) > - **`lower`**: 纯小写字母 (a-z) > - **`upper`**: 纯大写字母 (A-Z) > - **`alpha`**: 大小写字母 (a-zA-Z) > - **`alphanumeric`** (默认): 数字和大小写字母 (0-9a-zA-Z) > - **`hex`**: 十六进制字符 (0-9a-f)
-     * @summary 生成高度可定制的随机字符串
+     * @summary 随机字符串
      * @param {number} [length] 你希望生成的字符串的长度。有效范围是 1 到 1024。
      * @param {GetRandomStringTypeEnum} [type] 指定构成字符串的字符类型。
      * @param {*} [options] Override http request option.
@@ -6789,7 +8744,7 @@ export class RandomApi extends BaseAPI {
 
     /**
      * 通过POST请求向答案之书提问并获得神秘答案。  ## 功能概述 与GET方式相同，但通过JSON请求体发送问题，适合在需要发送较长问题或希望避免URL编码问题的场景中使用。  ## 请求体格式 请求体必须是有效的JSON格式，包含question字段。
-     * @summary 获取答案之书的神秘答案 (POST)
+     * @summary 答案之书 (POST)
      * @param {PostAnswerbookAskRequest} postAnswerbookAskRequest 包含问题的JSON对象
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -6800,30 +8755,29 @@ export class RandomApi extends BaseAPI {
 }
 
 export const GetRandomImageCategoryEnum = {
-    Furry: 'furry',
-    Bq: 'bq',
     Acg: 'acg',
-    AiDrawing: 'ai_drawing',
-    GeneralAnime: 'general_anime',
     Landscape: 'landscape',
-    MobileWallpaper: 'mobile_wallpaper',
+    Anime: 'anime',
     PcWallpaper: 'pc_wallpaper',
-    Anime: 'anime'
+    MobileWallpaper: 'mobile_wallpaper',
+    GeneralAnime: 'general_anime',
+    AiDrawing: 'ai_drawing',
+    Bq: 'bq',
+    Furry: 'furry'
 } as const;
 export type GetRandomImageCategoryEnum = typeof GetRandomImageCategoryEnum[keyof typeof GetRandomImageCategoryEnum];
 export const GetRandomImageTypeEnum = {
+    Pc: 'pc',
+    Mb: 'mb',
+    Eciyuan: 'eciyuan',
+    Ikun: 'ikun',
+    _4k: '4k',
+    S4k: 's4k',
     Z4k: 'z4k',
     Szs8k: 'szs8k',
-    S4k: 's4k',
-    _4k: '4k',
-    Youshou: 'youshou',
     Xiongmao: 'xiongmao',
-    Waiguoren: 'waiguoren',
     Maomao: 'maomao',
-    Ikun: 'ikun',
-    Eciyuan: 'eciyuan',
-    Pc: 'pc',
-    Mb: 'mb'
+    Waiguoren: 'waiguoren'
 } as const;
 export type GetRandomImageTypeEnum = typeof GetRandomImageTypeEnum[keyof typeof GetRandomImageTypeEnum];
 export const GetRandomStringTypeEnum = {
@@ -6844,7 +8798,7 @@ export const SocialApiAxiosParamCreator = function (configuration?: Configuratio
     return {
         /**
          * 需要快速获取一个GitHub仓库的核心信息？这个接口为你聚合了最有价值的数据，避免了多次调用GitHub官方API的麻烦，并且内置了缓存优化，速度更快、更稳定。  ### 聚合高价值数据 一次请求，即可获得以下信息： - **核心指标**: `star`, `fork`, `open_issues` 等关键统计数据。 - **项目详情**: 描述、主页、分支、语言、话题标签、开源协议。 - **参与者信息**: 获取协作者(`collaborators`)和推断的维护者(`maintainers`)列表，包括他们的公开邮箱（如果可用）。  > [!NOTE] > `collaborators` 字段在私有仓库或权限受限时可能为空。`maintainers` 是根据最新提交记录推断的，仅供参考。  ### 性能与稳定性 我们内置了多级缓存，有效避免触发GitHub的API速率限制。对于需要更高请求额度的用户，可以联系我们定制接口。
-         * @summary 获取GitHub仓库信息
+         * @summary 查询 GitHub 仓库
          * @param {string} repo 目标仓库的标识，格式为 &#x60;owner/repo&#x60;。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -6881,7 +8835,7 @@ export const SocialApiAxiosParamCreator = function (configuration?: Configuratio
         },
         /**
          * 想要获取UP主的所有投稿视频？或者想在你的应用里展示创作者的作品集？这个接口能帮你轻松实现。  ## 功能概述 通过用户的 `mid`（用户ID），你可以获取该UP主的投稿视频列表。接口支持关键词搜索、分页加载和多种排序方式，让你能够灵活地展示和分析创作者的内容。  ## 参数说明 - **`mid` (用户ID)**: B站用户的mid，必填参数。 - **`keywords` (搜索关键词)**: 可选，用于在该UP主的投稿中搜索特定关键词。 - **`orderby` (排序方式)**:    - `pubdate`: 按最新发布排序（默认）   - `views`: 按最多播放排序 - **`ps` (每页条数)**: 默认20条。 - **`pn` (页码)**: 默认1，用于分页。  ## 响应体字段说明 - **`total` (总稿件数)**: UP主的投稿总数。 - **`page` (当前页码)**: 当前返回的页码。 - **`size` (每页数量)**: 每页返回的视频数量。 - **`videos` (视频列表)**: 包含当前页的所有视频信息：   - `aid`: 视频的AV号   - `bvid`: 视频的BV号   - `title`: 视频标题   - `cover`: 封面URL   - `duration`: 时长（秒）   - `play_count`: 播放量   - `publish_time`: 发布时间戳   - `create_time`: 创建时间戳   - `state`: 视频状态   - `is_ugc_pay`: 是否付费视频（0=免费，1=付费）   - `is_interactive`: 是否为互动视频
-         * @summary 获取Bilibili用户投稿列表
+         * @summary 查询 B站投稿
          * @param {string} mid B站用户的mid（用户ID）
          * @param {string} [keywords] 搜索关键词，可为空
          * @param {string} [orderby] 排序方式。&#x60;pubdate&#x60;&#x3D;最新发布，&#x60;views&#x60;&#x3D;最多播放
@@ -6938,7 +8892,7 @@ export const SocialApiAxiosParamCreator = function (configuration?: Configuratio
         },
         /**
          * 想知道你喜欢的主播开播了吗？或者想在你的应用里集成B站直播间状态？这个接口能满足你。  ## 功能概述 这是一个智能接口，你可以用主播的 `mid` (用户ID) 或者直播间的 `room_id` (长号或短号)来查询。它会返回直播间的详细信息，包括是否在直播、标题、封面、人气、分区等。  ## 响应体字段说明 - **`live_status` (直播状态)**: `0` 代表未开播，`1` 代表直播中，`2` 代表轮播中。
-         * @summary 获取Bilibili直播间信息
+         * @summary 查询 B站直播间
          * @param {string} [mid] 主播的用户ID (&#x60;mid&#x60;)。与 &#x60;room_id&#x60; 任选其一。
          * @param {string} [roomId] 直播间ID，可以是长号（真实ID）或短号（靓号）。与 &#x60;mid&#x60; 任选其一。
          * @param {*} [options] Override http request option.
@@ -6977,16 +8931,16 @@ export const SocialApiAxiosParamCreator = function (configuration?: Configuratio
             };
         },
         /**
-         * 想要分析B站视频的评论区？这个接口可以帮你轻松获取评论数据，包括热门评论和最新评论，还支持分页加载。  ## 功能概述 通过视频的 `oid`（通常就是视频的`aid`），你可以分页获取该视频的评论区内容。你可以指定排序方式和分页参数，来精确地获取你需要的数据。  ## 参数说明 - **`sort` (排序方式)**: `0`=按时间排序, `1`=按点赞数排序, `2`=按回复数排序。默认为按时间排序。  ## 响应体字段说明 - **`hots` (热门评论)**: 仅在请求第一页时，可能会返回热门评论列表。其结构与 `replies` 中的对象一致。 - **`replies` (评论列表)**: 这是一个数组，包含了当前页的评论。其中：   - `root`: 指向根评论的ID。如果评论本身就是根评论，则为 `0`。   - `parent`: 指向该条回复所回复的上一级评论ID。如果评论是根评论，则为 `0`。
-         * @summary 获取Bilibili视频评论
+         * 想要分析B站视频的评论区？这个接口可以帮你轻松获取评论数据，包括热门评论和最新评论，还支持分页加载。  ## 功能概述 通过视频的 `oid`（通常就是视频的`aid`），你可以分页获取该视频的评论区内容。你可以指定排序方式和分页参数，来精确地获取你需要的数据。  ## 参数说明 - **`sort` (排序方式)**   - `0` 或 `time`：按时间排序   - `1` 或 `like`：按点赞排序   - `2` 或 `reply`：按回复数排序   - `3` 或 `hot`（也支持 `hottest`、`最热`）：按最热排序  ## 响应体字段说明 - **`hots` (热门评论)**: 仅在请求第一页时，可能会返回热门评论列表。其结构与 `replies` 中的对象一致。 - **`replies` (评论列表)**: 这是一个数组，包含了当前页的评论。其中：   - `root`: 指向根评论的ID。如果评论本身就是根评论，则为 `0`。   - `parent`: 指向该条回复所回复的上一级评论ID。如果评论是根评论，则为 `0`。
+         * @summary 查询 B站评论
          * @param {string} oid 目标评论区的ID。对于视频，这通常就是它的 &#x60;aid&#x60;。
-         * @param {string} [sort] 排序方式。&#x60;0&#x60;&#x3D;按时间, &#x60;1&#x60;&#x3D;按点赞, &#x60;2&#x60;&#x3D;按回复。默认为 &#x60;0&#x60;。
+         * @param {GetSocialBilibiliRepliesSortEnum} [sort] 排序方式。支持 &#x60;0/time&#x60;（按时间）、&#x60;1/like&#x60;（按点赞）、&#x60;2/reply&#x60;（按回复数）、&#x60;3/hot/hottest/最热&#x60;（按最热）。默认为 &#x60;0/time&#x60;。
          * @param {string} [ps] 每页获取的评论数量，范围是1到20。默认为 &#x60;20&#x60;。
          * @param {string} [pn] 要获取的页码，从1开始。默认为 &#x60;1&#x60;。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getSocialBilibiliReplies: async (oid: string, sort?: string, ps?: string, pn?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getSocialBilibiliReplies: async (oid: string, sort?: GetSocialBilibiliRepliesSortEnum, ps?: string, pn?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'oid' is not null or undefined
             assertParamExists('getSocialBilibiliReplies', 'oid', oid)
             const localVarPath = `/social/bilibili/replies`;
@@ -7030,7 +8984,7 @@ export const SocialApiAxiosParamCreator = function (configuration?: Configuratio
         },
         /**
          * 想在你的应用里集成B站用户资料展示？这个接口可以轻松获取用户的公开信息。  ## 功能概述 通过一个用户的UID（那一串纯数字ID），你可以查询到该用户的昵称、性别、头像、等级、签名等一系列公开的基本信息。
-         * @summary 查询Bilibili用户信息
+         * @summary 查询 B站用户
          * @param {string} uid Bilibili用户的UID
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -7067,7 +9021,7 @@ export const SocialApiAxiosParamCreator = function (configuration?: Configuratio
         },
         /**
          * 想在你的应用里展示B站视频的详细信息吗？无论是封面、标题，还是播放量、UP主信息，这个接口都能一网打尽。  ## 功能概述 通过提供视频的 `aid` 或 `bvid`，你可以获取到该视频的完整元数据，包括多P信息、UP主资料、数据统计等。  ## 响应体字段说明 - **`copyright` (视频类型)**: `1` 代表原创，`2` 代表转载。 - **`owner` (UP主信息)**: 包含 `mid`, `name`, `face` 等UP主的基本资料。 - **`stat` (数据统计)**: 包含了播放、弹幕、评论、点赞、投币、收藏、分享等核心数据。 - **`pages` (分P列表)**: 这是一个数组，包含了视频的每一个分P的信息，即使是单P视频也会有一个元素。
-         * @summary 获取Bilibili视频详细信息
+         * @summary 查询 B站视频
          * @param {string} [aid] 视频的AV号 (aid)，纯数字格式。&#x60;aid&#x60;和&#x60;bvid&#x60;任选其一即可。
          * @param {string} [bvid] 视频的BV号 (bvid)，例如 &#x60;BV117411r7R1&#x60;。&#x60;aid&#x60;和&#x60;bvid&#x60;任选其一即可。
          * @param {*} [options] Override http request option.
@@ -7106,8 +9060,8 @@ export const SocialApiAxiosParamCreator = function (configuration?: Configuratio
             };
         },
         /**
-         * 想在你的应用里展示QQ群信息？这个接口让你轻松获取群名称、群头像、群简介等公开信息。它能帮你快速构建社群导航站、群聊推荐系统，或是为你的数据分析工具提供可靠的数据源。无论是展示群聊卡片、生成加群链接，还是进行社群数据统计，这个接口都能满足你的需求。  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者集成和测试。未来，它将转为付费API，为用户提供更稳定和强大的服务。  ## 功能概述 你只需要提供一个QQ群号（5-12位纯数字），接口就会返回该群的完整公开信息。我们会先验证群号的有效性，确保返回的数据准确可靠。接口的响应速度快，数据结构清晰，非常适合集成到各类应用场景中。  ## 返回数据说明 接口会返回以下QQ群的关键信息： - **群基础信息**: 包括群号、群名称，让你能够准确识别和展示群聊。 - **视觉素材**: 提供群头像URL（标准100x100尺寸），可直接用于在你的界面中展示群聊图标。 - **群介绍资料**: 包含群描述/简介和群标签，帮助用户了解群聊的主题和特色。 - **便捷入口**: 返回加群链接（二维码URL），方便用户一键加入感兴趣的群聊。 - **数据时效**: 提供最后更新时间戳，让你了解数据的新鲜度。  所有返回的数据都遵循标准的JSON格式，字段命名清晰，便于解析和使用。无论你是在做网页端、移动端还是后端服务，都能轻松集成。
-         * @summary 获取QQ群名称、头像、简介
+         * 想在你的应用里展示QQ群信息？这个接口让你轻松获取群名称、群头像、群简介、成员数量等详细公开信息。它能帮你快速构建社群导航站、群聊推荐系统，或是为你的数据分析工具提供可靠的数据源。  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者集成和测试。未来，它将转为付费API，为用户提供更稳定和强大的服务。  ## 功能概述 你只需要提供一个QQ群号（5-12位纯数字），接口就会返回该群的完整公开信息。我们会先验证群号的有效性，确保返回的数据准确可靠。接口响应速度快，数据结构清晰，非常适合集成到各类应用场景中。  ## 返回数据说明 接口会返回以下QQ群的关键信息：  ### 基础字段（所有群都有） - **群基础信息**: 包括群号、群名称，让你能够准确识别和展示群聊 - **视觉素材**: 提供群头像URL（支持多种尺寸），可直接用于在你的界面中展示群聊图标 - **群介绍资料**: 包含群描述/简介和群标签，帮助用户了解群聊的主题和特色 - **便捷入口**: 返回加群链接（二维码URL），方便用户一键加入感兴趣的群聊 - **成员统计**: 当前成员数和最大成员数，直观了解群规模 - **数据时效**: 提供最后更新时间戳，让你了解数据的新鲜度  ### 扩展字段（部分群有） - **活跃度**: 活跃成员数量（可选） - **群主信息**: 群主QQ号和UID（可选） - **时间信息**: 建群时间戳和格式化时间（可选） - **群等级**: 群等级数值（可选） - **群公告**: 群公告/简介内容（可选） - **认证信息**: 官方认证类型和说明（可选）  所有返回的数据都遵循标准的JSON格式，字段命名清晰，便于解析和使用。扩展字段仅在数据可用时返回，保持响应体精简。
+         * @summary 查询 QQ 群信息
          * @param {string} groupId QQ群号，长度5-12位
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -7144,7 +9098,7 @@ export const SocialApiAxiosParamCreator = function (configuration?: Configuratio
         },
         /**
          * 这是一个功能丰富的QQ用户信息查询接口，能够获取QQ用户的详细公开信息。  > [!VIP] > 我们在近日优化了此接口，速度应该会更加快了。   ## 功能概述 通过QQ号查询用户的详细信息，包括基础资料、等级信息、VIP状态等。返回的信息丰富全面，适合用于用户画像分析、社交应用集成等场景。  ## 数据字段说明 - **基础信息**: 昵称、个性签名、头像、年龄、性别 - **联系信息**: QQ邮箱、个性域名(QID) - **等级信息**: QQ等级、VIP状态和等级 - **时间信息**: 注册时间、最后更新时间
-         * @summary 独家获取QQ号头像、昵称
+         * @summary 查询 QQ 信息
          * @param {string} qq 需要查询的QQ号
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -7190,7 +9144,7 @@ export const SocialApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 需要快速获取一个GitHub仓库的核心信息？这个接口为你聚合了最有价值的数据，避免了多次调用GitHub官方API的麻烦，并且内置了缓存优化，速度更快、更稳定。  ### 聚合高价值数据 一次请求，即可获得以下信息： - **核心指标**: `star`, `fork`, `open_issues` 等关键统计数据。 - **项目详情**: 描述、主页、分支、语言、话题标签、开源协议。 - **参与者信息**: 获取协作者(`collaborators`)和推断的维护者(`maintainers`)列表，包括他们的公开邮箱（如果可用）。  > [!NOTE] > `collaborators` 字段在私有仓库或权限受限时可能为空。`maintainers` 是根据最新提交记录推断的，仅供参考。  ### 性能与稳定性 我们内置了多级缓存，有效避免触发GitHub的API速率限制。对于需要更高请求额度的用户，可以联系我们定制接口。
-         * @summary 获取GitHub仓库信息
+         * @summary 查询 GitHub 仓库
          * @param {string} repo 目标仓库的标识，格式为 &#x60;owner/repo&#x60;。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -7203,7 +9157,7 @@ export const SocialApiFp = function(configuration?: Configuration) {
         },
         /**
          * 想要获取UP主的所有投稿视频？或者想在你的应用里展示创作者的作品集？这个接口能帮你轻松实现。  ## 功能概述 通过用户的 `mid`（用户ID），你可以获取该UP主的投稿视频列表。接口支持关键词搜索、分页加载和多种排序方式，让你能够灵活地展示和分析创作者的内容。  ## 参数说明 - **`mid` (用户ID)**: B站用户的mid，必填参数。 - **`keywords` (搜索关键词)**: 可选，用于在该UP主的投稿中搜索特定关键词。 - **`orderby` (排序方式)**:    - `pubdate`: 按最新发布排序（默认）   - `views`: 按最多播放排序 - **`ps` (每页条数)**: 默认20条。 - **`pn` (页码)**: 默认1，用于分页。  ## 响应体字段说明 - **`total` (总稿件数)**: UP主的投稿总数。 - **`page` (当前页码)**: 当前返回的页码。 - **`size` (每页数量)**: 每页返回的视频数量。 - **`videos` (视频列表)**: 包含当前页的所有视频信息：   - `aid`: 视频的AV号   - `bvid`: 视频的BV号   - `title`: 视频标题   - `cover`: 封面URL   - `duration`: 时长（秒）   - `play_count`: 播放量   - `publish_time`: 发布时间戳   - `create_time`: 创建时间戳   - `state`: 视频状态   - `is_ugc_pay`: 是否付费视频（0=免费，1=付费）   - `is_interactive`: 是否为互动视频
-         * @summary 获取Bilibili用户投稿列表
+         * @summary 查询 B站投稿
          * @param {string} mid B站用户的mid（用户ID）
          * @param {string} [keywords] 搜索关键词，可为空
          * @param {string} [orderby] 排序方式。&#x60;pubdate&#x60;&#x3D;最新发布，&#x60;views&#x60;&#x3D;最多播放
@@ -7220,7 +9174,7 @@ export const SocialApiFp = function(configuration?: Configuration) {
         },
         /**
          * 想知道你喜欢的主播开播了吗？或者想在你的应用里集成B站直播间状态？这个接口能满足你。  ## 功能概述 这是一个智能接口，你可以用主播的 `mid` (用户ID) 或者直播间的 `room_id` (长号或短号)来查询。它会返回直播间的详细信息，包括是否在直播、标题、封面、人气、分区等。  ## 响应体字段说明 - **`live_status` (直播状态)**: `0` 代表未开播，`1` 代表直播中，`2` 代表轮播中。
-         * @summary 获取Bilibili直播间信息
+         * @summary 查询 B站直播间
          * @param {string} [mid] 主播的用户ID (&#x60;mid&#x60;)。与 &#x60;room_id&#x60; 任选其一。
          * @param {string} [roomId] 直播间ID，可以是长号（真实ID）或短号（靓号）。与 &#x60;mid&#x60; 任选其一。
          * @param {*} [options] Override http request option.
@@ -7233,16 +9187,16 @@ export const SocialApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * 想要分析B站视频的评论区？这个接口可以帮你轻松获取评论数据，包括热门评论和最新评论，还支持分页加载。  ## 功能概述 通过视频的 `oid`（通常就是视频的`aid`），你可以分页获取该视频的评论区内容。你可以指定排序方式和分页参数，来精确地获取你需要的数据。  ## 参数说明 - **`sort` (排序方式)**: `0`=按时间排序, `1`=按点赞数排序, `2`=按回复数排序。默认为按时间排序。  ## 响应体字段说明 - **`hots` (热门评论)**: 仅在请求第一页时，可能会返回热门评论列表。其结构与 `replies` 中的对象一致。 - **`replies` (评论列表)**: 这是一个数组，包含了当前页的评论。其中：   - `root`: 指向根评论的ID。如果评论本身就是根评论，则为 `0`。   - `parent`: 指向该条回复所回复的上一级评论ID。如果评论是根评论，则为 `0`。
-         * @summary 获取Bilibili视频评论
+         * 想要分析B站视频的评论区？这个接口可以帮你轻松获取评论数据，包括热门评论和最新评论，还支持分页加载。  ## 功能概述 通过视频的 `oid`（通常就是视频的`aid`），你可以分页获取该视频的评论区内容。你可以指定排序方式和分页参数，来精确地获取你需要的数据。  ## 参数说明 - **`sort` (排序方式)**   - `0` 或 `time`：按时间排序   - `1` 或 `like`：按点赞排序   - `2` 或 `reply`：按回复数排序   - `3` 或 `hot`（也支持 `hottest`、`最热`）：按最热排序  ## 响应体字段说明 - **`hots` (热门评论)**: 仅在请求第一页时，可能会返回热门评论列表。其结构与 `replies` 中的对象一致。 - **`replies` (评论列表)**: 这是一个数组，包含了当前页的评论。其中：   - `root`: 指向根评论的ID。如果评论本身就是根评论，则为 `0`。   - `parent`: 指向该条回复所回复的上一级评论ID。如果评论是根评论，则为 `0`。
+         * @summary 查询 B站评论
          * @param {string} oid 目标评论区的ID。对于视频，这通常就是它的 &#x60;aid&#x60;。
-         * @param {string} [sort] 排序方式。&#x60;0&#x60;&#x3D;按时间, &#x60;1&#x60;&#x3D;按点赞, &#x60;2&#x60;&#x3D;按回复。默认为 &#x60;0&#x60;。
+         * @param {GetSocialBilibiliRepliesSortEnum} [sort] 排序方式。支持 &#x60;0/time&#x60;（按时间）、&#x60;1/like&#x60;（按点赞）、&#x60;2/reply&#x60;（按回复数）、&#x60;3/hot/hottest/最热&#x60;（按最热）。默认为 &#x60;0/time&#x60;。
          * @param {string} [ps] 每页获取的评论数量，范围是1到20。默认为 &#x60;20&#x60;。
          * @param {string} [pn] 要获取的页码，从1开始。默认为 &#x60;1&#x60;。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getSocialBilibiliReplies(oid: string, sort?: string, ps?: string, pn?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetSocialBilibiliReplies200Response>> {
+        async getSocialBilibiliReplies(oid: string, sort?: GetSocialBilibiliRepliesSortEnum, ps?: string, pn?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetSocialBilibiliReplies200Response>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getSocialBilibiliReplies(oid, sort, ps, pn, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['SocialApi.getSocialBilibiliReplies']?.[localVarOperationServerIndex]?.url;
@@ -7250,7 +9204,7 @@ export const SocialApiFp = function(configuration?: Configuration) {
         },
         /**
          * 想在你的应用里集成B站用户资料展示？这个接口可以轻松获取用户的公开信息。  ## 功能概述 通过一个用户的UID（那一串纯数字ID），你可以查询到该用户的昵称、性别、头像、等级、签名等一系列公开的基本信息。
-         * @summary 查询Bilibili用户信息
+         * @summary 查询 B站用户
          * @param {string} uid Bilibili用户的UID
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -7263,7 +9217,7 @@ export const SocialApiFp = function(configuration?: Configuration) {
         },
         /**
          * 想在你的应用里展示B站视频的详细信息吗？无论是封面、标题，还是播放量、UP主信息，这个接口都能一网打尽。  ## 功能概述 通过提供视频的 `aid` 或 `bvid`，你可以获取到该视频的完整元数据，包括多P信息、UP主资料、数据统计等。  ## 响应体字段说明 - **`copyright` (视频类型)**: `1` 代表原创，`2` 代表转载。 - **`owner` (UP主信息)**: 包含 `mid`, `name`, `face` 等UP主的基本资料。 - **`stat` (数据统计)**: 包含了播放、弹幕、评论、点赞、投币、收藏、分享等核心数据。 - **`pages` (分P列表)**: 这是一个数组，包含了视频的每一个分P的信息，即使是单P视频也会有一个元素。
-         * @summary 获取Bilibili视频详细信息
+         * @summary 查询 B站视频
          * @param {string} [aid] 视频的AV号 (aid)，纯数字格式。&#x60;aid&#x60;和&#x60;bvid&#x60;任选其一即可。
          * @param {string} [bvid] 视频的BV号 (bvid)，例如 &#x60;BV117411r7R1&#x60;。&#x60;aid&#x60;和&#x60;bvid&#x60;任选其一即可。
          * @param {*} [options] Override http request option.
@@ -7276,8 +9230,8 @@ export const SocialApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * 想在你的应用里展示QQ群信息？这个接口让你轻松获取群名称、群头像、群简介等公开信息。它能帮你快速构建社群导航站、群聊推荐系统，或是为你的数据分析工具提供可靠的数据源。无论是展示群聊卡片、生成加群链接，还是进行社群数据统计，这个接口都能满足你的需求。  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者集成和测试。未来，它将转为付费API，为用户提供更稳定和强大的服务。  ## 功能概述 你只需要提供一个QQ群号（5-12位纯数字），接口就会返回该群的完整公开信息。我们会先验证群号的有效性，确保返回的数据准确可靠。接口的响应速度快，数据结构清晰，非常适合集成到各类应用场景中。  ## 返回数据说明 接口会返回以下QQ群的关键信息： - **群基础信息**: 包括群号、群名称，让你能够准确识别和展示群聊。 - **视觉素材**: 提供群头像URL（标准100x100尺寸），可直接用于在你的界面中展示群聊图标。 - **群介绍资料**: 包含群描述/简介和群标签，帮助用户了解群聊的主题和特色。 - **便捷入口**: 返回加群链接（二维码URL），方便用户一键加入感兴趣的群聊。 - **数据时效**: 提供最后更新时间戳，让你了解数据的新鲜度。  所有返回的数据都遵循标准的JSON格式，字段命名清晰，便于解析和使用。无论你是在做网页端、移动端还是后端服务，都能轻松集成。
-         * @summary 获取QQ群名称、头像、简介
+         * 想在你的应用里展示QQ群信息？这个接口让你轻松获取群名称、群头像、群简介、成员数量等详细公开信息。它能帮你快速构建社群导航站、群聊推荐系统，或是为你的数据分析工具提供可靠的数据源。  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者集成和测试。未来，它将转为付费API，为用户提供更稳定和强大的服务。  ## 功能概述 你只需要提供一个QQ群号（5-12位纯数字），接口就会返回该群的完整公开信息。我们会先验证群号的有效性，确保返回的数据准确可靠。接口响应速度快，数据结构清晰，非常适合集成到各类应用场景中。  ## 返回数据说明 接口会返回以下QQ群的关键信息：  ### 基础字段（所有群都有） - **群基础信息**: 包括群号、群名称，让你能够准确识别和展示群聊 - **视觉素材**: 提供群头像URL（支持多种尺寸），可直接用于在你的界面中展示群聊图标 - **群介绍资料**: 包含群描述/简介和群标签，帮助用户了解群聊的主题和特色 - **便捷入口**: 返回加群链接（二维码URL），方便用户一键加入感兴趣的群聊 - **成员统计**: 当前成员数和最大成员数，直观了解群规模 - **数据时效**: 提供最后更新时间戳，让你了解数据的新鲜度  ### 扩展字段（部分群有） - **活跃度**: 活跃成员数量（可选） - **群主信息**: 群主QQ号和UID（可选） - **时间信息**: 建群时间戳和格式化时间（可选） - **群等级**: 群等级数值（可选） - **群公告**: 群公告/简介内容（可选） - **认证信息**: 官方认证类型和说明（可选）  所有返回的数据都遵循标准的JSON格式，字段命名清晰，便于解析和使用。扩展字段仅在数据可用时返回，保持响应体精简。
+         * @summary 查询 QQ 群信息
          * @param {string} groupId QQ群号，长度5-12位
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -7290,7 +9244,7 @@ export const SocialApiFp = function(configuration?: Configuration) {
         },
         /**
          * 这是一个功能丰富的QQ用户信息查询接口，能够获取QQ用户的详细公开信息。  > [!VIP] > 我们在近日优化了此接口，速度应该会更加快了。   ## 功能概述 通过QQ号查询用户的详细信息，包括基础资料、等级信息、VIP状态等。返回的信息丰富全面，适合用于用户画像分析、社交应用集成等场景。  ## 数据字段说明 - **基础信息**: 昵称、个性签名、头像、年龄、性别 - **联系信息**: QQ邮箱、个性域名(QID) - **等级信息**: QQ等级、VIP状态和等级 - **时间信息**: 注册时间、最后更新时间
-         * @summary 独家获取QQ号头像、昵称
+         * @summary 查询 QQ 信息
          * @param {string} qq 需要查询的QQ号
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -7312,7 +9266,7 @@ export const SocialApiFactory = function (configuration?: Configuration, basePat
     return {
         /**
          * 需要快速获取一个GitHub仓库的核心信息？这个接口为你聚合了最有价值的数据，避免了多次调用GitHub官方API的麻烦，并且内置了缓存优化，速度更快、更稳定。  ### 聚合高价值数据 一次请求，即可获得以下信息： - **核心指标**: `star`, `fork`, `open_issues` 等关键统计数据。 - **项目详情**: 描述、主页、分支、语言、话题标签、开源协议。 - **参与者信息**: 获取协作者(`collaborators`)和推断的维护者(`maintainers`)列表，包括他们的公开邮箱（如果可用）。  > [!NOTE] > `collaborators` 字段在私有仓库或权限受限时可能为空。`maintainers` 是根据最新提交记录推断的，仅供参考。  ### 性能与稳定性 我们内置了多级缓存，有效避免触发GitHub的API速率限制。对于需要更高请求额度的用户，可以联系我们定制接口。
-         * @summary 获取GitHub仓库信息
+         * @summary 查询 GitHub 仓库
          * @param {string} repo 目标仓库的标识，格式为 &#x60;owner/repo&#x60;。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -7322,7 +9276,7 @@ export const SocialApiFactory = function (configuration?: Configuration, basePat
         },
         /**
          * 想要获取UP主的所有投稿视频？或者想在你的应用里展示创作者的作品集？这个接口能帮你轻松实现。  ## 功能概述 通过用户的 `mid`（用户ID），你可以获取该UP主的投稿视频列表。接口支持关键词搜索、分页加载和多种排序方式，让你能够灵活地展示和分析创作者的内容。  ## 参数说明 - **`mid` (用户ID)**: B站用户的mid，必填参数。 - **`keywords` (搜索关键词)**: 可选，用于在该UP主的投稿中搜索特定关键词。 - **`orderby` (排序方式)**:    - `pubdate`: 按最新发布排序（默认）   - `views`: 按最多播放排序 - **`ps` (每页条数)**: 默认20条。 - **`pn` (页码)**: 默认1，用于分页。  ## 响应体字段说明 - **`total` (总稿件数)**: UP主的投稿总数。 - **`page` (当前页码)**: 当前返回的页码。 - **`size` (每页数量)**: 每页返回的视频数量。 - **`videos` (视频列表)**: 包含当前页的所有视频信息：   - `aid`: 视频的AV号   - `bvid`: 视频的BV号   - `title`: 视频标题   - `cover`: 封面URL   - `duration`: 时长（秒）   - `play_count`: 播放量   - `publish_time`: 发布时间戳   - `create_time`: 创建时间戳   - `state`: 视频状态   - `is_ugc_pay`: 是否付费视频（0=免费，1=付费）   - `is_interactive`: 是否为互动视频
-         * @summary 获取Bilibili用户投稿列表
+         * @summary 查询 B站投稿
          * @param {string} mid B站用户的mid（用户ID）
          * @param {string} [keywords] 搜索关键词，可为空
          * @param {string} [orderby] 排序方式。&#x60;pubdate&#x60;&#x3D;最新发布，&#x60;views&#x60;&#x3D;最多播放
@@ -7336,7 +9290,7 @@ export const SocialApiFactory = function (configuration?: Configuration, basePat
         },
         /**
          * 想知道你喜欢的主播开播了吗？或者想在你的应用里集成B站直播间状态？这个接口能满足你。  ## 功能概述 这是一个智能接口，你可以用主播的 `mid` (用户ID) 或者直播间的 `room_id` (长号或短号)来查询。它会返回直播间的详细信息，包括是否在直播、标题、封面、人气、分区等。  ## 响应体字段说明 - **`live_status` (直播状态)**: `0` 代表未开播，`1` 代表直播中，`2` 代表轮播中。
-         * @summary 获取Bilibili直播间信息
+         * @summary 查询 B站直播间
          * @param {string} [mid] 主播的用户ID (&#x60;mid&#x60;)。与 &#x60;room_id&#x60; 任选其一。
          * @param {string} [roomId] 直播间ID，可以是长号（真实ID）或短号（靓号）。与 &#x60;mid&#x60; 任选其一。
          * @param {*} [options] Override http request option.
@@ -7346,21 +9300,21 @@ export const SocialApiFactory = function (configuration?: Configuration, basePat
             return localVarFp.getSocialBilibiliLiveroom(mid, roomId, options).then((request) => request(axios, basePath));
         },
         /**
-         * 想要分析B站视频的评论区？这个接口可以帮你轻松获取评论数据，包括热门评论和最新评论，还支持分页加载。  ## 功能概述 通过视频的 `oid`（通常就是视频的`aid`），你可以分页获取该视频的评论区内容。你可以指定排序方式和分页参数，来精确地获取你需要的数据。  ## 参数说明 - **`sort` (排序方式)**: `0`=按时间排序, `1`=按点赞数排序, `2`=按回复数排序。默认为按时间排序。  ## 响应体字段说明 - **`hots` (热门评论)**: 仅在请求第一页时，可能会返回热门评论列表。其结构与 `replies` 中的对象一致。 - **`replies` (评论列表)**: 这是一个数组，包含了当前页的评论。其中：   - `root`: 指向根评论的ID。如果评论本身就是根评论，则为 `0`。   - `parent`: 指向该条回复所回复的上一级评论ID。如果评论是根评论，则为 `0`。
-         * @summary 获取Bilibili视频评论
+         * 想要分析B站视频的评论区？这个接口可以帮你轻松获取评论数据，包括热门评论和最新评论，还支持分页加载。  ## 功能概述 通过视频的 `oid`（通常就是视频的`aid`），你可以分页获取该视频的评论区内容。你可以指定排序方式和分页参数，来精确地获取你需要的数据。  ## 参数说明 - **`sort` (排序方式)**   - `0` 或 `time`：按时间排序   - `1` 或 `like`：按点赞排序   - `2` 或 `reply`：按回复数排序   - `3` 或 `hot`（也支持 `hottest`、`最热`）：按最热排序  ## 响应体字段说明 - **`hots` (热门评论)**: 仅在请求第一页时，可能会返回热门评论列表。其结构与 `replies` 中的对象一致。 - **`replies` (评论列表)**: 这是一个数组，包含了当前页的评论。其中：   - `root`: 指向根评论的ID。如果评论本身就是根评论，则为 `0`。   - `parent`: 指向该条回复所回复的上一级评论ID。如果评论是根评论，则为 `0`。
+         * @summary 查询 B站评论
          * @param {string} oid 目标评论区的ID。对于视频，这通常就是它的 &#x60;aid&#x60;。
-         * @param {string} [sort] 排序方式。&#x60;0&#x60;&#x3D;按时间, &#x60;1&#x60;&#x3D;按点赞, &#x60;2&#x60;&#x3D;按回复。默认为 &#x60;0&#x60;。
+         * @param {GetSocialBilibiliRepliesSortEnum} [sort] 排序方式。支持 &#x60;0/time&#x60;（按时间）、&#x60;1/like&#x60;（按点赞）、&#x60;2/reply&#x60;（按回复数）、&#x60;3/hot/hottest/最热&#x60;（按最热）。默认为 &#x60;0/time&#x60;。
          * @param {string} [ps] 每页获取的评论数量，范围是1到20。默认为 &#x60;20&#x60;。
          * @param {string} [pn] 要获取的页码，从1开始。默认为 &#x60;1&#x60;。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getSocialBilibiliReplies(oid: string, sort?: string, ps?: string, pn?: string, options?: RawAxiosRequestConfig): AxiosPromise<GetSocialBilibiliReplies200Response> {
+        getSocialBilibiliReplies(oid: string, sort?: GetSocialBilibiliRepliesSortEnum, ps?: string, pn?: string, options?: RawAxiosRequestConfig): AxiosPromise<GetSocialBilibiliReplies200Response> {
             return localVarFp.getSocialBilibiliReplies(oid, sort, ps, pn, options).then((request) => request(axios, basePath));
         },
         /**
          * 想在你的应用里集成B站用户资料展示？这个接口可以轻松获取用户的公开信息。  ## 功能概述 通过一个用户的UID（那一串纯数字ID），你可以查询到该用户的昵称、性别、头像、等级、签名等一系列公开的基本信息。
-         * @summary 查询Bilibili用户信息
+         * @summary 查询 B站用户
          * @param {string} uid Bilibili用户的UID
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -7370,7 +9324,7 @@ export const SocialApiFactory = function (configuration?: Configuration, basePat
         },
         /**
          * 想在你的应用里展示B站视频的详细信息吗？无论是封面、标题，还是播放量、UP主信息，这个接口都能一网打尽。  ## 功能概述 通过提供视频的 `aid` 或 `bvid`，你可以获取到该视频的完整元数据，包括多P信息、UP主资料、数据统计等。  ## 响应体字段说明 - **`copyright` (视频类型)**: `1` 代表原创，`2` 代表转载。 - **`owner` (UP主信息)**: 包含 `mid`, `name`, `face` 等UP主的基本资料。 - **`stat` (数据统计)**: 包含了播放、弹幕、评论、点赞、投币、收藏、分享等核心数据。 - **`pages` (分P列表)**: 这是一个数组，包含了视频的每一个分P的信息，即使是单P视频也会有一个元素。
-         * @summary 获取Bilibili视频详细信息
+         * @summary 查询 B站视频
          * @param {string} [aid] 视频的AV号 (aid)，纯数字格式。&#x60;aid&#x60;和&#x60;bvid&#x60;任选其一即可。
          * @param {string} [bvid] 视频的BV号 (bvid)，例如 &#x60;BV117411r7R1&#x60;。&#x60;aid&#x60;和&#x60;bvid&#x60;任选其一即可。
          * @param {*} [options] Override http request option.
@@ -7380,8 +9334,8 @@ export const SocialApiFactory = function (configuration?: Configuration, basePat
             return localVarFp.getSocialBilibiliVideoinfo(aid, bvid, options).then((request) => request(axios, basePath));
         },
         /**
-         * 想在你的应用里展示QQ群信息？这个接口让你轻松获取群名称、群头像、群简介等公开信息。它能帮你快速构建社群导航站、群聊推荐系统，或是为你的数据分析工具提供可靠的数据源。无论是展示群聊卡片、生成加群链接，还是进行社群数据统计，这个接口都能满足你的需求。  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者集成和测试。未来，它将转为付费API，为用户提供更稳定和强大的服务。  ## 功能概述 你只需要提供一个QQ群号（5-12位纯数字），接口就会返回该群的完整公开信息。我们会先验证群号的有效性，确保返回的数据准确可靠。接口的响应速度快，数据结构清晰，非常适合集成到各类应用场景中。  ## 返回数据说明 接口会返回以下QQ群的关键信息： - **群基础信息**: 包括群号、群名称，让你能够准确识别和展示群聊。 - **视觉素材**: 提供群头像URL（标准100x100尺寸），可直接用于在你的界面中展示群聊图标。 - **群介绍资料**: 包含群描述/简介和群标签，帮助用户了解群聊的主题和特色。 - **便捷入口**: 返回加群链接（二维码URL），方便用户一键加入感兴趣的群聊。 - **数据时效**: 提供最后更新时间戳，让你了解数据的新鲜度。  所有返回的数据都遵循标准的JSON格式，字段命名清晰，便于解析和使用。无论你是在做网页端、移动端还是后端服务，都能轻松集成。
-         * @summary 获取QQ群名称、头像、简介
+         * 想在你的应用里展示QQ群信息？这个接口让你轻松获取群名称、群头像、群简介、成员数量等详细公开信息。它能帮你快速构建社群导航站、群聊推荐系统，或是为你的数据分析工具提供可靠的数据源。  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者集成和测试。未来，它将转为付费API，为用户提供更稳定和强大的服务。  ## 功能概述 你只需要提供一个QQ群号（5-12位纯数字），接口就会返回该群的完整公开信息。我们会先验证群号的有效性，确保返回的数据准确可靠。接口响应速度快，数据结构清晰，非常适合集成到各类应用场景中。  ## 返回数据说明 接口会返回以下QQ群的关键信息：  ### 基础字段（所有群都有） - **群基础信息**: 包括群号、群名称，让你能够准确识别和展示群聊 - **视觉素材**: 提供群头像URL（支持多种尺寸），可直接用于在你的界面中展示群聊图标 - **群介绍资料**: 包含群描述/简介和群标签，帮助用户了解群聊的主题和特色 - **便捷入口**: 返回加群链接（二维码URL），方便用户一键加入感兴趣的群聊 - **成员统计**: 当前成员数和最大成员数，直观了解群规模 - **数据时效**: 提供最后更新时间戳，让你了解数据的新鲜度  ### 扩展字段（部分群有） - **活跃度**: 活跃成员数量（可选） - **群主信息**: 群主QQ号和UID（可选） - **时间信息**: 建群时间戳和格式化时间（可选） - **群等级**: 群等级数值（可选） - **群公告**: 群公告/简介内容（可选） - **认证信息**: 官方认证类型和说明（可选）  所有返回的数据都遵循标准的JSON格式，字段命名清晰，便于解析和使用。扩展字段仅在数据可用时返回，保持响应体精简。
+         * @summary 查询 QQ 群信息
          * @param {string} groupId QQ群号，长度5-12位
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -7391,7 +9345,7 @@ export const SocialApiFactory = function (configuration?: Configuration, basePat
         },
         /**
          * 这是一个功能丰富的QQ用户信息查询接口，能够获取QQ用户的详细公开信息。  > [!VIP] > 我们在近日优化了此接口，速度应该会更加快了。   ## 功能概述 通过QQ号查询用户的详细信息，包括基础资料、等级信息、VIP状态等。返回的信息丰富全面，适合用于用户画像分析、社交应用集成等场景。  ## 数据字段说明 - **基础信息**: 昵称、个性签名、头像、年龄、性别 - **联系信息**: QQ邮箱、个性域名(QID) - **等级信息**: QQ等级、VIP状态和等级 - **时间信息**: 注册时间、最后更新时间
-         * @summary 独家获取QQ号头像、昵称
+         * @summary 查询 QQ 信息
          * @param {string} qq 需要查询的QQ号
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -7408,7 +9362,7 @@ export const SocialApiFactory = function (configuration?: Configuration, basePat
 export class SocialApi extends BaseAPI {
     /**
      * 需要快速获取一个GitHub仓库的核心信息？这个接口为你聚合了最有价值的数据，避免了多次调用GitHub官方API的麻烦，并且内置了缓存优化，速度更快、更稳定。  ### 聚合高价值数据 一次请求，即可获得以下信息： - **核心指标**: `star`, `fork`, `open_issues` 等关键统计数据。 - **项目详情**: 描述、主页、分支、语言、话题标签、开源协议。 - **参与者信息**: 获取协作者(`collaborators`)和推断的维护者(`maintainers`)列表，包括他们的公开邮箱（如果可用）。  > [!NOTE] > `collaborators` 字段在私有仓库或权限受限时可能为空。`maintainers` 是根据最新提交记录推断的，仅供参考。  ### 性能与稳定性 我们内置了多级缓存，有效避免触发GitHub的API速率限制。对于需要更高请求额度的用户，可以联系我们定制接口。
-     * @summary 获取GitHub仓库信息
+     * @summary 查询 GitHub 仓库
      * @param {string} repo 目标仓库的标识，格式为 &#x60;owner/repo&#x60;。
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -7419,7 +9373,7 @@ export class SocialApi extends BaseAPI {
 
     /**
      * 想要获取UP主的所有投稿视频？或者想在你的应用里展示创作者的作品集？这个接口能帮你轻松实现。  ## 功能概述 通过用户的 `mid`（用户ID），你可以获取该UP主的投稿视频列表。接口支持关键词搜索、分页加载和多种排序方式，让你能够灵活地展示和分析创作者的内容。  ## 参数说明 - **`mid` (用户ID)**: B站用户的mid，必填参数。 - **`keywords` (搜索关键词)**: 可选，用于在该UP主的投稿中搜索特定关键词。 - **`orderby` (排序方式)**:    - `pubdate`: 按最新发布排序（默认）   - `views`: 按最多播放排序 - **`ps` (每页条数)**: 默认20条。 - **`pn` (页码)**: 默认1，用于分页。  ## 响应体字段说明 - **`total` (总稿件数)**: UP主的投稿总数。 - **`page` (当前页码)**: 当前返回的页码。 - **`size` (每页数量)**: 每页返回的视频数量。 - **`videos` (视频列表)**: 包含当前页的所有视频信息：   - `aid`: 视频的AV号   - `bvid`: 视频的BV号   - `title`: 视频标题   - `cover`: 封面URL   - `duration`: 时长（秒）   - `play_count`: 播放量   - `publish_time`: 发布时间戳   - `create_time`: 创建时间戳   - `state`: 视频状态   - `is_ugc_pay`: 是否付费视频（0=免费，1=付费）   - `is_interactive`: 是否为互动视频
-     * @summary 获取Bilibili用户投稿列表
+     * @summary 查询 B站投稿
      * @param {string} mid B站用户的mid（用户ID）
      * @param {string} [keywords] 搜索关键词，可为空
      * @param {string} [orderby] 排序方式。&#x60;pubdate&#x60;&#x3D;最新发布，&#x60;views&#x60;&#x3D;最多播放
@@ -7434,7 +9388,7 @@ export class SocialApi extends BaseAPI {
 
     /**
      * 想知道你喜欢的主播开播了吗？或者想在你的应用里集成B站直播间状态？这个接口能满足你。  ## 功能概述 这是一个智能接口，你可以用主播的 `mid` (用户ID) 或者直播间的 `room_id` (长号或短号)来查询。它会返回直播间的详细信息，包括是否在直播、标题、封面、人气、分区等。  ## 响应体字段说明 - **`live_status` (直播状态)**: `0` 代表未开播，`1` 代表直播中，`2` 代表轮播中。
-     * @summary 获取Bilibili直播间信息
+     * @summary 查询 B站直播间
      * @param {string} [mid] 主播的用户ID (&#x60;mid&#x60;)。与 &#x60;room_id&#x60; 任选其一。
      * @param {string} [roomId] 直播间ID，可以是长号（真实ID）或短号（靓号）。与 &#x60;mid&#x60; 任选其一。
      * @param {*} [options] Override http request option.
@@ -7445,22 +9399,22 @@ export class SocialApi extends BaseAPI {
     }
 
     /**
-     * 想要分析B站视频的评论区？这个接口可以帮你轻松获取评论数据，包括热门评论和最新评论，还支持分页加载。  ## 功能概述 通过视频的 `oid`（通常就是视频的`aid`），你可以分页获取该视频的评论区内容。你可以指定排序方式和分页参数，来精确地获取你需要的数据。  ## 参数说明 - **`sort` (排序方式)**: `0`=按时间排序, `1`=按点赞数排序, `2`=按回复数排序。默认为按时间排序。  ## 响应体字段说明 - **`hots` (热门评论)**: 仅在请求第一页时，可能会返回热门评论列表。其结构与 `replies` 中的对象一致。 - **`replies` (评论列表)**: 这是一个数组，包含了当前页的评论。其中：   - `root`: 指向根评论的ID。如果评论本身就是根评论，则为 `0`。   - `parent`: 指向该条回复所回复的上一级评论ID。如果评论是根评论，则为 `0`。
-     * @summary 获取Bilibili视频评论
+     * 想要分析B站视频的评论区？这个接口可以帮你轻松获取评论数据，包括热门评论和最新评论，还支持分页加载。  ## 功能概述 通过视频的 `oid`（通常就是视频的`aid`），你可以分页获取该视频的评论区内容。你可以指定排序方式和分页参数，来精确地获取你需要的数据。  ## 参数说明 - **`sort` (排序方式)**   - `0` 或 `time`：按时间排序   - `1` 或 `like`：按点赞排序   - `2` 或 `reply`：按回复数排序   - `3` 或 `hot`（也支持 `hottest`、`最热`）：按最热排序  ## 响应体字段说明 - **`hots` (热门评论)**: 仅在请求第一页时，可能会返回热门评论列表。其结构与 `replies` 中的对象一致。 - **`replies` (评论列表)**: 这是一个数组，包含了当前页的评论。其中：   - `root`: 指向根评论的ID。如果评论本身就是根评论，则为 `0`。   - `parent`: 指向该条回复所回复的上一级评论ID。如果评论是根评论，则为 `0`。
+     * @summary 查询 B站评论
      * @param {string} oid 目标评论区的ID。对于视频，这通常就是它的 &#x60;aid&#x60;。
-     * @param {string} [sort] 排序方式。&#x60;0&#x60;&#x3D;按时间, &#x60;1&#x60;&#x3D;按点赞, &#x60;2&#x60;&#x3D;按回复。默认为 &#x60;0&#x60;。
+     * @param {GetSocialBilibiliRepliesSortEnum} [sort] 排序方式。支持 &#x60;0/time&#x60;（按时间）、&#x60;1/like&#x60;（按点赞）、&#x60;2/reply&#x60;（按回复数）、&#x60;3/hot/hottest/最热&#x60;（按最热）。默认为 &#x60;0/time&#x60;。
      * @param {string} [ps] 每页获取的评论数量，范围是1到20。默认为 &#x60;20&#x60;。
      * @param {string} [pn] 要获取的页码，从1开始。默认为 &#x60;1&#x60;。
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public getSocialBilibiliReplies(oid: string, sort?: string, ps?: string, pn?: string, options?: RawAxiosRequestConfig) {
+    public getSocialBilibiliReplies(oid: string, sort?: GetSocialBilibiliRepliesSortEnum, ps?: string, pn?: string, options?: RawAxiosRequestConfig) {
         return SocialApiFp(this.configuration).getSocialBilibiliReplies(oid, sort, ps, pn, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 想在你的应用里集成B站用户资料展示？这个接口可以轻松获取用户的公开信息。  ## 功能概述 通过一个用户的UID（那一串纯数字ID），你可以查询到该用户的昵称、性别、头像、等级、签名等一系列公开的基本信息。
-     * @summary 查询Bilibili用户信息
+     * @summary 查询 B站用户
      * @param {string} uid Bilibili用户的UID
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -7471,7 +9425,7 @@ export class SocialApi extends BaseAPI {
 
     /**
      * 想在你的应用里展示B站视频的详细信息吗？无论是封面、标题，还是播放量、UP主信息，这个接口都能一网打尽。  ## 功能概述 通过提供视频的 `aid` 或 `bvid`，你可以获取到该视频的完整元数据，包括多P信息、UP主资料、数据统计等。  ## 响应体字段说明 - **`copyright` (视频类型)**: `1` 代表原创，`2` 代表转载。 - **`owner` (UP主信息)**: 包含 `mid`, `name`, `face` 等UP主的基本资料。 - **`stat` (数据统计)**: 包含了播放、弹幕、评论、点赞、投币、收藏、分享等核心数据。 - **`pages` (分P列表)**: 这是一个数组，包含了视频的每一个分P的信息，即使是单P视频也会有一个元素。
-     * @summary 获取Bilibili视频详细信息
+     * @summary 查询 B站视频
      * @param {string} [aid] 视频的AV号 (aid)，纯数字格式。&#x60;aid&#x60;和&#x60;bvid&#x60;任选其一即可。
      * @param {string} [bvid] 视频的BV号 (bvid)，例如 &#x60;BV117411r7R1&#x60;。&#x60;aid&#x60;和&#x60;bvid&#x60;任选其一即可。
      * @param {*} [options] Override http request option.
@@ -7482,8 +9436,8 @@ export class SocialApi extends BaseAPI {
     }
 
     /**
-     * 想在你的应用里展示QQ群信息？这个接口让你轻松获取群名称、群头像、群简介等公开信息。它能帮你快速构建社群导航站、群聊推荐系统，或是为你的数据分析工具提供可靠的数据源。无论是展示群聊卡片、生成加群链接，还是进行社群数据统计，这个接口都能满足你的需求。  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者集成和测试。未来，它将转为付费API，为用户提供更稳定和强大的服务。  ## 功能概述 你只需要提供一个QQ群号（5-12位纯数字），接口就会返回该群的完整公开信息。我们会先验证群号的有效性，确保返回的数据准确可靠。接口的响应速度快，数据结构清晰，非常适合集成到各类应用场景中。  ## 返回数据说明 接口会返回以下QQ群的关键信息： - **群基础信息**: 包括群号、群名称，让你能够准确识别和展示群聊。 - **视觉素材**: 提供群头像URL（标准100x100尺寸），可直接用于在你的界面中展示群聊图标。 - **群介绍资料**: 包含群描述/简介和群标签，帮助用户了解群聊的主题和特色。 - **便捷入口**: 返回加群链接（二维码URL），方便用户一键加入感兴趣的群聊。 - **数据时效**: 提供最后更新时间戳，让你了解数据的新鲜度。  所有返回的数据都遵循标准的JSON格式，字段命名清晰，便于解析和使用。无论你是在做网页端、移动端还是后端服务，都能轻松集成。
-     * @summary 获取QQ群名称、头像、简介
+     * 想在你的应用里展示QQ群信息？这个接口让你轻松获取群名称、群头像、群简介、成员数量等详细公开信息。它能帮你快速构建社群导航站、群聊推荐系统，或是为你的数据分析工具提供可靠的数据源。  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者集成和测试。未来，它将转为付费API，为用户提供更稳定和强大的服务。  ## 功能概述 你只需要提供一个QQ群号（5-12位纯数字），接口就会返回该群的完整公开信息。我们会先验证群号的有效性，确保返回的数据准确可靠。接口响应速度快，数据结构清晰，非常适合集成到各类应用场景中。  ## 返回数据说明 接口会返回以下QQ群的关键信息：  ### 基础字段（所有群都有） - **群基础信息**: 包括群号、群名称，让你能够准确识别和展示群聊 - **视觉素材**: 提供群头像URL（支持多种尺寸），可直接用于在你的界面中展示群聊图标 - **群介绍资料**: 包含群描述/简介和群标签，帮助用户了解群聊的主题和特色 - **便捷入口**: 返回加群链接（二维码URL），方便用户一键加入感兴趣的群聊 - **成员统计**: 当前成员数和最大成员数，直观了解群规模 - **数据时效**: 提供最后更新时间戳，让你了解数据的新鲜度  ### 扩展字段（部分群有） - **活跃度**: 活跃成员数量（可选） - **群主信息**: 群主QQ号和UID（可选） - **时间信息**: 建群时间戳和格式化时间（可选） - **群等级**: 群等级数值（可选） - **群公告**: 群公告/简介内容（可选） - **认证信息**: 官方认证类型和说明（可选）  所有返回的数据都遵循标准的JSON格式，字段命名清晰，便于解析和使用。扩展字段仅在数据可用时返回，保持响应体精简。
+     * @summary 查询 QQ 群信息
      * @param {string} groupId QQ群号，长度5-12位
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -7494,7 +9448,7 @@ export class SocialApi extends BaseAPI {
 
     /**
      * 这是一个功能丰富的QQ用户信息查询接口，能够获取QQ用户的详细公开信息。  > [!VIP] > 我们在近日优化了此接口，速度应该会更加快了。   ## 功能概述 通过QQ号查询用户的详细信息，包括基础资料、等级信息、VIP状态等。返回的信息丰富全面，适合用于用户画像分析、社交应用集成等场景。  ## 数据字段说明 - **基础信息**: 昵称、个性签名、头像、年龄、性别 - **联系信息**: QQ邮箱、个性域名(QID) - **等级信息**: QQ等级、VIP状态和等级 - **时间信息**: 注册时间、最后更新时间
-     * @summary 独家获取QQ号头像、昵称
+     * @summary 查询 QQ 信息
      * @param {string} qq 需要查询的QQ号
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -7504,6 +9458,19 @@ export class SocialApi extends BaseAPI {
     }
 }
 
+export const GetSocialBilibiliRepliesSortEnum = {
+    _0: '0',
+    Time: 'time',
+    _1: '1',
+    Like: 'like',
+    _2: '2',
+    Reply: 'reply',
+    _3: '3',
+    Hot: 'hot',
+    Hottest: 'hottest',
+    : '最热'
+} as const;
+export type GetSocialBilibiliRepliesSortEnum = typeof GetSocialBilibiliRepliesSortEnum[keyof typeof GetSocialBilibiliRepliesSortEnum];
 
 
 /**
@@ -7513,7 +9480,7 @@ export const StatusApiAxiosParamCreator = function (configuration?: Configuratio
     return {
         /**
          * 想了解我们API的当前负载情况吗？这个接口为你提供了服务的“心电图”。  ## 功能概述 此接口返回我们后端自适应限流器的实时状态。你可以看到当前并发请求数、并发上限、系统负载、请求接受/拒绝数等核心指标。这对于监控API健康状况和性能表现至关重要。  > [!IMPORTANT] > 此接口为管理接口，需要提供有效的管理员级别API密钥才能访问。  ### 认证方式 请在请求头中添加 `Authorization: Bearer <你的API密钥>`。
-         * @summary 获取API限流器实时状态
+         * @summary 限流状态
          * @param {string} authorization Bearer类型的API密钥认证头。例如：&#x60;Bearer sk-xxx&#x60;
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -7593,7 +9560,7 @@ export const StatusApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 想了解我们API的当前负载情况吗？这个接口为你提供了服务的“心电图”。  ## 功能概述 此接口返回我们后端自适应限流器的实时状态。你可以看到当前并发请求数、并发上限、系统负载、请求接受/拒绝数等核心指标。这对于监控API健康状况和性能表现至关重要。  > [!IMPORTANT] > 此接口为管理接口，需要提供有效的管理员级别API密钥才能访问。  ### 认证方式 请在请求头中添加 `Authorization: Bearer <你的API密钥>`。
-         * @summary 获取API限流器实时状态
+         * @summary 限流状态
          * @param {string} authorization Bearer类型的API密钥认证头。例如：&#x60;Bearer sk-xxx&#x60;
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -7628,7 +9595,7 @@ export const StatusApiFactory = function (configuration?: Configuration, basePat
     return {
         /**
          * 想了解我们API的当前负载情况吗？这个接口为你提供了服务的“心电图”。  ## 功能概述 此接口返回我们后端自适应限流器的实时状态。你可以看到当前并发请求数、并发上限、系统负载、请求接受/拒绝数等核心指标。这对于监控API健康状况和性能表现至关重要。  > [!IMPORTANT] > 此接口为管理接口，需要提供有效的管理员级别API密钥才能访问。  ### 认证方式 请在请求头中添加 `Authorization: Bearer <你的API密钥>`。
-         * @summary 获取API限流器实时状态
+         * @summary 限流状态
          * @param {string} authorization Bearer类型的API密钥认证头。例如：&#x60;Bearer sk-xxx&#x60;
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -7655,7 +9622,7 @@ export const StatusApiFactory = function (configuration?: Configuration, basePat
 export class StatusApi extends BaseAPI {
     /**
      * 想了解我们API的当前负载情况吗？这个接口为你提供了服务的“心电图”。  ## 功能概述 此接口返回我们后端自适应限流器的实时状态。你可以看到当前并发请求数、并发上限、系统负载、请求接受/拒绝数等核心指标。这对于监控API健康状况和性能表现至关重要。  > [!IMPORTANT] > 此接口为管理接口，需要提供有效的管理员级别API密钥才能访问。  ### 认证方式 请在请求头中添加 `Authorization: Bearer <你的API密钥>`。
-     * @summary 获取API限流器实时状态
+     * @summary 限流状态
      * @param {string} authorization Bearer类型的API密钥认证头。例如：&#x60;Bearer sk-xxx&#x60;
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -7685,7 +9652,7 @@ export const TextApiAxiosParamCreator = function (configuration?: Configuration)
     return {
         /**
          * 一个快速计算文本 MD5 哈希值的工具，适用于短文本且不关心参数暴露的场景。  ## 功能概述 通过GET请求的查询参数传入文本，返回其32位小写的MD5哈希值。  > [!NOTE] > 对于较长或敏感的文本，我们推荐使用本接口的 POST 版本，以避免URL长度限制和参数暴露问题。
-         * @summary 计算文本的MD5哈希值(GET)
+         * @summary MD5 哈希
          * @param {string} text 需要计算哈希值的文本
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -7722,7 +9689,7 @@ export const TextApiAxiosParamCreator = function (configuration?: Configuration)
         },
         /**
          * 收到了用AES加密的密文？把它、密钥和随机数（nonce）交给我们，就能还原出原始内容。  ## 功能概述 这是一个标准的AES解密接口。你需要提供经过Base64编码的密文、加密时使用的密钥和nonce（随机数，通常为16字节字符串）。  > [!IMPORTANT] > **关于密钥 `key`** > 我们支持 AES-128, AES-192, 和 AES-256。请确保你提供的密钥 `key` 的长度（字节数）正好是 **16**、**24** 或 **32**，以分别对应这三种加密强度。 >  > **关于随机数 `nonce`** > 通常为16字节字符串，需与加密时一致。
-         * @summary 使用AES算法解密文本
+         * @summary AES 解密
          * @param {PostTextAesDecryptRequest} postTextAesDecryptRequest 包含待解密文本 \&#39;text\&#39;、密钥 \&#39;key\&#39; 和随机数 \&#39;nonce\&#39; 的JSON对象
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -7757,8 +9724,44 @@ export const TextApiAxiosParamCreator = function (configuration?: Configuration)
             };
         },
         /**
+         * 需要解密通过高级加密接口加密的数据？这个接口提供与加密接口完全配对的解密功能，支持相同的6种加密模式和3种填充方式。  > [!IMPORTANT] > **解密参数必须与加密时一致** > 解密时，必须提供与加密时相同的密钥、模式和填充方式。对于非GCM模式，还需要提供加密时返回的IV。  ## 功能概述 这是一个功能完整的AES解密接口，能够解密通过高级加密接口加密的所有密文。支持所有6种加密模式和3种填充方式，与加密接口完全配对。  ### 解密流程 1. 获取加密时返回的密文和配置参数 2. 使用相同的密钥、模式、填充方式和IV（如需要） 3. 调用本接口进行解密 4. 获取原始明文  ### 支持的解密模式 - **GCM模式**（推荐）：自动验证数据完整性，如果密文被篡改会解密失败 - **CBC模式**：经典块解密模式，需要提供加密时的IV - **CTR/OFB/CFB模式**：流密码解密，需要提供加密时的IV - **ECB模式**：不需要IV，但安全性较低  ### 填充方式处理 - **PKCS7填充**：解密后自动移除填充 - **Zero填充**：解密后自动移除0x00填充 - **None填充**：无填充处理  ## 参数说明 - **`text`**: 待解密的密文（Base64编码，来自加密接口返回的ciphertext字段） - **`key`**: 解密密钥（必须与加密时相同） - **`mode`**: 加密模式（必须与加密时相同） - **`padding`**: 填充方式（可选，默认PKCS7，必须与加密时相同） - **`iv`**: 初始化向量（非GCM模式必须提供，Base64编码）  ## 常见错误处理 如果解密失败，请检查以下几点： - 密钥是否与加密时完全相同 - 模式和填充方式是否匹配 - 非GCM模式下是否提供了正确的IV - 密文是否完整且未被修改 - GCM模式下密文是否被篡改
+         * @summary AES高级解密
+         * @param {PostTextAesDecryptAdvancedRequest} postTextAesDecryptAdvancedRequest 包含解密配置的JSON对象
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postTextAesDecryptAdvanced: async (postTextAesDecryptAdvancedRequest: PostTextAesDecryptAdvancedRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'postTextAesDecryptAdvancedRequest' is not null or undefined
+            assertParamExists('postTextAesDecryptAdvanced', 'postTextAesDecryptAdvancedRequest', postTextAesDecryptAdvancedRequest)
+            const localVarPath = `/text/aes/decrypt-advanced`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postTextAesDecryptAdvancedRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * 需要安全地传输或存储一些文本信息？AES加密是一个可靠的选择。  ## 功能概述 这是一个标准的AES加密接口。你提供需要加密的明文和密钥，我们返回经过Base64编码的密文。  > [!IMPORTANT] > **关于密钥 `key`** > 我们支持 AES-128, AES-192, 和 AES-256。请确保你提供的密钥 `key` 的长度（字节数）正好是 **16**、**24** 或 **32**，以分别对应这三种加密强度。
-         * @summary 使用AES算法加密文本
+         * @summary AES 加密
          * @param {PostTextAesEncryptRequest} postTextAesEncryptRequest 包含待加密文本 \&#39;text\&#39; 和密钥 \&#39;key\&#39; 的JSON对象
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -7793,8 +9796,44 @@ export const TextApiAxiosParamCreator = function (configuration?: Configuration)
             };
         },
         /**
+         * 需要更灵活的AES加密方案？这个高级接口支持6种加密模式和3种填充方式，让你根据具体场景选择最合适的加密配置。  > [!IMPORTANT] > **推荐使用GCM模式** > GCM模式提供认证加密(AEAD)，不仅能加密数据，还能验证数据完整性，防止密文被篡改。这是目前最推荐的加密模式。  ## 功能概述 这是一个功能全面的AES加密接口，支持多种加密模式和填充方式。你可以根据不同的安全需求和性能要求，灵活选择合适的加密配置。  ### 支持的加密模式 - **GCM模式**（推荐）：认证加密模式，提供完整性保护 - **CBC模式**：经典块加密模式，需要IV和填充，适用于文件加密 - **CTR模式**：流密码模式，无需填充，适用于实时数据加密 - **OFB/CFB模式**：流密码模式，无需填充，适用于流数据加密 - **ECB模式**（不推荐）：仅用于兼容性需求  ### 支持的填充方式 - **PKCS7填充**（推荐）：标准填充方式 - **Zero填充**：使用0x00字节填充 - **None填充**：无填充，用于流密码模式  ### 输出格式支持 - **base64**（默认）：标准Base64编码输出，适合传输和存储 - **hex**：十六进制编码输出，方便与在线加密工具对比验证  通过 `output_format` 参数可以直接获取HEX格式的密文，无需额外调用转换接口。  ## 参数说明 - **`text`**: 待加密的明文文本 - **`key`**: 加密密钥（支持任意长度） - **`mode`**: 加密模式（可选，默认GCM） - **`padding`**: 填充方式（可选，默认PKCS7） - **`iv`**: 自定义IV（可选，Base64编码，16字节） - **`output_format`**: 输出格式（可选，默认base64）  ## 使用示例  **示例1：HEX格式输出** ```json {   \"text\": \"测试文本123\",   \"key\": \"1234567890123456\",   \"mode\": \"ECB\",   \"padding\": \"PKCS7\",   \"output_format\": \"hex\" } ``` 返回示例： ```json {   \"ciphertext\": \"aaaca6027da10918bb5d23d81939552c\",   \"mode\": \"ECB\",   \"padding\": \"PKCS7\" } ```  **示例2：Base64格式输出（默认）** ```json {   \"text\": \"测试文本123\",   \"key\": \"1234567890123456\",   \"mode\": \"ECB\",   \"padding\": \"PKCS7\" } ``` 返回示例： ```json {   \"ciphertext\": \"qqymAn2hCRi7XSPYGTlVLA==\",   \"mode\": \"ECB\",   \"padding\": \"PKCS7\" } ```  ## 技术规格 - **加密算法**: AES-256 - **编码格式**: Base64/HEX（输入/输出） - **IV长度**: 16字节（128位） - **版本标注**: v3.4.8+  > [!NOTE] > **关于IV（初始化向量）** > - GCM模式无需提供IV > - CBC/CTR/OFB/CFB模式可选提供IV > - ECB模式不使用IV > - 建议每次加密使用不同的IV以确保安全性  > [!TIP] > **关于输出格式** > - 如需与在线加密工具（如 toolhelper.cn）对比结果，建议使用 `output_format: \"hex\"`  > - Base64格式更适合网络传输和API调用 > - 两种格式可以相互转换，数据完全一致
+         * @summary AES高级加密
+         * @param {PostTextAesEncryptAdvancedRequest} postTextAesEncryptAdvancedRequest 包含加密配置的JSON对象
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postTextAesEncryptAdvanced: async (postTextAesEncryptAdvancedRequest: PostTextAesEncryptAdvancedRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'postTextAesEncryptAdvancedRequest' is not null or undefined
+            assertParamExists('postTextAesEncryptAdvanced', 'postTextAesEncryptAdvancedRequest', postTextAesEncryptAdvancedRequest)
+            const localVarPath = `/text/aes/encrypt-advanced`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postTextAesEncryptAdvancedRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * 想知道一篇文章有多少字、多少个词、或者多少行？这个接口可以帮你快速统计。  ## 功能概述 你提供一段文本，我们会从多个维度进行分析，并返回其字符数、词数、句子数、段落数和行数。这对于文本编辑、内容管理等场景非常有用。
-         * @summary 多维度分析文本内容
+         * @summary 文本分析
          * @param {PostTextAnalyzeRequest} postTextAnalyzeRequest 包含待分析文本 \&#39;text\&#39; 的JSON对象
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -7830,7 +9869,7 @@ export const TextApiAxiosParamCreator = function (configuration?: Configuration)
         },
         /**
          * 这是一个简单实用的 Base64 解码工具。  ## 功能概述 你提供一个 Base64 编码的字符串，我们帮你解码成原始的 UTF-8 文本。
-         * @summary 解码Base64编码的文本
+         * @summary Base64 解码
          * @param {PostTextBase64DecodeRequest} postTextBase64DecodeRequest 包含待解码文本 \&#39;text\&#39; 的JSON对象
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -7866,7 +9905,7 @@ export const TextApiAxiosParamCreator = function (configuration?: Configuration)
         },
         /**
          * 这是一个简单实用的 Base64 编码工具。  ## 功能概述 你提供一段原始文本，我们帮你转换成 Base64 编码的字符串。
-         * @summary 将文本进行Base64编码
+         * @summary Base64 编码
          * @param {PostTextBase64EncodeRequest} postTextBase64EncodeRequest 包含待编码文本 \&#39;text\&#39; 的JSON对象
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -7901,8 +9940,44 @@ export const TextApiAxiosParamCreator = function (configuration?: Configuration)
             };
         },
         /**
+         * 需要在不同文本格式之间转换？这个接口支持Base64、Hex、URL、HTML、Unicode等多种格式互转，还能生成MD5、SHA256等哈希值。  ## 功能概述 你提供待转换的文本、源格式和目标格式，接口会自动完成转换。支持7种双向格式（plain、base64、hex、url、html、unicode、binary）和4种单向哈希（md5、sha1、sha256、sha512）。  ## 格式说明 **双向转换格式**：plain（纯文本）、base64、hex（十六进制）、url、html（HTML实体）、unicode（\\uXXXX转义）、binary（二进制字符串）  **单向哈希格式**：md5、sha1、sha256、sha512（仅可作为目标格式，不可逆）  ## 链式转换 支持多次调用实现复杂转换，如先将文本转为base64，再将base64转为hex。
+         * @summary 格式转换
+         * @param {PostTextConvertRequest} postTextConvertRequest 包含转换配置的JSON对象
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postTextConvert: async (postTextConvertRequest: PostTextConvertRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'postTextConvertRequest' is not null or undefined
+            assertParamExists('postTextConvert', 'postTextConvertRequest', postTextConvertRequest)
+            const localVarPath = `/text/convert`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(postTextConvertRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * 一个用于计算文本 MD5 哈希值的标准工具，推荐使用此版本。  ## 功能概述 通过POST请求的表单体传入文本，返回其32位小写的MD5哈希值。相比GET版本，此方法更适合处理较长或包含敏感信息的文本。
-         * @summary 计算文本的MD5哈希值 (POST)
+         * @summary MD5 哈希 (POST)
          * @param {PostTextMd5Request} postTextMd5Request 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -7938,7 +10013,7 @@ export const TextApiAxiosParamCreator = function (configuration?: Configuration)
         },
         /**
          * 下载了一个文件，想确认它在传输过程中有没有损坏？校验MD5值是最常用的方法。  ## 功能概述 你提供原始文本和一个MD5哈希值，我们帮你计算文本的哈希，并与你提供的哈希进行比对，告诉你它们是否匹配。这在文件完整性校验等场景下非常有用。
-         * @summary 校验MD5哈希值
+         * @summary MD5 校验
          * @param {PostTextMd5VerifyRequest} postTextMd5VerifyRequest 包含待校验文本 \&#39;text\&#39; 和哈希值 \&#39;hash\&#39; 的JSON对象
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -7983,7 +10058,7 @@ export const TextApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 一个快速计算文本 MD5 哈希值的工具，适用于短文本且不关心参数暴露的场景。  ## 功能概述 通过GET请求的查询参数传入文本，返回其32位小写的MD5哈希值。  > [!NOTE] > 对于较长或敏感的文本，我们推荐使用本接口的 POST 版本，以避免URL长度限制和参数暴露问题。
-         * @summary 计算文本的MD5哈希值(GET)
+         * @summary MD5 哈希
          * @param {string} text 需要计算哈希值的文本
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -7996,7 +10071,7 @@ export const TextApiFp = function(configuration?: Configuration) {
         },
         /**
          * 收到了用AES加密的密文？把它、密钥和随机数（nonce）交给我们，就能还原出原始内容。  ## 功能概述 这是一个标准的AES解密接口。你需要提供经过Base64编码的密文、加密时使用的密钥和nonce（随机数，通常为16字节字符串）。  > [!IMPORTANT] > **关于密钥 `key`** > 我们支持 AES-128, AES-192, 和 AES-256。请确保你提供的密钥 `key` 的长度（字节数）正好是 **16**、**24** 或 **32**，以分别对应这三种加密强度。 >  > **关于随机数 `nonce`** > 通常为16字节字符串，需与加密时一致。
-         * @summary 使用AES算法解密文本
+         * @summary AES 解密
          * @param {PostTextAesDecryptRequest} postTextAesDecryptRequest 包含待解密文本 \&#39;text\&#39;、密钥 \&#39;key\&#39; 和随机数 \&#39;nonce\&#39; 的JSON对象
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -8008,8 +10083,21 @@ export const TextApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
+         * 需要解密通过高级加密接口加密的数据？这个接口提供与加密接口完全配对的解密功能，支持相同的6种加密模式和3种填充方式。  > [!IMPORTANT] > **解密参数必须与加密时一致** > 解密时，必须提供与加密时相同的密钥、模式和填充方式。对于非GCM模式，还需要提供加密时返回的IV。  ## 功能概述 这是一个功能完整的AES解密接口，能够解密通过高级加密接口加密的所有密文。支持所有6种加密模式和3种填充方式，与加密接口完全配对。  ### 解密流程 1. 获取加密时返回的密文和配置参数 2. 使用相同的密钥、模式、填充方式和IV（如需要） 3. 调用本接口进行解密 4. 获取原始明文  ### 支持的解密模式 - **GCM模式**（推荐）：自动验证数据完整性，如果密文被篡改会解密失败 - **CBC模式**：经典块解密模式，需要提供加密时的IV - **CTR/OFB/CFB模式**：流密码解密，需要提供加密时的IV - **ECB模式**：不需要IV，但安全性较低  ### 填充方式处理 - **PKCS7填充**：解密后自动移除填充 - **Zero填充**：解密后自动移除0x00填充 - **None填充**：无填充处理  ## 参数说明 - **`text`**: 待解密的密文（Base64编码，来自加密接口返回的ciphertext字段） - **`key`**: 解密密钥（必须与加密时相同） - **`mode`**: 加密模式（必须与加密时相同） - **`padding`**: 填充方式（可选，默认PKCS7，必须与加密时相同） - **`iv`**: 初始化向量（非GCM模式必须提供，Base64编码）  ## 常见错误处理 如果解密失败，请检查以下几点： - 密钥是否与加密时完全相同 - 模式和填充方式是否匹配 - 非GCM模式下是否提供了正确的IV - 密文是否完整且未被修改 - GCM模式下密文是否被篡改
+         * @summary AES高级解密
+         * @param {PostTextAesDecryptAdvancedRequest} postTextAesDecryptAdvancedRequest 包含解密配置的JSON对象
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postTextAesDecryptAdvanced(postTextAesDecryptAdvancedRequest: PostTextAesDecryptAdvancedRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PostTextAesDecryptAdvanced200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postTextAesDecryptAdvanced(postTextAesDecryptAdvancedRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TextApi.postTextAesDecryptAdvanced']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
          * 需要安全地传输或存储一些文本信息？AES加密是一个可靠的选择。  ## 功能概述 这是一个标准的AES加密接口。你提供需要加密的明文和密钥，我们返回经过Base64编码的密文。  > [!IMPORTANT] > **关于密钥 `key`** > 我们支持 AES-128, AES-192, 和 AES-256。请确保你提供的密钥 `key` 的长度（字节数）正好是 **16**、**24** 或 **32**，以分别对应这三种加密强度。
-         * @summary 使用AES算法加密文本
+         * @summary AES 加密
          * @param {PostTextAesEncryptRequest} postTextAesEncryptRequest 包含待加密文本 \&#39;text\&#39; 和密钥 \&#39;key\&#39; 的JSON对象
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -8021,8 +10109,21 @@ export const TextApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
+         * 需要更灵活的AES加密方案？这个高级接口支持6种加密模式和3种填充方式，让你根据具体场景选择最合适的加密配置。  > [!IMPORTANT] > **推荐使用GCM模式** > GCM模式提供认证加密(AEAD)，不仅能加密数据，还能验证数据完整性，防止密文被篡改。这是目前最推荐的加密模式。  ## 功能概述 这是一个功能全面的AES加密接口，支持多种加密模式和填充方式。你可以根据不同的安全需求和性能要求，灵活选择合适的加密配置。  ### 支持的加密模式 - **GCM模式**（推荐）：认证加密模式，提供完整性保护 - **CBC模式**：经典块加密模式，需要IV和填充，适用于文件加密 - **CTR模式**：流密码模式，无需填充，适用于实时数据加密 - **OFB/CFB模式**：流密码模式，无需填充，适用于流数据加密 - **ECB模式**（不推荐）：仅用于兼容性需求  ### 支持的填充方式 - **PKCS7填充**（推荐）：标准填充方式 - **Zero填充**：使用0x00字节填充 - **None填充**：无填充，用于流密码模式  ### 输出格式支持 - **base64**（默认）：标准Base64编码输出，适合传输和存储 - **hex**：十六进制编码输出，方便与在线加密工具对比验证  通过 `output_format` 参数可以直接获取HEX格式的密文，无需额外调用转换接口。  ## 参数说明 - **`text`**: 待加密的明文文本 - **`key`**: 加密密钥（支持任意长度） - **`mode`**: 加密模式（可选，默认GCM） - **`padding`**: 填充方式（可选，默认PKCS7） - **`iv`**: 自定义IV（可选，Base64编码，16字节） - **`output_format`**: 输出格式（可选，默认base64）  ## 使用示例  **示例1：HEX格式输出** ```json {   \"text\": \"测试文本123\",   \"key\": \"1234567890123456\",   \"mode\": \"ECB\",   \"padding\": \"PKCS7\",   \"output_format\": \"hex\" } ``` 返回示例： ```json {   \"ciphertext\": \"aaaca6027da10918bb5d23d81939552c\",   \"mode\": \"ECB\",   \"padding\": \"PKCS7\" } ```  **示例2：Base64格式输出（默认）** ```json {   \"text\": \"测试文本123\",   \"key\": \"1234567890123456\",   \"mode\": \"ECB\",   \"padding\": \"PKCS7\" } ``` 返回示例： ```json {   \"ciphertext\": \"qqymAn2hCRi7XSPYGTlVLA==\",   \"mode\": \"ECB\",   \"padding\": \"PKCS7\" } ```  ## 技术规格 - **加密算法**: AES-256 - **编码格式**: Base64/HEX（输入/输出） - **IV长度**: 16字节（128位） - **版本标注**: v3.4.8+  > [!NOTE] > **关于IV（初始化向量）** > - GCM模式无需提供IV > - CBC/CTR/OFB/CFB模式可选提供IV > - ECB模式不使用IV > - 建议每次加密使用不同的IV以确保安全性  > [!TIP] > **关于输出格式** > - 如需与在线加密工具（如 toolhelper.cn）对比结果，建议使用 `output_format: \"hex\"`  > - Base64格式更适合网络传输和API调用 > - 两种格式可以相互转换，数据完全一致
+         * @summary AES高级加密
+         * @param {PostTextAesEncryptAdvancedRequest} postTextAesEncryptAdvancedRequest 包含加密配置的JSON对象
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postTextAesEncryptAdvanced(postTextAesEncryptAdvancedRequest: PostTextAesEncryptAdvancedRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PostTextAesEncryptAdvanced200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postTextAesEncryptAdvanced(postTextAesEncryptAdvancedRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TextApi.postTextAesEncryptAdvanced']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
          * 想知道一篇文章有多少字、多少个词、或者多少行？这个接口可以帮你快速统计。  ## 功能概述 你提供一段文本，我们会从多个维度进行分析，并返回其字符数、词数、句子数、段落数和行数。这对于文本编辑、内容管理等场景非常有用。
-         * @summary 多维度分析文本内容
+         * @summary 文本分析
          * @param {PostTextAnalyzeRequest} postTextAnalyzeRequest 包含待分析文本 \&#39;text\&#39; 的JSON对象
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -8035,7 +10136,7 @@ export const TextApiFp = function(configuration?: Configuration) {
         },
         /**
          * 这是一个简单实用的 Base64 解码工具。  ## 功能概述 你提供一个 Base64 编码的字符串，我们帮你解码成原始的 UTF-8 文本。
-         * @summary 解码Base64编码的文本
+         * @summary Base64 解码
          * @param {PostTextBase64DecodeRequest} postTextBase64DecodeRequest 包含待解码文本 \&#39;text\&#39; 的JSON对象
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -8048,7 +10149,7 @@ export const TextApiFp = function(configuration?: Configuration) {
         },
         /**
          * 这是一个简单实用的 Base64 编码工具。  ## 功能概述 你提供一段原始文本，我们帮你转换成 Base64 编码的字符串。
-         * @summary 将文本进行Base64编码
+         * @summary Base64 编码
          * @param {PostTextBase64EncodeRequest} postTextBase64EncodeRequest 包含待编码文本 \&#39;text\&#39; 的JSON对象
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -8060,8 +10161,21 @@ export const TextApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
+         * 需要在不同文本格式之间转换？这个接口支持Base64、Hex、URL、HTML、Unicode等多种格式互转，还能生成MD5、SHA256等哈希值。  ## 功能概述 你提供待转换的文本、源格式和目标格式，接口会自动完成转换。支持7种双向格式（plain、base64、hex、url、html、unicode、binary）和4种单向哈希（md5、sha1、sha256、sha512）。  ## 格式说明 **双向转换格式**：plain（纯文本）、base64、hex（十六进制）、url、html（HTML实体）、unicode（\\uXXXX转义）、binary（二进制字符串）  **单向哈希格式**：md5、sha1、sha256、sha512（仅可作为目标格式，不可逆）  ## 链式转换 支持多次调用实现复杂转换，如先将文本转为base64，再将base64转为hex。
+         * @summary 格式转换
+         * @param {PostTextConvertRequest} postTextConvertRequest 包含转换配置的JSON对象
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async postTextConvert(postTextConvertRequest: PostTextConvertRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PostTextConvert200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.postTextConvert(postTextConvertRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TextApi.postTextConvert']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
          * 一个用于计算文本 MD5 哈希值的标准工具，推荐使用此版本。  ## 功能概述 通过POST请求的表单体传入文本，返回其32位小写的MD5哈希值。相比GET版本，此方法更适合处理较长或包含敏感信息的文本。
-         * @summary 计算文本的MD5哈希值 (POST)
+         * @summary MD5 哈希 (POST)
          * @param {PostTextMd5Request} postTextMd5Request 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -8074,7 +10188,7 @@ export const TextApiFp = function(configuration?: Configuration) {
         },
         /**
          * 下载了一个文件，想确认它在传输过程中有没有损坏？校验MD5值是最常用的方法。  ## 功能概述 你提供原始文本和一个MD5哈希值，我们帮你计算文本的哈希，并与你提供的哈希进行比对，告诉你它们是否匹配。这在文件完整性校验等场景下非常有用。
-         * @summary 校验MD5哈希值
+         * @summary MD5 校验
          * @param {PostTextMd5VerifyRequest} postTextMd5VerifyRequest 包含待校验文本 \&#39;text\&#39; 和哈希值 \&#39;hash\&#39; 的JSON对象
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -8096,7 +10210,7 @@ export const TextApiFactory = function (configuration?: Configuration, basePath?
     return {
         /**
          * 一个快速计算文本 MD5 哈希值的工具，适用于短文本且不关心参数暴露的场景。  ## 功能概述 通过GET请求的查询参数传入文本，返回其32位小写的MD5哈希值。  > [!NOTE] > 对于较长或敏感的文本，我们推荐使用本接口的 POST 版本，以避免URL长度限制和参数暴露问题。
-         * @summary 计算文本的MD5哈希值(GET)
+         * @summary MD5 哈希
          * @param {string} text 需要计算哈希值的文本
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -8106,7 +10220,7 @@ export const TextApiFactory = function (configuration?: Configuration, basePath?
         },
         /**
          * 收到了用AES加密的密文？把它、密钥和随机数（nonce）交给我们，就能还原出原始内容。  ## 功能概述 这是一个标准的AES解密接口。你需要提供经过Base64编码的密文、加密时使用的密钥和nonce（随机数，通常为16字节字符串）。  > [!IMPORTANT] > **关于密钥 `key`** > 我们支持 AES-128, AES-192, 和 AES-256。请确保你提供的密钥 `key` 的长度（字节数）正好是 **16**、**24** 或 **32**，以分别对应这三种加密强度。 >  > **关于随机数 `nonce`** > 通常为16字节字符串，需与加密时一致。
-         * @summary 使用AES算法解密文本
+         * @summary AES 解密
          * @param {PostTextAesDecryptRequest} postTextAesDecryptRequest 包含待解密文本 \&#39;text\&#39;、密钥 \&#39;key\&#39; 和随机数 \&#39;nonce\&#39; 的JSON对象
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -8115,8 +10229,18 @@ export const TextApiFactory = function (configuration?: Configuration, basePath?
             return localVarFp.postTextAesDecrypt(postTextAesDecryptRequest, options).then((request) => request(axios, basePath));
         },
         /**
+         * 需要解密通过高级加密接口加密的数据？这个接口提供与加密接口完全配对的解密功能，支持相同的6种加密模式和3种填充方式。  > [!IMPORTANT] > **解密参数必须与加密时一致** > 解密时，必须提供与加密时相同的密钥、模式和填充方式。对于非GCM模式，还需要提供加密时返回的IV。  ## 功能概述 这是一个功能完整的AES解密接口，能够解密通过高级加密接口加密的所有密文。支持所有6种加密模式和3种填充方式，与加密接口完全配对。  ### 解密流程 1. 获取加密时返回的密文和配置参数 2. 使用相同的密钥、模式、填充方式和IV（如需要） 3. 调用本接口进行解密 4. 获取原始明文  ### 支持的解密模式 - **GCM模式**（推荐）：自动验证数据完整性，如果密文被篡改会解密失败 - **CBC模式**：经典块解密模式，需要提供加密时的IV - **CTR/OFB/CFB模式**：流密码解密，需要提供加密时的IV - **ECB模式**：不需要IV，但安全性较低  ### 填充方式处理 - **PKCS7填充**：解密后自动移除填充 - **Zero填充**：解密后自动移除0x00填充 - **None填充**：无填充处理  ## 参数说明 - **`text`**: 待解密的密文（Base64编码，来自加密接口返回的ciphertext字段） - **`key`**: 解密密钥（必须与加密时相同） - **`mode`**: 加密模式（必须与加密时相同） - **`padding`**: 填充方式（可选，默认PKCS7，必须与加密时相同） - **`iv`**: 初始化向量（非GCM模式必须提供，Base64编码）  ## 常见错误处理 如果解密失败，请检查以下几点： - 密钥是否与加密时完全相同 - 模式和填充方式是否匹配 - 非GCM模式下是否提供了正确的IV - 密文是否完整且未被修改 - GCM模式下密文是否被篡改
+         * @summary AES高级解密
+         * @param {PostTextAesDecryptAdvancedRequest} postTextAesDecryptAdvancedRequest 包含解密配置的JSON对象
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postTextAesDecryptAdvanced(postTextAesDecryptAdvancedRequest: PostTextAesDecryptAdvancedRequest, options?: RawAxiosRequestConfig): AxiosPromise<PostTextAesDecryptAdvanced200Response> {
+            return localVarFp.postTextAesDecryptAdvanced(postTextAesDecryptAdvancedRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
          * 需要安全地传输或存储一些文本信息？AES加密是一个可靠的选择。  ## 功能概述 这是一个标准的AES加密接口。你提供需要加密的明文和密钥，我们返回经过Base64编码的密文。  > [!IMPORTANT] > **关于密钥 `key`** > 我们支持 AES-128, AES-192, 和 AES-256。请确保你提供的密钥 `key` 的长度（字节数）正好是 **16**、**24** 或 **32**，以分别对应这三种加密强度。
-         * @summary 使用AES算法加密文本
+         * @summary AES 加密
          * @param {PostTextAesEncryptRequest} postTextAesEncryptRequest 包含待加密文本 \&#39;text\&#39; 和密钥 \&#39;key\&#39; 的JSON对象
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -8125,8 +10249,18 @@ export const TextApiFactory = function (configuration?: Configuration, basePath?
             return localVarFp.postTextAesEncrypt(postTextAesEncryptRequest, options).then((request) => request(axios, basePath));
         },
         /**
+         * 需要更灵活的AES加密方案？这个高级接口支持6种加密模式和3种填充方式，让你根据具体场景选择最合适的加密配置。  > [!IMPORTANT] > **推荐使用GCM模式** > GCM模式提供认证加密(AEAD)，不仅能加密数据，还能验证数据完整性，防止密文被篡改。这是目前最推荐的加密模式。  ## 功能概述 这是一个功能全面的AES加密接口，支持多种加密模式和填充方式。你可以根据不同的安全需求和性能要求，灵活选择合适的加密配置。  ### 支持的加密模式 - **GCM模式**（推荐）：认证加密模式，提供完整性保护 - **CBC模式**：经典块加密模式，需要IV和填充，适用于文件加密 - **CTR模式**：流密码模式，无需填充，适用于实时数据加密 - **OFB/CFB模式**：流密码模式，无需填充，适用于流数据加密 - **ECB模式**（不推荐）：仅用于兼容性需求  ### 支持的填充方式 - **PKCS7填充**（推荐）：标准填充方式 - **Zero填充**：使用0x00字节填充 - **None填充**：无填充，用于流密码模式  ### 输出格式支持 - **base64**（默认）：标准Base64编码输出，适合传输和存储 - **hex**：十六进制编码输出，方便与在线加密工具对比验证  通过 `output_format` 参数可以直接获取HEX格式的密文，无需额外调用转换接口。  ## 参数说明 - **`text`**: 待加密的明文文本 - **`key`**: 加密密钥（支持任意长度） - **`mode`**: 加密模式（可选，默认GCM） - **`padding`**: 填充方式（可选，默认PKCS7） - **`iv`**: 自定义IV（可选，Base64编码，16字节） - **`output_format`**: 输出格式（可选，默认base64）  ## 使用示例  **示例1：HEX格式输出** ```json {   \"text\": \"测试文本123\",   \"key\": \"1234567890123456\",   \"mode\": \"ECB\",   \"padding\": \"PKCS7\",   \"output_format\": \"hex\" } ``` 返回示例： ```json {   \"ciphertext\": \"aaaca6027da10918bb5d23d81939552c\",   \"mode\": \"ECB\",   \"padding\": \"PKCS7\" } ```  **示例2：Base64格式输出（默认）** ```json {   \"text\": \"测试文本123\",   \"key\": \"1234567890123456\",   \"mode\": \"ECB\",   \"padding\": \"PKCS7\" } ``` 返回示例： ```json {   \"ciphertext\": \"qqymAn2hCRi7XSPYGTlVLA==\",   \"mode\": \"ECB\",   \"padding\": \"PKCS7\" } ```  ## 技术规格 - **加密算法**: AES-256 - **编码格式**: Base64/HEX（输入/输出） - **IV长度**: 16字节（128位） - **版本标注**: v3.4.8+  > [!NOTE] > **关于IV（初始化向量）** > - GCM模式无需提供IV > - CBC/CTR/OFB/CFB模式可选提供IV > - ECB模式不使用IV > - 建议每次加密使用不同的IV以确保安全性  > [!TIP] > **关于输出格式** > - 如需与在线加密工具（如 toolhelper.cn）对比结果，建议使用 `output_format: \"hex\"`  > - Base64格式更适合网络传输和API调用 > - 两种格式可以相互转换，数据完全一致
+         * @summary AES高级加密
+         * @param {PostTextAesEncryptAdvancedRequest} postTextAesEncryptAdvancedRequest 包含加密配置的JSON对象
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postTextAesEncryptAdvanced(postTextAesEncryptAdvancedRequest: PostTextAesEncryptAdvancedRequest, options?: RawAxiosRequestConfig): AxiosPromise<PostTextAesEncryptAdvanced200Response> {
+            return localVarFp.postTextAesEncryptAdvanced(postTextAesEncryptAdvancedRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
          * 想知道一篇文章有多少字、多少个词、或者多少行？这个接口可以帮你快速统计。  ## 功能概述 你提供一段文本，我们会从多个维度进行分析，并返回其字符数、词数、句子数、段落数和行数。这对于文本编辑、内容管理等场景非常有用。
-         * @summary 多维度分析文本内容
+         * @summary 文本分析
          * @param {PostTextAnalyzeRequest} postTextAnalyzeRequest 包含待分析文本 \&#39;text\&#39; 的JSON对象
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -8136,7 +10270,7 @@ export const TextApiFactory = function (configuration?: Configuration, basePath?
         },
         /**
          * 这是一个简单实用的 Base64 解码工具。  ## 功能概述 你提供一个 Base64 编码的字符串，我们帮你解码成原始的 UTF-8 文本。
-         * @summary 解码Base64编码的文本
+         * @summary Base64 解码
          * @param {PostTextBase64DecodeRequest} postTextBase64DecodeRequest 包含待解码文本 \&#39;text\&#39; 的JSON对象
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -8146,7 +10280,7 @@ export const TextApiFactory = function (configuration?: Configuration, basePath?
         },
         /**
          * 这是一个简单实用的 Base64 编码工具。  ## 功能概述 你提供一段原始文本，我们帮你转换成 Base64 编码的字符串。
-         * @summary 将文本进行Base64编码
+         * @summary Base64 编码
          * @param {PostTextBase64EncodeRequest} postTextBase64EncodeRequest 包含待编码文本 \&#39;text\&#39; 的JSON对象
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -8155,8 +10289,18 @@ export const TextApiFactory = function (configuration?: Configuration, basePath?
             return localVarFp.postTextBase64Encode(postTextBase64EncodeRequest, options).then((request) => request(axios, basePath));
         },
         /**
+         * 需要在不同文本格式之间转换？这个接口支持Base64、Hex、URL、HTML、Unicode等多种格式互转，还能生成MD5、SHA256等哈希值。  ## 功能概述 你提供待转换的文本、源格式和目标格式，接口会自动完成转换。支持7种双向格式（plain、base64、hex、url、html、unicode、binary）和4种单向哈希（md5、sha1、sha256、sha512）。  ## 格式说明 **双向转换格式**：plain（纯文本）、base64、hex（十六进制）、url、html（HTML实体）、unicode（\\uXXXX转义）、binary（二进制字符串）  **单向哈希格式**：md5、sha1、sha256、sha512（仅可作为目标格式，不可逆）  ## 链式转换 支持多次调用实现复杂转换，如先将文本转为base64，再将base64转为hex。
+         * @summary 格式转换
+         * @param {PostTextConvertRequest} postTextConvertRequest 包含转换配置的JSON对象
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        postTextConvert(postTextConvertRequest: PostTextConvertRequest, options?: RawAxiosRequestConfig): AxiosPromise<PostTextConvert200Response> {
+            return localVarFp.postTextConvert(postTextConvertRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
          * 一个用于计算文本 MD5 哈希值的标准工具，推荐使用此版本。  ## 功能概述 通过POST请求的表单体传入文本，返回其32位小写的MD5哈希值。相比GET版本，此方法更适合处理较长或包含敏感信息的文本。
-         * @summary 计算文本的MD5哈希值 (POST)
+         * @summary MD5 哈希 (POST)
          * @param {PostTextMd5Request} postTextMd5Request 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -8166,7 +10310,7 @@ export const TextApiFactory = function (configuration?: Configuration, basePath?
         },
         /**
          * 下载了一个文件，想确认它在传输过程中有没有损坏？校验MD5值是最常用的方法。  ## 功能概述 你提供原始文本和一个MD5哈希值，我们帮你计算文本的哈希，并与你提供的哈希进行比对，告诉你它们是否匹配。这在文件完整性校验等场景下非常有用。
-         * @summary 校验MD5哈希值
+         * @summary MD5 校验
          * @param {PostTextMd5VerifyRequest} postTextMd5VerifyRequest 包含待校验文本 \&#39;text\&#39; 和哈希值 \&#39;hash\&#39; 的JSON对象
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -8183,7 +10327,7 @@ export const TextApiFactory = function (configuration?: Configuration, basePath?
 export class TextApi extends BaseAPI {
     /**
      * 一个快速计算文本 MD5 哈希值的工具，适用于短文本且不关心参数暴露的场景。  ## 功能概述 通过GET请求的查询参数传入文本，返回其32位小写的MD5哈希值。  > [!NOTE] > 对于较长或敏感的文本，我们推荐使用本接口的 POST 版本，以避免URL长度限制和参数暴露问题。
-     * @summary 计算文本的MD5哈希值(GET)
+     * @summary MD5 哈希
      * @param {string} text 需要计算哈希值的文本
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8194,7 +10338,7 @@ export class TextApi extends BaseAPI {
 
     /**
      * 收到了用AES加密的密文？把它、密钥和随机数（nonce）交给我们，就能还原出原始内容。  ## 功能概述 这是一个标准的AES解密接口。你需要提供经过Base64编码的密文、加密时使用的密钥和nonce（随机数，通常为16字节字符串）。  > [!IMPORTANT] > **关于密钥 `key`** > 我们支持 AES-128, AES-192, 和 AES-256。请确保你提供的密钥 `key` 的长度（字节数）正好是 **16**、**24** 或 **32**，以分别对应这三种加密强度。 >  > **关于随机数 `nonce`** > 通常为16字节字符串，需与加密时一致。
-     * @summary 使用AES算法解密文本
+     * @summary AES 解密
      * @param {PostTextAesDecryptRequest} postTextAesDecryptRequest 包含待解密文本 \&#39;text\&#39;、密钥 \&#39;key\&#39; 和随机数 \&#39;nonce\&#39; 的JSON对象
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8204,8 +10348,19 @@ export class TextApi extends BaseAPI {
     }
 
     /**
+     * 需要解密通过高级加密接口加密的数据？这个接口提供与加密接口完全配对的解密功能，支持相同的6种加密模式和3种填充方式。  > [!IMPORTANT] > **解密参数必须与加密时一致** > 解密时，必须提供与加密时相同的密钥、模式和填充方式。对于非GCM模式，还需要提供加密时返回的IV。  ## 功能概述 这是一个功能完整的AES解密接口，能够解密通过高级加密接口加密的所有密文。支持所有6种加密模式和3种填充方式，与加密接口完全配对。  ### 解密流程 1. 获取加密时返回的密文和配置参数 2. 使用相同的密钥、模式、填充方式和IV（如需要） 3. 调用本接口进行解密 4. 获取原始明文  ### 支持的解密模式 - **GCM模式**（推荐）：自动验证数据完整性，如果密文被篡改会解密失败 - **CBC模式**：经典块解密模式，需要提供加密时的IV - **CTR/OFB/CFB模式**：流密码解密，需要提供加密时的IV - **ECB模式**：不需要IV，但安全性较低  ### 填充方式处理 - **PKCS7填充**：解密后自动移除填充 - **Zero填充**：解密后自动移除0x00填充 - **None填充**：无填充处理  ## 参数说明 - **`text`**: 待解密的密文（Base64编码，来自加密接口返回的ciphertext字段） - **`key`**: 解密密钥（必须与加密时相同） - **`mode`**: 加密模式（必须与加密时相同） - **`padding`**: 填充方式（可选，默认PKCS7，必须与加密时相同） - **`iv`**: 初始化向量（非GCM模式必须提供，Base64编码）  ## 常见错误处理 如果解密失败，请检查以下几点： - 密钥是否与加密时完全相同 - 模式和填充方式是否匹配 - 非GCM模式下是否提供了正确的IV - 密文是否完整且未被修改 - GCM模式下密文是否被篡改
+     * @summary AES高级解密
+     * @param {PostTextAesDecryptAdvancedRequest} postTextAesDecryptAdvancedRequest 包含解密配置的JSON对象
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public postTextAesDecryptAdvanced(postTextAesDecryptAdvancedRequest: PostTextAesDecryptAdvancedRequest, options?: RawAxiosRequestConfig) {
+        return TextApiFp(this.configuration).postTextAesDecryptAdvanced(postTextAesDecryptAdvancedRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
      * 需要安全地传输或存储一些文本信息？AES加密是一个可靠的选择。  ## 功能概述 这是一个标准的AES加密接口。你提供需要加密的明文和密钥，我们返回经过Base64编码的密文。  > [!IMPORTANT] > **关于密钥 `key`** > 我们支持 AES-128, AES-192, 和 AES-256。请确保你提供的密钥 `key` 的长度（字节数）正好是 **16**、**24** 或 **32**，以分别对应这三种加密强度。
-     * @summary 使用AES算法加密文本
+     * @summary AES 加密
      * @param {PostTextAesEncryptRequest} postTextAesEncryptRequest 包含待加密文本 \&#39;text\&#39; 和密钥 \&#39;key\&#39; 的JSON对象
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8215,8 +10370,19 @@ export class TextApi extends BaseAPI {
     }
 
     /**
+     * 需要更灵活的AES加密方案？这个高级接口支持6种加密模式和3种填充方式，让你根据具体场景选择最合适的加密配置。  > [!IMPORTANT] > **推荐使用GCM模式** > GCM模式提供认证加密(AEAD)，不仅能加密数据，还能验证数据完整性，防止密文被篡改。这是目前最推荐的加密模式。  ## 功能概述 这是一个功能全面的AES加密接口，支持多种加密模式和填充方式。你可以根据不同的安全需求和性能要求，灵活选择合适的加密配置。  ### 支持的加密模式 - **GCM模式**（推荐）：认证加密模式，提供完整性保护 - **CBC模式**：经典块加密模式，需要IV和填充，适用于文件加密 - **CTR模式**：流密码模式，无需填充，适用于实时数据加密 - **OFB/CFB模式**：流密码模式，无需填充，适用于流数据加密 - **ECB模式**（不推荐）：仅用于兼容性需求  ### 支持的填充方式 - **PKCS7填充**（推荐）：标准填充方式 - **Zero填充**：使用0x00字节填充 - **None填充**：无填充，用于流密码模式  ### 输出格式支持 - **base64**（默认）：标准Base64编码输出，适合传输和存储 - **hex**：十六进制编码输出，方便与在线加密工具对比验证  通过 `output_format` 参数可以直接获取HEX格式的密文，无需额外调用转换接口。  ## 参数说明 - **`text`**: 待加密的明文文本 - **`key`**: 加密密钥（支持任意长度） - **`mode`**: 加密模式（可选，默认GCM） - **`padding`**: 填充方式（可选，默认PKCS7） - **`iv`**: 自定义IV（可选，Base64编码，16字节） - **`output_format`**: 输出格式（可选，默认base64）  ## 使用示例  **示例1：HEX格式输出** ```json {   \"text\": \"测试文本123\",   \"key\": \"1234567890123456\",   \"mode\": \"ECB\",   \"padding\": \"PKCS7\",   \"output_format\": \"hex\" } ``` 返回示例： ```json {   \"ciphertext\": \"aaaca6027da10918bb5d23d81939552c\",   \"mode\": \"ECB\",   \"padding\": \"PKCS7\" } ```  **示例2：Base64格式输出（默认）** ```json {   \"text\": \"测试文本123\",   \"key\": \"1234567890123456\",   \"mode\": \"ECB\",   \"padding\": \"PKCS7\" } ``` 返回示例： ```json {   \"ciphertext\": \"qqymAn2hCRi7XSPYGTlVLA==\",   \"mode\": \"ECB\",   \"padding\": \"PKCS7\" } ```  ## 技术规格 - **加密算法**: AES-256 - **编码格式**: Base64/HEX（输入/输出） - **IV长度**: 16字节（128位） - **版本标注**: v3.4.8+  > [!NOTE] > **关于IV（初始化向量）** > - GCM模式无需提供IV > - CBC/CTR/OFB/CFB模式可选提供IV > - ECB模式不使用IV > - 建议每次加密使用不同的IV以确保安全性  > [!TIP] > **关于输出格式** > - 如需与在线加密工具（如 toolhelper.cn）对比结果，建议使用 `output_format: \"hex\"`  > - Base64格式更适合网络传输和API调用 > - 两种格式可以相互转换，数据完全一致
+     * @summary AES高级加密
+     * @param {PostTextAesEncryptAdvancedRequest} postTextAesEncryptAdvancedRequest 包含加密配置的JSON对象
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public postTextAesEncryptAdvanced(postTextAesEncryptAdvancedRequest: PostTextAesEncryptAdvancedRequest, options?: RawAxiosRequestConfig) {
+        return TextApiFp(this.configuration).postTextAesEncryptAdvanced(postTextAesEncryptAdvancedRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
      * 想知道一篇文章有多少字、多少个词、或者多少行？这个接口可以帮你快速统计。  ## 功能概述 你提供一段文本，我们会从多个维度进行分析，并返回其字符数、词数、句子数、段落数和行数。这对于文本编辑、内容管理等场景非常有用。
-     * @summary 多维度分析文本内容
+     * @summary 文本分析
      * @param {PostTextAnalyzeRequest} postTextAnalyzeRequest 包含待分析文本 \&#39;text\&#39; 的JSON对象
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8227,7 +10393,7 @@ export class TextApi extends BaseAPI {
 
     /**
      * 这是一个简单实用的 Base64 解码工具。  ## 功能概述 你提供一个 Base64 编码的字符串，我们帮你解码成原始的 UTF-8 文本。
-     * @summary 解码Base64编码的文本
+     * @summary Base64 解码
      * @param {PostTextBase64DecodeRequest} postTextBase64DecodeRequest 包含待解码文本 \&#39;text\&#39; 的JSON对象
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8238,7 +10404,7 @@ export class TextApi extends BaseAPI {
 
     /**
      * 这是一个简单实用的 Base64 编码工具。  ## 功能概述 你提供一段原始文本，我们帮你转换成 Base64 编码的字符串。
-     * @summary 将文本进行Base64编码
+     * @summary Base64 编码
      * @param {PostTextBase64EncodeRequest} postTextBase64EncodeRequest 包含待编码文本 \&#39;text\&#39; 的JSON对象
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8248,8 +10414,19 @@ export class TextApi extends BaseAPI {
     }
 
     /**
+     * 需要在不同文本格式之间转换？这个接口支持Base64、Hex、URL、HTML、Unicode等多种格式互转，还能生成MD5、SHA256等哈希值。  ## 功能概述 你提供待转换的文本、源格式和目标格式，接口会自动完成转换。支持7种双向格式（plain、base64、hex、url、html、unicode、binary）和4种单向哈希（md5、sha1、sha256、sha512）。  ## 格式说明 **双向转换格式**：plain（纯文本）、base64、hex（十六进制）、url、html（HTML实体）、unicode（\\uXXXX转义）、binary（二进制字符串）  **单向哈希格式**：md5、sha1、sha256、sha512（仅可作为目标格式，不可逆）  ## 链式转换 支持多次调用实现复杂转换，如先将文本转为base64，再将base64转为hex。
+     * @summary 格式转换
+     * @param {PostTextConvertRequest} postTextConvertRequest 包含转换配置的JSON对象
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public postTextConvert(postTextConvertRequest: PostTextConvertRequest, options?: RawAxiosRequestConfig) {
+        return TextApiFp(this.configuration).postTextConvert(postTextConvertRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
      * 一个用于计算文本 MD5 哈希值的标准工具，推荐使用此版本。  ## 功能概述 通过POST请求的表单体传入文本，返回其32位小写的MD5哈希值。相比GET版本，此方法更适合处理较长或包含敏感信息的文本。
-     * @summary 计算文本的MD5哈希值 (POST)
+     * @summary MD5 哈希 (POST)
      * @param {PostTextMd5Request} postTextMd5Request 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8260,7 +10437,7 @@ export class TextApi extends BaseAPI {
 
     /**
      * 下载了一个文件，想确认它在传输过程中有没有损坏？校验MD5值是最常用的方法。  ## 功能概述 你提供原始文本和一个MD5哈希值，我们帮你计算文本的哈希，并与你提供的哈希进行比对，告诉你它们是否匹配。这在文件完整性校验等场景下非常有用。
-     * @summary 校验MD5哈希值
+     * @summary MD5 校验
      * @param {PostTextMd5VerifyRequest} postTextMd5VerifyRequest 包含待校验文本 \&#39;text\&#39; 和哈希值 \&#39;hash\&#39; 的JSON对象
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -8278,8 +10455,8 @@ export class TextApi extends BaseAPI {
 export const TranslateApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
-         * 获取AI智能翻译服务支持的完整语言列表、翻译风格选项、上下文场景选项以及性能指标信息。这个接口对于需要在前端动态展示翻译配置选项的应用非常有用，它会返回当前AI翻译服务所支持的所有语言代码、原生名称、翻译风格说明、上下文场景描述，以及服务的性能特征和限制信息。通过此接口，开发者可以构建用户友好的翻译界面，让用户选择合适的翻译参数。
-         * @summary 获取AI翻译支持的语言和配置
+         * 获取AI智能翻译服务支持的完整语言列表、翻译风格选项、上下文场景选项以及性能指标信息。
+         * @summary AI翻译配置
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -8308,7 +10485,7 @@ export const TranslateApiAxiosParamCreator = function (configuration?: Configura
             };
         },
         /**
-         * 这是一个商业级的AI智能翻译服务，采用最新的神经网络翻译技术和大语言模型，提供远超传统机器翻译的质量。它不仅能够智能处理单个文本翻译，还支持高效的批量文本翻译，并且具备上下文感知、风格适配、格式保留等高级功能。  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者深度集成和测试。未来，它将转为付费API，为用户提供更稳定、更智能的翻译服务。  ## 功能概述  - **智能双模式**: 支持单个文本翻译和批量文本翻译的统一接口设计，自动识别请求类型并提供相应的翻译服务。系统会根据输入自动判断是处理单条文本还是批量文本，无需使用不同的接口。 - **多风格适配**: 提供随意口语化、专业商务、学术正式、文学艺术四种翻译风格，能够根据不同场景需求调整翻译的语言风格和表达方式。 - **上下文感知**: 支持通用、商务、技术、医疗、法律、市场营销、娱乐、教育、新闻等九种专业领域的上下文翻译，确保术语准确性和表达地道性。 - **高质量保证**: 内置质量评估系统，对每次翻译结果进行流畅度、准确度、完整性评分，并提供置信度分数和替代翻译建议。 - **智能解释**: 提供关键词组翻译注释、文化背景说明和语法结构分析，帮助用户理解翻译逻辑和文化差异。 - **高效批量**: 批量翻译支持最多50条文本，总计10万字符，配备智能并发控制（1-10并发）和失败重试机制。 - **快速模式**: 提供快速模式选项，在保证95%+准确率的前提下，响应时间缩短至800ms内，适合实时翻译和聊天应用。 - **格式保留**: 智能识别并保持原文的格式结构，包括换行、缩进、特殊符号等，确保翻译后的文本保持良好的可读性。
+         * 这是一个商业级的AI智能翻译服务，采用最新的神经网络翻译技术和大语言模型，提供远超传统机器翻译的质量。  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者深度集成和测试。未来，它将转为付费API，为用户提供更稳定、更智能的翻译服务。  ## 功能概述  - **智能双模式**: 支持单个文本翻译和批量文本翻译的统一接口设计，自动识别请求类型并提供相应的翻译服务。系统会根据输入自动判断是处理单条文本还是批量文本，无需使用不同的接口。 - **多风格适配**: 提供随意口语化、专业商务、学术正式、文学艺术四种翻译风格，能够根据不同场景需求调整翻译的语言风格和表达方式。 - **上下文感知**: 支持通用、商务、技术、医疗、法律、市场营销、娱乐、教育、新闻等九种专业领域的上下文翻译，确保术语准确性和表达地道性。 - **高质量保证**: 内置质量评估系统，对每次翻译结果进行流畅度、准确度、完整性评分，并提供置信度分数和替代翻译建议。 - **智能解释**: 提供关键词组翻译注释、文化背景说明和语法结构分析，帮助用户理解翻译逻辑和文化差异。 - **高效批量**: 批量翻译支持最多50条文本，总计10万字符，配备智能并发控制（1-10并发）和失败重试机制。 - **快速模式**: 提供快速模式选项，在保证95%+准确率的前提下，响应时间缩短至800ms内，适合实时翻译和聊天应用。 - **格式保留**: 智能识别并保持原文的格式结构，包括换行、缩进、特殊符号等，确保翻译后的文本保持良好的可读性。
          * @summary AI智能翻译
          * @param {PostAiTranslateTargetLangEnum} targetLang 目标语言代码。请从支持的语言列表中选择一个语言代码。
          * @param {PostAiTranslateRequest} postAiTranslateRequest 包含翻译参数的JSON对象，支持单个文本或批量文本翻译
@@ -8388,7 +10565,7 @@ export const TranslateApiAxiosParamCreator = function (configuration?: Configura
         },
         /**
          * 需要跨越语言的鸿沟进行交流？这个翻译接口是你可靠的\'同声传译\'。  ## 功能概述 你可以将一段源语言文本（我们能自动检测源语言）翻译成你指定的任何目标语言。无论是中译英、日译法，都不在话下。  ## 支持的语言 我们支持超过100种语言的互译，包括但不限于：中文（简体/繁体）、英语、日语、韩语、法语、德语、西班牙语、俄语、阿拉伯语等主流语言，以及各种小语种。详见下方参数列表。
-         * @summary 多语言文本翻译
+         * @summary 翻译
          * @param {PostTranslateTextToLangEnum} toLang 目标语言代码。请从支持的语言列表中选择一个语言代码。
          * @param {PostTranslateTextRequest} postTranslateTextRequest 包含待翻译文本的JSON对象
          * @param {*} [options] Override http request option.
@@ -8439,8 +10616,8 @@ export const TranslateApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = TranslateApiAxiosParamCreator(configuration)
     return {
         /**
-         * 获取AI智能翻译服务支持的完整语言列表、翻译风格选项、上下文场景选项以及性能指标信息。这个接口对于需要在前端动态展示翻译配置选项的应用非常有用，它会返回当前AI翻译服务所支持的所有语言代码、原生名称、翻译风格说明、上下文场景描述，以及服务的性能特征和限制信息。通过此接口，开发者可以构建用户友好的翻译界面，让用户选择合适的翻译参数。
-         * @summary 获取AI翻译支持的语言和配置
+         * 获取AI智能翻译服务支持的完整语言列表、翻译风格选项、上下文场景选项以及性能指标信息。
+         * @summary AI翻译配置
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -8451,7 +10628,7 @@ export const TranslateApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * 这是一个商业级的AI智能翻译服务，采用最新的神经网络翻译技术和大语言模型，提供远超传统机器翻译的质量。它不仅能够智能处理单个文本翻译，还支持高效的批量文本翻译，并且具备上下文感知、风格适配、格式保留等高级功能。  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者深度集成和测试。未来，它将转为付费API，为用户提供更稳定、更智能的翻译服务。  ## 功能概述  - **智能双模式**: 支持单个文本翻译和批量文本翻译的统一接口设计，自动识别请求类型并提供相应的翻译服务。系统会根据输入自动判断是处理单条文本还是批量文本，无需使用不同的接口。 - **多风格适配**: 提供随意口语化、专业商务、学术正式、文学艺术四种翻译风格，能够根据不同场景需求调整翻译的语言风格和表达方式。 - **上下文感知**: 支持通用、商务、技术、医疗、法律、市场营销、娱乐、教育、新闻等九种专业领域的上下文翻译，确保术语准确性和表达地道性。 - **高质量保证**: 内置质量评估系统，对每次翻译结果进行流畅度、准确度、完整性评分，并提供置信度分数和替代翻译建议。 - **智能解释**: 提供关键词组翻译注释、文化背景说明和语法结构分析，帮助用户理解翻译逻辑和文化差异。 - **高效批量**: 批量翻译支持最多50条文本，总计10万字符，配备智能并发控制（1-10并发）和失败重试机制。 - **快速模式**: 提供快速模式选项，在保证95%+准确率的前提下，响应时间缩短至800ms内，适合实时翻译和聊天应用。 - **格式保留**: 智能识别并保持原文的格式结构，包括换行、缩进、特殊符号等，确保翻译后的文本保持良好的可读性。
+         * 这是一个商业级的AI智能翻译服务，采用最新的神经网络翻译技术和大语言模型，提供远超传统机器翻译的质量。  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者深度集成和测试。未来，它将转为付费API，为用户提供更稳定、更智能的翻译服务。  ## 功能概述  - **智能双模式**: 支持单个文本翻译和批量文本翻译的统一接口设计，自动识别请求类型并提供相应的翻译服务。系统会根据输入自动判断是处理单条文本还是批量文本，无需使用不同的接口。 - **多风格适配**: 提供随意口语化、专业商务、学术正式、文学艺术四种翻译风格，能够根据不同场景需求调整翻译的语言风格和表达方式。 - **上下文感知**: 支持通用、商务、技术、医疗、法律、市场营销、娱乐、教育、新闻等九种专业领域的上下文翻译，确保术语准确性和表达地道性。 - **高质量保证**: 内置质量评估系统，对每次翻译结果进行流畅度、准确度、完整性评分，并提供置信度分数和替代翻译建议。 - **智能解释**: 提供关键词组翻译注释、文化背景说明和语法结构分析，帮助用户理解翻译逻辑和文化差异。 - **高效批量**: 批量翻译支持最多50条文本，总计10万字符，配备智能并发控制（1-10并发）和失败重试机制。 - **快速模式**: 提供快速模式选项，在保证95%+准确率的前提下，响应时间缩短至800ms内，适合实时翻译和聊天应用。 - **格式保留**: 智能识别并保持原文的格式结构，包括换行、缩进、特殊符号等，确保翻译后的文本保持良好的可读性。
          * @summary AI智能翻译
          * @param {PostAiTranslateTargetLangEnum} targetLang 目标语言代码。请从支持的语言列表中选择一个语言代码。
          * @param {PostAiTranslateRequest} postAiTranslateRequest 包含翻译参数的JSON对象，支持单个文本或批量文本翻译
@@ -8479,7 +10656,7 @@ export const TranslateApiFp = function(configuration?: Configuration) {
         },
         /**
          * 需要跨越语言的鸿沟进行交流？这个翻译接口是你可靠的\'同声传译\'。  ## 功能概述 你可以将一段源语言文本（我们能自动检测源语言）翻译成你指定的任何目标语言。无论是中译英、日译法，都不在话下。  ## 支持的语言 我们支持超过100种语言的互译，包括但不限于：中文（简体/繁体）、英语、日语、韩语、法语、德语、西班牙语、俄语、阿拉伯语等主流语言，以及各种小语种。详见下方参数列表。
-         * @summary 多语言文本翻译
+         * @summary 翻译
          * @param {PostTranslateTextToLangEnum} toLang 目标语言代码。请从支持的语言列表中选择一个语言代码。
          * @param {PostTranslateTextRequest} postTranslateTextRequest 包含待翻译文本的JSON对象
          * @param {*} [options] Override http request option.
@@ -8501,8 +10678,8 @@ export const TranslateApiFactory = function (configuration?: Configuration, base
     const localVarFp = TranslateApiFp(configuration)
     return {
         /**
-         * 获取AI智能翻译服务支持的完整语言列表、翻译风格选项、上下文场景选项以及性能指标信息。这个接口对于需要在前端动态展示翻译配置选项的应用非常有用，它会返回当前AI翻译服务所支持的所有语言代码、原生名称、翻译风格说明、上下文场景描述，以及服务的性能特征和限制信息。通过此接口，开发者可以构建用户友好的翻译界面，让用户选择合适的翻译参数。
-         * @summary 获取AI翻译支持的语言和配置
+         * 获取AI智能翻译服务支持的完整语言列表、翻译风格选项、上下文场景选项以及性能指标信息。
+         * @summary AI翻译配置
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -8510,7 +10687,7 @@ export const TranslateApiFactory = function (configuration?: Configuration, base
             return localVarFp.getAiTranslateLanguages(options).then((request) => request(axios, basePath));
         },
         /**
-         * 这是一个商业级的AI智能翻译服务，采用最新的神经网络翻译技术和大语言模型，提供远超传统机器翻译的质量。它不仅能够智能处理单个文本翻译，还支持高效的批量文本翻译，并且具备上下文感知、风格适配、格式保留等高级功能。  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者深度集成和测试。未来，它将转为付费API，为用户提供更稳定、更智能的翻译服务。  ## 功能概述  - **智能双模式**: 支持单个文本翻译和批量文本翻译的统一接口设计，自动识别请求类型并提供相应的翻译服务。系统会根据输入自动判断是处理单条文本还是批量文本，无需使用不同的接口。 - **多风格适配**: 提供随意口语化、专业商务、学术正式、文学艺术四种翻译风格，能够根据不同场景需求调整翻译的语言风格和表达方式。 - **上下文感知**: 支持通用、商务、技术、医疗、法律、市场营销、娱乐、教育、新闻等九种专业领域的上下文翻译，确保术语准确性和表达地道性。 - **高质量保证**: 内置质量评估系统，对每次翻译结果进行流畅度、准确度、完整性评分，并提供置信度分数和替代翻译建议。 - **智能解释**: 提供关键词组翻译注释、文化背景说明和语法结构分析，帮助用户理解翻译逻辑和文化差异。 - **高效批量**: 批量翻译支持最多50条文本，总计10万字符，配备智能并发控制（1-10并发）和失败重试机制。 - **快速模式**: 提供快速模式选项，在保证95%+准确率的前提下，响应时间缩短至800ms内，适合实时翻译和聊天应用。 - **格式保留**: 智能识别并保持原文的格式结构，包括换行、缩进、特殊符号等，确保翻译后的文本保持良好的可读性。
+         * 这是一个商业级的AI智能翻译服务，采用最新的神经网络翻译技术和大语言模型，提供远超传统机器翻译的质量。  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者深度集成和测试。未来，它将转为付费API，为用户提供更稳定、更智能的翻译服务。  ## 功能概述  - **智能双模式**: 支持单个文本翻译和批量文本翻译的统一接口设计，自动识别请求类型并提供相应的翻译服务。系统会根据输入自动判断是处理单条文本还是批量文本，无需使用不同的接口。 - **多风格适配**: 提供随意口语化、专业商务、学术正式、文学艺术四种翻译风格，能够根据不同场景需求调整翻译的语言风格和表达方式。 - **上下文感知**: 支持通用、商务、技术、医疗、法律、市场营销、娱乐、教育、新闻等九种专业领域的上下文翻译，确保术语准确性和表达地道性。 - **高质量保证**: 内置质量评估系统，对每次翻译结果进行流畅度、准确度、完整性评分，并提供置信度分数和替代翻译建议。 - **智能解释**: 提供关键词组翻译注释、文化背景说明和语法结构分析，帮助用户理解翻译逻辑和文化差异。 - **高效批量**: 批量翻译支持最多50条文本，总计10万字符，配备智能并发控制（1-10并发）和失败重试机制。 - **快速模式**: 提供快速模式选项，在保证95%+准确率的前提下，响应时间缩短至800ms内，适合实时翻译和聊天应用。 - **格式保留**: 智能识别并保持原文的格式结构，包括换行、缩进、特殊符号等，确保翻译后的文本保持良好的可读性。
          * @summary AI智能翻译
          * @param {PostAiTranslateTargetLangEnum} targetLang 目标语言代码。请从支持的语言列表中选择一个语言代码。
          * @param {PostAiTranslateRequest} postAiTranslateRequest 包含翻译参数的JSON对象，支持单个文本或批量文本翻译
@@ -8532,7 +10709,7 @@ export const TranslateApiFactory = function (configuration?: Configuration, base
         },
         /**
          * 需要跨越语言的鸿沟进行交流？这个翻译接口是你可靠的\'同声传译\'。  ## 功能概述 你可以将一段源语言文本（我们能自动检测源语言）翻译成你指定的任何目标语言。无论是中译英、日译法，都不在话下。  ## 支持的语言 我们支持超过100种语言的互译，包括但不限于：中文（简体/繁体）、英语、日语、韩语、法语、德语、西班牙语、俄语、阿拉伯语等主流语言，以及各种小语种。详见下方参数列表。
-         * @summary 多语言文本翻译
+         * @summary 翻译
          * @param {PostTranslateTextToLangEnum} toLang 目标语言代码。请从支持的语言列表中选择一个语言代码。
          * @param {PostTranslateTextRequest} postTranslateTextRequest 包含待翻译文本的JSON对象
          * @param {*} [options] Override http request option.
@@ -8549,8 +10726,8 @@ export const TranslateApiFactory = function (configuration?: Configuration, base
  */
 export class TranslateApi extends BaseAPI {
     /**
-     * 获取AI智能翻译服务支持的完整语言列表、翻译风格选项、上下文场景选项以及性能指标信息。这个接口对于需要在前端动态展示翻译配置选项的应用非常有用，它会返回当前AI翻译服务所支持的所有语言代码、原生名称、翻译风格说明、上下文场景描述，以及服务的性能特征和限制信息。通过此接口，开发者可以构建用户友好的翻译界面，让用户选择合适的翻译参数。
-     * @summary 获取AI翻译支持的语言和配置
+     * 获取AI智能翻译服务支持的完整语言列表、翻译风格选项、上下文场景选项以及性能指标信息。
+     * @summary AI翻译配置
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -8559,7 +10736,7 @@ export class TranslateApi extends BaseAPI {
     }
 
     /**
-     * 这是一个商业级的AI智能翻译服务，采用最新的神经网络翻译技术和大语言模型，提供远超传统机器翻译的质量。它不仅能够智能处理单个文本翻译，还支持高效的批量文本翻译，并且具备上下文感知、风格适配、格式保留等高级功能。  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者深度集成和测试。未来，它将转为付费API，为用户提供更稳定、更智能的翻译服务。  ## 功能概述  - **智能双模式**: 支持单个文本翻译和批量文本翻译的统一接口设计，自动识别请求类型并提供相应的翻译服务。系统会根据输入自动判断是处理单条文本还是批量文本，无需使用不同的接口。 - **多风格适配**: 提供随意口语化、专业商务、学术正式、文学艺术四种翻译风格，能够根据不同场景需求调整翻译的语言风格和表达方式。 - **上下文感知**: 支持通用、商务、技术、医疗、法律、市场营销、娱乐、教育、新闻等九种专业领域的上下文翻译，确保术语准确性和表达地道性。 - **高质量保证**: 内置质量评估系统，对每次翻译结果进行流畅度、准确度、完整性评分，并提供置信度分数和替代翻译建议。 - **智能解释**: 提供关键词组翻译注释、文化背景说明和语法结构分析，帮助用户理解翻译逻辑和文化差异。 - **高效批量**: 批量翻译支持最多50条文本，总计10万字符，配备智能并发控制（1-10并发）和失败重试机制。 - **快速模式**: 提供快速模式选项，在保证95%+准确率的前提下，响应时间缩短至800ms内，适合实时翻译和聊天应用。 - **格式保留**: 智能识别并保持原文的格式结构，包括换行、缩进、特殊符号等，确保翻译后的文本保持良好的可读性。
+     * 这是一个商业级的AI智能翻译服务，采用最新的神经网络翻译技术和大语言模型，提供远超传统机器翻译的质量。  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者深度集成和测试。未来，它将转为付费API，为用户提供更稳定、更智能的翻译服务。  ## 功能概述  - **智能双模式**: 支持单个文本翻译和批量文本翻译的统一接口设计，自动识别请求类型并提供相应的翻译服务。系统会根据输入自动判断是处理单条文本还是批量文本，无需使用不同的接口。 - **多风格适配**: 提供随意口语化、专业商务、学术正式、文学艺术四种翻译风格，能够根据不同场景需求调整翻译的语言风格和表达方式。 - **上下文感知**: 支持通用、商务、技术、医疗、法律、市场营销、娱乐、教育、新闻等九种专业领域的上下文翻译，确保术语准确性和表达地道性。 - **高质量保证**: 内置质量评估系统，对每次翻译结果进行流畅度、准确度、完整性评分，并提供置信度分数和替代翻译建议。 - **智能解释**: 提供关键词组翻译注释、文化背景说明和语法结构分析，帮助用户理解翻译逻辑和文化差异。 - **高效批量**: 批量翻译支持最多50条文本，总计10万字符，配备智能并发控制（1-10并发）和失败重试机制。 - **快速模式**: 提供快速模式选项，在保证95%+准确率的前提下，响应时间缩短至800ms内，适合实时翻译和聊天应用。 - **格式保留**: 智能识别并保持原文的格式结构，包括换行、缩进、特殊符号等，确保翻译后的文本保持良好的可读性。
      * @summary AI智能翻译
      * @param {PostAiTranslateTargetLangEnum} targetLang 目标语言代码。请从支持的语言列表中选择一个语言代码。
      * @param {PostAiTranslateRequest} postAiTranslateRequest 包含翻译参数的JSON对象，支持单个文本或批量文本翻译
@@ -8583,7 +10760,7 @@ export class TranslateApi extends BaseAPI {
 
     /**
      * 需要跨越语言的鸿沟进行交流？这个翻译接口是你可靠的\'同声传译\'。  ## 功能概述 你可以将一段源语言文本（我们能自动检测源语言）翻译成你指定的任何目标语言。无论是中译英、日译法，都不在话下。  ## 支持的语言 我们支持超过100种语言的互译，包括但不限于：中文（简体/繁体）、英语、日语、韩语、法语、德语、西班牙语、俄语、阿拉伯语等主流语言，以及各种小语种。详见下方参数列表。
-     * @summary 多语言文本翻译
+     * @summary 翻译
      * @param {PostTranslateTextToLangEnum} toLang 目标语言代码。请从支持的语言列表中选择一个语言代码。
      * @param {PostTranslateTextRequest} postTranslateTextRequest 包含待翻译文本的JSON对象
      * @param {*} [options] Override http request option.
@@ -8826,8 +11003,8 @@ export type PostTranslateTextToLangEnum = typeof PostTranslateTextToLangEnum[key
 export const WebParseApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
-         * 提交了URL转Markdown任务后，想知道处理进度和结果？这个接口可以帮你实时追踪。  ## 功能概述  通过之前提交任务时获得的任务ID，你可以查询该任务的当前状态、处理进度以及最终结果。任务结果会在缓存中保存30分钟，期间可以重复查询，非常方便。  任务有五种状态：等待处理（pending）时进度为0%；处理中（processing）时进度在10-90%之间；已完成（completed）时进度为100%并返回Markdown内容；失败（failed）时会返回错误信息；超时（timeout）表示任务处理时间超过60秒已被取消。建议采用指数退避策略进行轮询，初始延迟1秒，每次延迟增加20%，最大延迟5秒。当状态为已完成、失败或超时时停止轮询。  系统会自动管理任务生命周期，单个任务最长处理时间为60秒，任务结果保存30分钟后自动清理，每5分钟清理一次过期任务。  ## 任务状态说明  | 状态 | 说明 | 进度 | 轮询建议 | |------|------|------|----------| | `pending` | 等待处理 | 0% | 立即开始轮询 | | `processing` | 处理中 | 10-90% | 每2-5秒轮询一次 | | `completed` | 已完成 | 100% | 停止轮询，获取结果 | | `failed` | 失败 | 100% | 停止轮询，查看错误信息 | | `timeout` | 超时 | 100% | 停止轮询，任务已取消 |
-         * @summary 查询网页转换任务状态和结果
+         * 提交了网页转 Markdown 任务后，想知道处理进度和结果？用这个接口来查询。  ## 功能概述 通过任务 ID 查询转换任务的当前状态、处理进度和最终结果。任务结果缓存 30 分钟，期间可重复查询。  ## 任务状态  | 状态 | 说明 | |------|------| | `pending` | 等待处理 | | `processing` | 处理中 | | `completed` | 已完成，可获取结果 | | `failed` | 失败 | | `timeout` | 超时（超过 60 秒） |  > [!NOTE] > 建议每 2-5 秒轮询一次，当状态为 `completed`、`failed` 或 `timeout` 时停止轮询。
+         * @summary 转换任务状态
          * @param {string} taskId 任务ID（由提交接口返回）
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -8860,8 +11037,8 @@ export const WebParseApiAxiosParamCreator = function (configuration?: Configurat
             };
         },
         /**
-         * 想一次性“打包”一个网页上的所有图片吗？这个接口可以帮你实现。  ## 功能概述 你提供一个网页的URL，我们会访问该页面，解析其HTML内容，并提取出所有 `<img>` 标签中的图片链接，然后将这些链接列表返回给你。非常适合用于制作图片采集器或素材下载工具。
-         * @summary 提取网页中的所有图片
+         * 想批量获取一个网页上的所有图片链接？这个接口帮你搞定。  ## 功能概述 提供一个网页 URL，返回该页面中所有图片的链接列表。适合用于图片采集、素材下载等场景。
+         * @summary 提取网页图片
          * @param {string} url 需要提取图片的网页URL
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -8897,8 +11074,8 @@ export const WebParseApiAxiosParamCreator = function (configuration?: Configurat
             };
         },
         /**
-         * 当你在应用中需要展示一个链接的预览时（就像微信或Telegram里那样），这个接口能帮你轻松获取所需信息。  ## 功能概述 你提供一个网页的URL，我们会抓取并解析它的 `<head>` 部分，提取出关键的元数据（Metadata），如页面标题（Title）、描述（Description）、关键词（Keywords）以及网站图标（Favicon）等。
-         * @summary 抓取并解析网页的元数据
+         * 想在应用里做链接预览卡片？这个接口帮你一键获取网页的标题、描述、图标等信息。  ## 功能概述 提供一个网页 URL，返回该页面的元数据，包括标题、描述、关键词、Favicon、Open Graph 信息等。非常适合用于生成链接预览卡片或做 SEO 分析。
+         * @summary 提取网页元数据
          * @param {string} url 需要提取元数据的网页URL
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -8934,8 +11111,8 @@ export const WebParseApiAxiosParamCreator = function (configuration?: Configurat
             };
         },
         /**
-         * 想要将复杂的网页转换为结构清晰的Markdown？这个接口采用异步处理模式，特别适合处理大型网页、复杂网站或需要长时间处理的转换任务。  ## 功能概述  > [!VIP] >本API目前处于**限时免费**阶段，我们鼓励开发者集成和测试。未来，它将转为付费API，为用户提供更稳定和强大的服务。  UAPI Pro平台推出的异步网页转Markdown API能够将任意网页URL转换为结构清晰、格式优美的Markdown文本。提交任务后立即返回任务ID，不会阻塞客户端等待。您可以通过任务ID实时查询转换进度和处理状态，支持长达60秒的处理时间，轻松应对大型网站、需要JS渲染的单页应用等复杂页面。任务结果会缓存30分钟，期间可重复查询，过期任务自动清理无需手动管理。  此API采用先进算法，自动识别并抓取网页主体内容，精准剔除广告、导航栏、页眉页脚等无关元素。完美保留原文的格式，包括标题、列表、代码块、表格、引用、图片等，并输出为兼容性强的GitHub Flavored Markdown (GFM) 格式。同时会自动解析并提取文章标题、作者、发布日期、站点名称等关键元数据，并将其格式化为标准的YAML Front Matter，方便后续处理和CMS集成。  ## 使用流程  调用本接口提交URL转换任务后，会立即获得一个唯一的任务ID。随后使用任务ID调用查询接口，获取任务状态和进度。任务完成后，从查询接口的响应中获取Markdown内容。
-         * @summary 深度抓取网页转Markdown
+         * 想把一个网页的内容转成干净的 Markdown 文本？这个异步接口可以帮你搞定，特别适合处理大型或复杂的网页。  ## 功能概述  > [!VIP] > 本 API 目前处于**限时免费**阶段，未来将转为付费服务。  提交一个网页 URL，我们会自动抓取主体内容，剔除广告、导航栏等干扰元素，并转换为 Markdown 格式。同时会提取标题、作者、发布日期等元数据，生成 YAML Front Matter。  任务提交后会立即返回任务 ID，你可以用它来查询处理进度和结果。单个任务最长处理 60 秒，结果缓存 30 分钟。
+         * @summary 网页转 Markdown
          * @param {string} url 需要转换的网页URL。URL必须经过编码。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -8980,8 +11157,8 @@ export const WebParseApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = WebParseApiAxiosParamCreator(configuration)
     return {
         /**
-         * 提交了URL转Markdown任务后，想知道处理进度和结果？这个接口可以帮你实时追踪。  ## 功能概述  通过之前提交任务时获得的任务ID，你可以查询该任务的当前状态、处理进度以及最终结果。任务结果会在缓存中保存30分钟，期间可以重复查询，非常方便。  任务有五种状态：等待处理（pending）时进度为0%；处理中（processing）时进度在10-90%之间；已完成（completed）时进度为100%并返回Markdown内容；失败（failed）时会返回错误信息；超时（timeout）表示任务处理时间超过60秒已被取消。建议采用指数退避策略进行轮询，初始延迟1秒，每次延迟增加20%，最大延迟5秒。当状态为已完成、失败或超时时停止轮询。  系统会自动管理任务生命周期，单个任务最长处理时间为60秒，任务结果保存30分钟后自动清理，每5分钟清理一次过期任务。  ## 任务状态说明  | 状态 | 说明 | 进度 | 轮询建议 | |------|------|------|----------| | `pending` | 等待处理 | 0% | 立即开始轮询 | | `processing` | 处理中 | 10-90% | 每2-5秒轮询一次 | | `completed` | 已完成 | 100% | 停止轮询，获取结果 | | `failed` | 失败 | 100% | 停止轮询，查看错误信息 | | `timeout` | 超时 | 100% | 停止轮询，任务已取消 |
-         * @summary 查询网页转换任务状态和结果
+         * 提交了网页转 Markdown 任务后，想知道处理进度和结果？用这个接口来查询。  ## 功能概述 通过任务 ID 查询转换任务的当前状态、处理进度和最终结果。任务结果缓存 30 分钟，期间可重复查询。  ## 任务状态  | 状态 | 说明 | |------|------| | `pending` | 等待处理 | | `processing` | 处理中 | | `completed` | 已完成，可获取结果 | | `failed` | 失败 | | `timeout` | 超时（超过 60 秒） |  > [!NOTE] > 建议每 2-5 秒轮询一次，当状态为 `completed`、`failed` 或 `timeout` 时停止轮询。
+         * @summary 转换任务状态
          * @param {string} taskId 任务ID（由提交接口返回）
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -8993,8 +11170,8 @@ export const WebParseApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * 想一次性“打包”一个网页上的所有图片吗？这个接口可以帮你实现。  ## 功能概述 你提供一个网页的URL，我们会访问该页面，解析其HTML内容，并提取出所有 `<img>` 标签中的图片链接，然后将这些链接列表返回给你。非常适合用于制作图片采集器或素材下载工具。
-         * @summary 提取网页中的所有图片
+         * 想批量获取一个网页上的所有图片链接？这个接口帮你搞定。  ## 功能概述 提供一个网页 URL，返回该页面中所有图片的链接列表。适合用于图片采集、素材下载等场景。
+         * @summary 提取网页图片
          * @param {string} url 需要提取图片的网页URL
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -9006,8 +11183,8 @@ export const WebParseApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * 当你在应用中需要展示一个链接的预览时（就像微信或Telegram里那样），这个接口能帮你轻松获取所需信息。  ## 功能概述 你提供一个网页的URL，我们会抓取并解析它的 `<head>` 部分，提取出关键的元数据（Metadata），如页面标题（Title）、描述（Description）、关键词（Keywords）以及网站图标（Favicon）等。
-         * @summary 抓取并解析网页的元数据
+         * 想在应用里做链接预览卡片？这个接口帮你一键获取网页的标题、描述、图标等信息。  ## 功能概述 提供一个网页 URL，返回该页面的元数据，包括标题、描述、关键词、Favicon、Open Graph 信息等。非常适合用于生成链接预览卡片或做 SEO 分析。
+         * @summary 提取网页元数据
          * @param {string} url 需要提取元数据的网页URL
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -9019,8 +11196,8 @@ export const WebParseApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * 想要将复杂的网页转换为结构清晰的Markdown？这个接口采用异步处理模式，特别适合处理大型网页、复杂网站或需要长时间处理的转换任务。  ## 功能概述  > [!VIP] >本API目前处于**限时免费**阶段，我们鼓励开发者集成和测试。未来，它将转为付费API，为用户提供更稳定和强大的服务。  UAPI Pro平台推出的异步网页转Markdown API能够将任意网页URL转换为结构清晰、格式优美的Markdown文本。提交任务后立即返回任务ID，不会阻塞客户端等待。您可以通过任务ID实时查询转换进度和处理状态，支持长达60秒的处理时间，轻松应对大型网站、需要JS渲染的单页应用等复杂页面。任务结果会缓存30分钟，期间可重复查询，过期任务自动清理无需手动管理。  此API采用先进算法，自动识别并抓取网页主体内容，精准剔除广告、导航栏、页眉页脚等无关元素。完美保留原文的格式，包括标题、列表、代码块、表格、引用、图片等，并输出为兼容性强的GitHub Flavored Markdown (GFM) 格式。同时会自动解析并提取文章标题、作者、发布日期、站点名称等关键元数据，并将其格式化为标准的YAML Front Matter，方便后续处理和CMS集成。  ## 使用流程  调用本接口提交URL转换任务后，会立即获得一个唯一的任务ID。随后使用任务ID调用查询接口，获取任务状态和进度。任务完成后，从查询接口的响应中获取Markdown内容。
-         * @summary 深度抓取网页转Markdown
+         * 想把一个网页的内容转成干净的 Markdown 文本？这个异步接口可以帮你搞定，特别适合处理大型或复杂的网页。  ## 功能概述  > [!VIP] > 本 API 目前处于**限时免费**阶段，未来将转为付费服务。  提交一个网页 URL，我们会自动抓取主体内容，剔除广告、导航栏等干扰元素，并转换为 Markdown 格式。同时会提取标题、作者、发布日期等元数据，生成 YAML Front Matter。  任务提交后会立即返回任务 ID，你可以用它来查询处理进度和结果。单个任务最长处理 60 秒，结果缓存 30 分钟。
+         * @summary 网页转 Markdown
          * @param {string} url 需要转换的网页URL。URL必须经过编码。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -9041,8 +11218,8 @@ export const WebParseApiFactory = function (configuration?: Configuration, baseP
     const localVarFp = WebParseApiFp(configuration)
     return {
         /**
-         * 提交了URL转Markdown任务后，想知道处理进度和结果？这个接口可以帮你实时追踪。  ## 功能概述  通过之前提交任务时获得的任务ID，你可以查询该任务的当前状态、处理进度以及最终结果。任务结果会在缓存中保存30分钟，期间可以重复查询，非常方便。  任务有五种状态：等待处理（pending）时进度为0%；处理中（processing）时进度在10-90%之间；已完成（completed）时进度为100%并返回Markdown内容；失败（failed）时会返回错误信息；超时（timeout）表示任务处理时间超过60秒已被取消。建议采用指数退避策略进行轮询，初始延迟1秒，每次延迟增加20%，最大延迟5秒。当状态为已完成、失败或超时时停止轮询。  系统会自动管理任务生命周期，单个任务最长处理时间为60秒，任务结果保存30分钟后自动清理，每5分钟清理一次过期任务。  ## 任务状态说明  | 状态 | 说明 | 进度 | 轮询建议 | |------|------|------|----------| | `pending` | 等待处理 | 0% | 立即开始轮询 | | `processing` | 处理中 | 10-90% | 每2-5秒轮询一次 | | `completed` | 已完成 | 100% | 停止轮询，获取结果 | | `failed` | 失败 | 100% | 停止轮询，查看错误信息 | | `timeout` | 超时 | 100% | 停止轮询，任务已取消 |
-         * @summary 查询网页转换任务状态和结果
+         * 提交了网页转 Markdown 任务后，想知道处理进度和结果？用这个接口来查询。  ## 功能概述 通过任务 ID 查询转换任务的当前状态、处理进度和最终结果。任务结果缓存 30 分钟，期间可重复查询。  ## 任务状态  | 状态 | 说明 | |------|------| | `pending` | 等待处理 | | `processing` | 处理中 | | `completed` | 已完成，可获取结果 | | `failed` | 失败 | | `timeout` | 超时（超过 60 秒） |  > [!NOTE] > 建议每 2-5 秒轮询一次，当状态为 `completed`、`failed` 或 `timeout` 时停止轮询。
+         * @summary 转换任务状态
          * @param {string} taskId 任务ID（由提交接口返回）
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -9051,8 +11228,8 @@ export const WebParseApiFactory = function (configuration?: Configuration, baseP
             return localVarFp.getWebTomarkdownAsyncStatus(taskId, options).then((request) => request(axios, basePath));
         },
         /**
-         * 想一次性“打包”一个网页上的所有图片吗？这个接口可以帮你实现。  ## 功能概述 你提供一个网页的URL，我们会访问该页面，解析其HTML内容，并提取出所有 `<img>` 标签中的图片链接，然后将这些链接列表返回给你。非常适合用于制作图片采集器或素材下载工具。
-         * @summary 提取网页中的所有图片
+         * 想批量获取一个网页上的所有图片链接？这个接口帮你搞定。  ## 功能概述 提供一个网页 URL，返回该页面中所有图片的链接列表。适合用于图片采集、素材下载等场景。
+         * @summary 提取网页图片
          * @param {string} url 需要提取图片的网页URL
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -9061,8 +11238,8 @@ export const WebParseApiFactory = function (configuration?: Configuration, baseP
             return localVarFp.getWebparseExtractimages(url, options).then((request) => request(axios, basePath));
         },
         /**
-         * 当你在应用中需要展示一个链接的预览时（就像微信或Telegram里那样），这个接口能帮你轻松获取所需信息。  ## 功能概述 你提供一个网页的URL，我们会抓取并解析它的 `<head>` 部分，提取出关键的元数据（Metadata），如页面标题（Title）、描述（Description）、关键词（Keywords）以及网站图标（Favicon）等。
-         * @summary 抓取并解析网页的元数据
+         * 想在应用里做链接预览卡片？这个接口帮你一键获取网页的标题、描述、图标等信息。  ## 功能概述 提供一个网页 URL，返回该页面的元数据，包括标题、描述、关键词、Favicon、Open Graph 信息等。非常适合用于生成链接预览卡片或做 SEO 分析。
+         * @summary 提取网页元数据
          * @param {string} url 需要提取元数据的网页URL
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -9071,8 +11248,8 @@ export const WebParseApiFactory = function (configuration?: Configuration, baseP
             return localVarFp.getWebparseMetadata(url, options).then((request) => request(axios, basePath));
         },
         /**
-         * 想要将复杂的网页转换为结构清晰的Markdown？这个接口采用异步处理模式，特别适合处理大型网页、复杂网站或需要长时间处理的转换任务。  ## 功能概述  > [!VIP] >本API目前处于**限时免费**阶段，我们鼓励开发者集成和测试。未来，它将转为付费API，为用户提供更稳定和强大的服务。  UAPI Pro平台推出的异步网页转Markdown API能够将任意网页URL转换为结构清晰、格式优美的Markdown文本。提交任务后立即返回任务ID，不会阻塞客户端等待。您可以通过任务ID实时查询转换进度和处理状态，支持长达60秒的处理时间，轻松应对大型网站、需要JS渲染的单页应用等复杂页面。任务结果会缓存30分钟，期间可重复查询，过期任务自动清理无需手动管理。  此API采用先进算法，自动识别并抓取网页主体内容，精准剔除广告、导航栏、页眉页脚等无关元素。完美保留原文的格式，包括标题、列表、代码块、表格、引用、图片等，并输出为兼容性强的GitHub Flavored Markdown (GFM) 格式。同时会自动解析并提取文章标题、作者、发布日期、站点名称等关键元数据，并将其格式化为标准的YAML Front Matter，方便后续处理和CMS集成。  ## 使用流程  调用本接口提交URL转换任务后，会立即获得一个唯一的任务ID。随后使用任务ID调用查询接口，获取任务状态和进度。任务完成后，从查询接口的响应中获取Markdown内容。
-         * @summary 深度抓取网页转Markdown
+         * 想把一个网页的内容转成干净的 Markdown 文本？这个异步接口可以帮你搞定，特别适合处理大型或复杂的网页。  ## 功能概述  > [!VIP] > 本 API 目前处于**限时免费**阶段，未来将转为付费服务。  提交一个网页 URL，我们会自动抓取主体内容，剔除广告、导航栏等干扰元素，并转换为 Markdown 格式。同时会提取标题、作者、发布日期等元数据，生成 YAML Front Matter。  任务提交后会立即返回任务 ID，你可以用它来查询处理进度和结果。单个任务最长处理 60 秒，结果缓存 30 分钟。
+         * @summary 网页转 Markdown
          * @param {string} url 需要转换的网页URL。URL必须经过编码。
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -9088,8 +11265,8 @@ export const WebParseApiFactory = function (configuration?: Configuration, baseP
  */
 export class WebParseApi extends BaseAPI {
     /**
-     * 提交了URL转Markdown任务后，想知道处理进度和结果？这个接口可以帮你实时追踪。  ## 功能概述  通过之前提交任务时获得的任务ID，你可以查询该任务的当前状态、处理进度以及最终结果。任务结果会在缓存中保存30分钟，期间可以重复查询，非常方便。  任务有五种状态：等待处理（pending）时进度为0%；处理中（processing）时进度在10-90%之间；已完成（completed）时进度为100%并返回Markdown内容；失败（failed）时会返回错误信息；超时（timeout）表示任务处理时间超过60秒已被取消。建议采用指数退避策略进行轮询，初始延迟1秒，每次延迟增加20%，最大延迟5秒。当状态为已完成、失败或超时时停止轮询。  系统会自动管理任务生命周期，单个任务最长处理时间为60秒，任务结果保存30分钟后自动清理，每5分钟清理一次过期任务。  ## 任务状态说明  | 状态 | 说明 | 进度 | 轮询建议 | |------|------|------|----------| | `pending` | 等待处理 | 0% | 立即开始轮询 | | `processing` | 处理中 | 10-90% | 每2-5秒轮询一次 | | `completed` | 已完成 | 100% | 停止轮询，获取结果 | | `failed` | 失败 | 100% | 停止轮询，查看错误信息 | | `timeout` | 超时 | 100% | 停止轮询，任务已取消 |
-     * @summary 查询网页转换任务状态和结果
+     * 提交了网页转 Markdown 任务后，想知道处理进度和结果？用这个接口来查询。  ## 功能概述 通过任务 ID 查询转换任务的当前状态、处理进度和最终结果。任务结果缓存 30 分钟，期间可重复查询。  ## 任务状态  | 状态 | 说明 | |------|------| | `pending` | 等待处理 | | `processing` | 处理中 | | `completed` | 已完成，可获取结果 | | `failed` | 失败 | | `timeout` | 超时（超过 60 秒） |  > [!NOTE] > 建议每 2-5 秒轮询一次，当状态为 `completed`、`failed` 或 `timeout` 时停止轮询。
+     * @summary 转换任务状态
      * @param {string} taskId 任务ID（由提交接口返回）
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -9099,8 +11276,8 @@ export class WebParseApi extends BaseAPI {
     }
 
     /**
-     * 想一次性“打包”一个网页上的所有图片吗？这个接口可以帮你实现。  ## 功能概述 你提供一个网页的URL，我们会访问该页面，解析其HTML内容，并提取出所有 `<img>` 标签中的图片链接，然后将这些链接列表返回给你。非常适合用于制作图片采集器或素材下载工具。
-     * @summary 提取网页中的所有图片
+     * 想批量获取一个网页上的所有图片链接？这个接口帮你搞定。  ## 功能概述 提供一个网页 URL，返回该页面中所有图片的链接列表。适合用于图片采集、素材下载等场景。
+     * @summary 提取网页图片
      * @param {string} url 需要提取图片的网页URL
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -9110,8 +11287,8 @@ export class WebParseApi extends BaseAPI {
     }
 
     /**
-     * 当你在应用中需要展示一个链接的预览时（就像微信或Telegram里那样），这个接口能帮你轻松获取所需信息。  ## 功能概述 你提供一个网页的URL，我们会抓取并解析它的 `<head>` 部分，提取出关键的元数据（Metadata），如页面标题（Title）、描述（Description）、关键词（Keywords）以及网站图标（Favicon）等。
-     * @summary 抓取并解析网页的元数据
+     * 想在应用里做链接预览卡片？这个接口帮你一键获取网页的标题、描述、图标等信息。  ## 功能概述 提供一个网页 URL，返回该页面的元数据，包括标题、描述、关键词、Favicon、Open Graph 信息等。非常适合用于生成链接预览卡片或做 SEO 分析。
+     * @summary 提取网页元数据
      * @param {string} url 需要提取元数据的网页URL
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -9121,8 +11298,8 @@ export class WebParseApi extends BaseAPI {
     }
 
     /**
-     * 想要将复杂的网页转换为结构清晰的Markdown？这个接口采用异步处理模式，特别适合处理大型网页、复杂网站或需要长时间处理的转换任务。  ## 功能概述  > [!VIP] >本API目前处于**限时免费**阶段，我们鼓励开发者集成和测试。未来，它将转为付费API，为用户提供更稳定和强大的服务。  UAPI Pro平台推出的异步网页转Markdown API能够将任意网页URL转换为结构清晰、格式优美的Markdown文本。提交任务后立即返回任务ID，不会阻塞客户端等待。您可以通过任务ID实时查询转换进度和处理状态，支持长达60秒的处理时间，轻松应对大型网站、需要JS渲染的单页应用等复杂页面。任务结果会缓存30分钟，期间可重复查询，过期任务自动清理无需手动管理。  此API采用先进算法，自动识别并抓取网页主体内容，精准剔除广告、导航栏、页眉页脚等无关元素。完美保留原文的格式，包括标题、列表、代码块、表格、引用、图片等，并输出为兼容性强的GitHub Flavored Markdown (GFM) 格式。同时会自动解析并提取文章标题、作者、发布日期、站点名称等关键元数据，并将其格式化为标准的YAML Front Matter，方便后续处理和CMS集成。  ## 使用流程  调用本接口提交URL转换任务后，会立即获得一个唯一的任务ID。随后使用任务ID调用查询接口，获取任务状态和进度。任务完成后，从查询接口的响应中获取Markdown内容。
-     * @summary 深度抓取网页转Markdown
+     * 想把一个网页的内容转成干净的 Markdown 文本？这个异步接口可以帮你搞定，特别适合处理大型或复杂的网页。  ## 功能概述  > [!VIP] > 本 API 目前处于**限时免费**阶段，未来将转为付费服务。  提交一个网页 URL，我们会自动抓取主体内容，剔除广告、导航栏等干扰元素，并转换为 Markdown 格式。同时会提取标题、作者、发布日期等元数据，生成 YAML Front Matter。  任务提交后会立即返回任务 ID，你可以用它来查询处理进度和结果。单个任务最长处理 60 秒，结果缓存 30 分钟。
+     * @summary 网页转 Markdown
      * @param {string} url 需要转换的网页URL。URL必须经过编码。
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}

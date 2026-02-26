@@ -5,7 +5,6 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**code** | **number** | 状态码，200代表成功。 | [optional] [default to undefined]
 **favicon_url** | **string** | 服务器图标的 Base64 Data URI。你可以直接在 &#x60;&lt;img&gt;&#x60; 标签的 &#x60;src&#x60; 属性中使用它。 | [optional] [default to undefined]
 **ip** | **string** | 服务器解析后的IP地址。 | [optional] [default to undefined]
 **max_players** | **number** | 服务器配置的最大玩家容量。 | [optional] [default to undefined]
@@ -22,7 +21,6 @@ Name | Type | Description | Notes
 import { GetGameMinecraftServerstatus200Response } from 'uapi-sdk-typescript';
 
 const instance: GetGameMinecraftServerstatus200Response = {
-    code,
     favicon_url,
     ip,
     max_players,

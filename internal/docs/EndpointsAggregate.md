@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**endpoints** | [**Array&lt;EndpointsAggregateEndpointsInner&gt;**](EndpointsAggregateEndpointsInner.md) |  | [optional] [default to undefined]
+**endpoints** | [**Array<EndpointsAggregateEndpointsInner>**](EndpointsAggregateEndpointsInner.md) |  | [optional] [default to undefined]
 **unaggregated** | [**EndpointsAggregateUnaggregated**](EndpointsAggregateUnaggregated.md) |  | [optional] [default to undefined]
 
 ## Example

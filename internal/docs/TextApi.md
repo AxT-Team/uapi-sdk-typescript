@@ -4,14 +4,17 @@ All URIs are relative to *https://uapis.cn/api/v1*
 
 |Method | HTTP request | Description|
 |------------- | ------------- | -------------|
-|[**getTextMd5**](#gettextmd5) | **GET** /text/md5 | 计算文本的MD5哈希值(GET)|
-|[**postTextAesDecrypt**](#posttextaesdecrypt) | **POST** /text/aes/decrypt | 使用AES算法解密文本|
-|[**postTextAesEncrypt**](#posttextaesencrypt) | **POST** /text/aes/encrypt | 使用AES算法加密文本|
-|[**postTextAnalyze**](#posttextanalyze) | **POST** /text/analyze | 多维度分析文本内容|
-|[**postTextBase64Decode**](#posttextbase64decode) | **POST** /text/base64/decode | 解码Base64编码的文本|
-|[**postTextBase64Encode**](#posttextbase64encode) | **POST** /text/base64/encode | 将文本进行Base64编码|
-|[**postTextMd5**](#posttextmd5) | **POST** /text/md5 | 计算文本的MD5哈希值 (POST)|
-|[**postTextMd5Verify**](#posttextmd5verify) | **POST** /text/md5/verify | 校验MD5哈希值|
+|[**getTextMd5**](#gettextmd5) | **GET** /text/md5 | MD5 哈希|
+|[**postTextAesDecrypt**](#posttextaesdecrypt) | **POST** /text/aes/decrypt | AES 解密|
+|[**postTextAesDecryptAdvanced**](#posttextaesdecryptadvanced) | **POST** /text/aes/decrypt-advanced | AES高级解密|
+|[**postTextAesEncrypt**](#posttextaesencrypt) | **POST** /text/aes/encrypt | AES 加密|
+|[**postTextAesEncryptAdvanced**](#posttextaesencryptadvanced) | **POST** /text/aes/encrypt-advanced | AES高级加密|
+|[**postTextAnalyze**](#posttextanalyze) | **POST** /text/analyze | 文本分析|
+|[**postTextBase64Decode**](#posttextbase64decode) | **POST** /text/base64/decode | Base64 解码|
+|[**postTextBase64Encode**](#posttextbase64encode) | **POST** /text/base64/encode | Base64 编码|
+|[**postTextConvert**](#posttextconvert) | **POST** /text/convert | 格式转换|
+|[**postTextMd5**](#posttextmd5) | **POST** /text/md5 | MD5 哈希 (POST)|
+|[**postTextMd5Verify**](#posttextmd5verify) | **POST** /text/md5/verify | MD5 校验|
 
 # **getTextMd5**
 > GetTextMd5200Response getTextMd5()
@@ -119,6 +122,59 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+# **postTextAesDecryptAdvanced**
+> PostTextAesDecryptAdvanced200Response postTextAesDecryptAdvanced(postTextAesDecryptAdvancedRequest)
+
+需要解密通过高级加密接口加密的数据？这个接口提供与加密接口完全配对的解密功能，支持相同的6种加密模式和3种填充方式。  > [!IMPORTANT] > **解密参数必须与加密时一致** > 解密时，必须提供与加密时相同的密钥、模式和填充方式。对于非GCM模式，还需要提供加密时返回的IV。  ## 功能概述 这是一个功能完整的AES解密接口，能够解密通过高级加密接口加密的所有密文。支持所有6种加密模式和3种填充方式，与加密接口完全配对。  ### 解密流程 1. 获取加密时返回的密文和配置参数 2. 使用相同的密钥、模式、填充方式和IV（如需要） 3. 调用本接口进行解密 4. 获取原始明文  ### 支持的解密模式 - **GCM模式**（推荐）：自动验证数据完整性，如果密文被篡改会解密失败 - **CBC模式**：经典块解密模式，需要提供加密时的IV - **CTR/OFB/CFB模式**：流密码解密，需要提供加密时的IV - **ECB模式**：不需要IV，但安全性较低  ### 填充方式处理 - **PKCS7填充**：解密后自动移除填充 - **Zero填充**：解密后自动移除0x00填充 - **None填充**：无填充处理  ## 参数说明 - **`text`**: 待解密的密文（Base64编码，来自加密接口返回的ciphertext字段） - **`key`**: 解密密钥（必须与加密时相同） - **`mode`**: 加密模式（必须与加密时相同） - **`padding`**: 填充方式（可选，默认PKCS7，必须与加密时相同） - **`iv`**: 初始化向量（非GCM模式必须提供，Base64编码）  ## 常见错误处理 如果解密失败，请检查以下几点： - 密钥是否与加密时完全相同 - 模式和填充方式是否匹配 - 非GCM模式下是否提供了正确的IV - 密文是否完整且未被修改 - GCM模式下密文是否被篡改
+
+### Example
+
+```typescript
+import {
+    TextApi,
+    Configuration,
+    PostTextAesDecryptAdvancedRequest
+} from 'uapi-sdk-typescript';
+
+const configuration = new Configuration();
+const apiInstance = new TextApi(configuration);
+
+let postTextAesDecryptAdvancedRequest: PostTextAesDecryptAdvancedRequest; //包含解密配置的JSON对象
+
+const { status, data } = await apiInstance.postTextAesDecryptAdvanced(
+    postTextAesDecryptAdvancedRequest
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **postTextAesDecryptAdvancedRequest** | **PostTextAesDecryptAdvancedRequest**| 包含解密配置的JSON对象 | |
+
+
+### Return type
+
+**PostTextAesDecryptAdvanced200Response**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | 解密成功，返回原始明文 |  -  |
+|**400** | 无效的请求参数或解密失败 |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 # **postTextAesEncrypt**
 > PostTextAesEncrypt200Response postTextAesEncrypt(postTextAesEncryptRequest)
 
@@ -170,6 +226,59 @@ No authorization required
 |**200** | 成功响应 |  -  |
 |**400** | 无效的请求参数 |  -  |
 |**500** | 加密失败 |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **postTextAesEncryptAdvanced**
+> PostTextAesEncryptAdvanced200Response postTextAesEncryptAdvanced(postTextAesEncryptAdvancedRequest)
+
+需要更灵活的AES加密方案？这个高级接口支持6种加密模式和3种填充方式，让你根据具体场景选择最合适的加密配置。  > [!IMPORTANT] > **推荐使用GCM模式** > GCM模式提供认证加密(AEAD)，不仅能加密数据，还能验证数据完整性，防止密文被篡改。这是目前最推荐的加密模式。  ## 功能概述 这是一个功能全面的AES加密接口，支持多种加密模式和填充方式。你可以根据不同的安全需求和性能要求，灵活选择合适的加密配置。  ### 支持的加密模式 - **GCM模式**（推荐）：认证加密模式，提供完整性保护 - **CBC模式**：经典块加密模式，需要IV和填充，适用于文件加密 - **CTR模式**：流密码模式，无需填充，适用于实时数据加密 - **OFB/CFB模式**：流密码模式，无需填充，适用于流数据加密 - **ECB模式**（不推荐）：仅用于兼容性需求  ### 支持的填充方式 - **PKCS7填充**（推荐）：标准填充方式 - **Zero填充**：使用0x00字节填充 - **None填充**：无填充，用于流密码模式  ### 输出格式支持 - **base64**（默认）：标准Base64编码输出，适合传输和存储 - **hex**：十六进制编码输出，方便与在线加密工具对比验证  通过 `output_format` 参数可以直接获取HEX格式的密文，无需额外调用转换接口。  ## 参数说明 - **`text`**: 待加密的明文文本 - **`key`**: 加密密钥（支持任意长度） - **`mode`**: 加密模式（可选，默认GCM） - **`padding`**: 填充方式（可选，默认PKCS7） - **`iv`**: 自定义IV（可选，Base64编码，16字节） - **`output_format`**: 输出格式（可选，默认base64）  ## 使用示例  **示例1：HEX格式输出** ```json {   \"text\": \"测试文本123\",   \"key\": \"1234567890123456\",   \"mode\": \"ECB\",   \"padding\": \"PKCS7\",   \"output_format\": \"hex\" } ``` 返回示例： ```json {   \"ciphertext\": \"aaaca6027da10918bb5d23d81939552c\",   \"mode\": \"ECB\",   \"padding\": \"PKCS7\" } ```  **示例2：Base64格式输出（默认）** ```json {   \"text\": \"测试文本123\",   \"key\": \"1234567890123456\",   \"mode\": \"ECB\",   \"padding\": \"PKCS7\" } ``` 返回示例： ```json {   \"ciphertext\": \"qqymAn2hCRi7XSPYGTlVLA==\",   \"mode\": \"ECB\",   \"padding\": \"PKCS7\" } ```  ## 技术规格 - **加密算法**: AES-256 - **编码格式**: Base64/HEX（输入/输出） - **IV长度**: 16字节（128位） - **版本标注**: v3.4.8+  > [!NOTE] > **关于IV（初始化向量）** > - GCM模式无需提供IV > - CBC/CTR/OFB/CFB模式可选提供IV > - ECB模式不使用IV > - 建议每次加密使用不同的IV以确保安全性  > [!TIP] > **关于输出格式** > - 如需与在线加密工具（如 toolhelper.cn）对比结果，建议使用 `output_format: \"hex\"`  > - Base64格式更适合网络传输和API调用 > - 两种格式可以相互转换，数据完全一致
+
+### Example
+
+```typescript
+import {
+    TextApi,
+    Configuration,
+    PostTextAesEncryptAdvancedRequest
+} from 'uapi-sdk-typescript';
+
+const configuration = new Configuration();
+const apiInstance = new TextApi(configuration);
+
+let postTextAesEncryptAdvancedRequest: PostTextAesEncryptAdvancedRequest; //包含加密配置的JSON对象
+
+const { status, data } = await apiInstance.postTextAesEncryptAdvanced(
+    postTextAesEncryptAdvancedRequest
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **postTextAesEncryptAdvancedRequest** | **PostTextAesEncryptAdvancedRequest**| 包含加密配置的JSON对象 | |
+
+
+### Return type
+
+**PostTextAesEncryptAdvanced200Response**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | 加密成功，返回密文和加密配置 |  -  |
+|**400** | 无效的请求参数 |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
@@ -329,6 +438,59 @@ No authorization required
 |-------------|-------------|------------------|
 |**200** | 成功响应 |  -  |
 |**400** | 无效的请求参数 |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+# **postTextConvert**
+> PostTextConvert200Response postTextConvert(postTextConvertRequest)
+
+需要在不同文本格式之间转换？这个接口支持Base64、Hex、URL、HTML、Unicode等多种格式互转，还能生成MD5、SHA256等哈希值。  ## 功能概述 你提供待转换的文本、源格式和目标格式，接口会自动完成转换。支持7种双向格式（plain、base64、hex、url、html、unicode、binary）和4种单向哈希（md5、sha1、sha256、sha512）。  ## 格式说明 **双向转换格式**：plain（纯文本）、base64、hex（十六进制）、url、html（HTML实体）、unicode（\\uXXXX转义）、binary（二进制字符串）  **单向哈希格式**：md5、sha1、sha256、sha512（仅可作为目标格式，不可逆）  ## 链式转换 支持多次调用实现复杂转换，如先将文本转为base64，再将base64转为hex。
+
+### Example
+
+```typescript
+import {
+    TextApi,
+    Configuration,
+    PostTextConvertRequest
+} from 'uapi-sdk-typescript';
+
+const configuration = new Configuration();
+const apiInstance = new TextApi(configuration);
+
+let postTextConvertRequest: PostTextConvertRequest; //包含转换配置的JSON对象
+
+const { status, data } = await apiInstance.postTextConvert(
+    postTextConvertRequest
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **postTextConvertRequest** | **PostTextConvertRequest**| 包含转换配置的JSON对象 | |
+
+
+### Return type
+
+**PostTextConvert200Response**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | 转换成功 |  -  |
+|**400** | 转换失败或参数错误 |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

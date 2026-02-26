@@ -6,7 +6,6 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **code** | **string** |  | [optional] [default to undefined]
-**details** | **object** |  | [optional] [default to undefined]
 **message** | **string** |  | [optional] [default to undefined]
 
 ## Example
@@ -16,7 +15,6 @@ import { GetStatusUsage404Response } from 'uapi-sdk-typescript';
 
 const instance: GetStatusUsage404Response = {
     code,
-    details,
     message,
 };
 ```

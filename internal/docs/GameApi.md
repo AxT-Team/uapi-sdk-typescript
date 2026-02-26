@@ -4,11 +4,11 @@ All URIs are relative to *https://uapis.cn/api/v1*
 
 |Method | HTTP request | Description|
 |------------- | ------------- | -------------|
-|[**getGameEpicFree**](#getgameepicfree) | **GET** /game/epic-free | 获取Epic Games免费游戏|
-|[**getGameMinecraftHistoryid**](#getgameminecrafthistoryid) | **GET** /game/minecraft/historyid | 查询Minecraft玩家历史用户名|
-|[**getGameMinecraftServerstatus**](#getgameminecraftserverstatus) | **GET** /game/minecraft/serverstatus | 查询Minecraft服务器状态|
-|[**getGameMinecraftUserinfo**](#getgameminecraftuserinfo) | **GET** /game/minecraft/userinfo | 查询Minecraft玩家信息|
-|[**getGameSteamSummary**](#getgamesteamsummary) | **GET** /game/steam/summary | 获取Steam用户公开摘要|
+|[**getGameEpicFree**](#getgameepicfree) | **GET** /game/epic-free | Epic 免费游戏|
+|[**getGameMinecraftHistoryid**](#getgameminecrafthistoryid) | **GET** /game/minecraft/historyid | 查询 MC 曾用名|
+|[**getGameMinecraftServerstatus**](#getgameminecraftserverstatus) | **GET** /game/minecraft/serverstatus | 查询 MC 服务器|
+|[**getGameMinecraftUserinfo**](#getgameminecraftuserinfo) | **GET** /game/minecraft/userinfo | 查询 MC 玩家|
+|[**getGameSteamSummary**](#getgamesteamsummary) | **GET** /game/steam/summary | 查询 Steam 用户|
 
 # **getGameEpicFree**
 > GetGameEpicFree200Response getGameEpicFree()
@@ -58,7 +58,7 @@ No authorization required
 # **getGameMinecraftHistoryid**
 > GetGameMinecraftHistoryid200Response getGameMinecraftHistoryid()
 
-想知道某个大佬以前叫什么名字吗？这个接口可以帮你追溯一个 Minecraft 玩家的“黑历史”！  ## 功能概述 通过提供一个玩家的 UUID，你可以获取到该玩家所有曾用名及其变更时间的列表。这对于识别回归的老玩家或者社区管理非常有用。  ## 使用须知 > [!NOTE] > **UUID 格式** > 查询时，请务必提供玩家的 **32位无破折号** Minecraft UUID，例如 `ee9b4ed1aac1491eb7611471be374b80`。
+想知道某个大佬以前叫什么名字吗？这个接口可以帮你追溯一个 Minecraft 玩家的“黑历史”！  ## 功能概述 通过提供玩家的用户名或 UUID，你可以获取到该玩家所有曾用名及其变更时间的列表。这对于识别回归的老玩家或者社区管理非常有用。  ## 使用须知 > [!NOTE] > **参数说明** > - `name` 和 `uuid` 二选一 > - UUID 支持带连字符（如 `ee9b4ed1-aac1-491e-b761-1471be374b80`）或不带连字符格式  > [!IMPORTANT] > **响应结构差异** > - 使用 `uuid` 查询：返回单个用户的历史记录 > - 使用 `name` 查询：返回所有匹配用户的列表（包括当前用户名或曾用名匹配的玩家），需判断响应中是否有 `results` 字段来区分两种模式
 
 ### Example
 
@@ -71,9 +71,11 @@ import {
 const configuration = new Configuration();
 const apiInstance = new GameApi(configuration);
 
-let uuid: string; //玩家的 Minecraft UUID，请务必使用32位无破折号的格式。 (default to undefined)
+let name: string; //玩家的 Minecraft 用户名。使用此参数查询时，会返回所有匹配用户的列表（包括当前用户名或曾用名匹配的玩家）。 (optional) (default to undefined)
+let uuid: string; //玩家的 Minecraft UUID，支持带连字符或不带连字符格式。 (optional) (default to undefined)
 
 const { status, data } = await apiInstance.getGameMinecraftHistoryid(
+    name,
     uuid
 );
 ```
@@ -82,7 +84,8 @@ const { status, data } = await apiInstance.getGameMinecraftHistoryid(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **uuid** | [**string**] | 玩家的 Minecraft UUID，请务必使用32位无破折号的格式。 | defaults to undefined|
+| **name** | [**string**] | 玩家的 Minecraft 用户名。使用此参数查询时，会返回所有匹配用户的列表（包括当前用户名或曾用名匹配的玩家）。 | (optional) defaults to undefined|
+| **uuid** | [**string**] | 玩家的 Minecraft UUID，支持带连字符或不带连字符格式。 | (optional) defaults to undefined|
 
 
 ### Return type
@@ -102,10 +105,10 @@ No authorization required
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-|**200** | 查询成功！返回该玩家的完整用户名历史记录。 |  -  |
-|**400** | 请求失败。请检查你是否提供了 &#x60;uuid&#x60; 参数，以及它的格式是否为32位无破折号字符串。 |  -  |
+|**200** | 查询成功！根据查询方式返回不同结构： - **uuid 查询**：返回单个用户的历史记录 - **name 查询**：返回匹配用户列表（判断响应中是否有 &#x60;results&#x60; 字段来区分） |  -  |
+|**400** | 请求失败。请检查你是否提供了 &#x60;name&#x60; 或 &#x60;uuid&#x60; 参数中的至少一个。 |  -  |
 |**404** | 用户未找到。我们根据你提供的 UUID 未能找到对应的 Minecraft 玩家。请确认 UUID 是否正确。 |  -  |
-|**502** | 上游服务错误。在向 Mojang 的官方 API 请求数据时遇到了问题。这可能是他们的服务暂时中断，请稍后重试。 |  -  |
+|**502** | 服务暂时不可用，请稍后重试。 |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

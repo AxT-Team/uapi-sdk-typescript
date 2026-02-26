@@ -4,7 +4,7 @@ All URIs are relative to *https://uapis.cn/api/v1*
 
 |Method | HTTP request | Description|
 |------------- | ------------- | -------------|
-|[**getDailyNewsImage**](#getdailynewsimage) | **GET** /daily/news-image | 生成每日新闻摘要图片|
+|[**getDailyNewsImage**](#getdailynewsimage) | **GET** /daily/news-image | 每日新闻图|
 
 # **getDailyNewsImage**
 > File getDailyNewsImage()

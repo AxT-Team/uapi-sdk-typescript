@@ -6,7 +6,6 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**code** | **number** |  | [optional] [default to undefined]
 **whois** | **string** | **WHOIS原始文本**  返回未经处理的原始WHOIS查询结果文本。 | [optional] [default to undefined]
 
 ## Example
@@ -15,7 +14,6 @@ Name | Type | Description | Notes
 import { GetNetworkWhois200ResponseOneOf } from 'uapi-sdk-typescript';
 
 const instance: GetNetworkWhois200ResponseOneOf = {
-    code,
     whois,
 };
 ```
