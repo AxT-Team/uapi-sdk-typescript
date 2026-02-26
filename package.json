@@ -1,9 +1,13 @@
 {
   "name": "uapi-sdk-typescript",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AxT-Team/uapi-sdk-typescript"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "node --version"
