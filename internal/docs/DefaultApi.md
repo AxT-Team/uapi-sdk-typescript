@@ -70,7 +70,7 @@ import {
 const configuration = new Configuration();
 const apiInstance = new DefaultApi(configuration);
 
-let keyword: string; //要分析的关键词，最长50字符。 (default to undefined)
+let keyword: string; //要分析的关键词，最长1,000字符。 (default to undefined)
 
 const { status, data } = await apiInstance.getSensitiveWordAnalyzeQuery(
     keyword
@@ -81,7 +81,7 @@ const { status, data } = await apiInstance.getSensitiveWordAnalyzeQuery(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **keyword** | [**string**] | 要分析的关键词，最长50字符。 | defaults to undefined|
+| **keyword** | [**string**] | 要分析的关键词，最长1,000字符。 | defaults to undefined|
 
 
 ### Return type
@@ -110,7 +110,7 @@ No authorization required
 # **postSearchAggregate**
 > PostSearchAggregate200Response postSearchAggregate(postSearchAggregateRequest)
 
-想在你的应用中集成搜索功能？我们提供了一个强大的搜索引擎API，让你可以轻松实现实时网页搜索。  ## 功能概述  UAPI Pro Search 是一个智能搜索引擎，采用机器学习算法对搜索结果进行智能排序，确保最相关的内容排在前面。你可以用它搜索任何关键词，也可以限定在特定网站或特定文件类型中搜索。  - **实时网页搜索**: 毫秒级响应，快速返回搜索结果 - **智能排序**: 采用机器学习回归排序算法，结果更精准 - **时间排序**: 支持按发布时间排序，获取最新内容 - **时间范围过滤**: 支持按天/周/月/年过滤结果 - **站内搜索**: 支持 `site:` 操作符，在指定网站内搜索 - **文件类型过滤**: 支持 `filetype:` 操作符，快速找到 PDF、Word 等特定格式文件  > [!VIP] > 本API目前处于**限时免费**阶段，我们鼓励开发者集成和测试。未来，它将转为付费API，为用户提供更稳定和强大的服务。       
+想在你的应用中集成搜索功能？我们提供了一个强大的搜索引擎API，让你可以轻松实现实时网页搜索。  ## 功能概述  UAPI Pro Search 是一个智能搜索引擎，采用机器学习算法对搜索结果进行智能排序，确保最相关的内容排在前面。你可以用它搜索任何关键词，也可以限定在特定网站或特定文件类型中搜索。  - **实时网页搜索**: 毫秒级响应，快速返回搜索结果 - **智能排序**: 采用机器学习回归排序算法，结果更精准 - **时间排序**: 支持按发布时间排序，获取最新内容 - **时间范围过滤**: 支持按天/周/月/年过滤结果 - **站内搜索**: 支持 `site:` 操作符，在指定网站内搜索 - **文件类型过滤**: 支持 `filetype:` 操作符，快速找到 PDF、Word 等特定格式文件       
 
 ### Example
 
@@ -124,7 +124,7 @@ import {
 const configuration = new Configuration();
 const apiInstance = new DefaultApi(configuration);
 
-let postSearchAggregateRequest: PostSearchAggregateRequest; //包含搜索参数的JSON对象
+let postSearchAggregateRequest: PostSearchAggregateRequest; //
 
 const { status, data } = await apiInstance.postSearchAggregate(
     postSearchAggregateRequest
@@ -135,7 +135,7 @@ const { status, data } = await apiInstance.postSearchAggregate(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **postSearchAggregateRequest** | **PostSearchAggregateRequest**| 包含搜索参数的JSON对象 | |
+| **postSearchAggregateRequest** | **PostSearchAggregateRequest**|  | |
 
 
 ### Return type
@@ -166,7 +166,7 @@ No authorization required
 # **postSensitiveWordAnalyze**
 > PostSensitiveWordAnalyze200Response postSensitiveWordAnalyze(postSensitiveWordAnalyzeRequest)
 
-分析单个或多个关键词的敏感程度，返回标准化风险标签与置信度结果。  > [!VIP] > 本API基于先进的分析模型，提供三级缓存策略和并发处理能力。  ## 功能概述  - **模型驱动**: 使用先进的分析模型进行语义分析。 - **高性能**: 采用三级缓存策略（持久化存储 → 统一缓存 → 模型分析），确保高频请求的响应速度。 - **并发支持**: 支持批量并发处理，单次最多可分析100个关键词。 - **标准标签**: 返回 `label` 字段，明确区分 `sensitive` 与 `normal`。 - **分类清晰**: 返回 `category` 字段，用于标识具体风险类别。 - **置信度输出**: 返回 `confidence` 字段，范围为0.0到1.0。  ## 响应字段说明  | 字段 | 类型 | 说明 | |------|------|------| | `results` | array | 分析结果对象的数组。 | | `results[].k` | string | 您在请求中提供的原始关键词。 | | `results[].label` | string | 核心判断字段：`sensitive`(敏感)、`normal`(正常)。 | | `results[].category` | string | 风险分类：`safe`(安全)、`threat`(威胁)、`porn`(色情)、`fraud`(欺诈)、`insult`(辱骂)。 | | `results[].confidence` | number | 当前分类的置信度，范围0.0到1.0。 | | `total` | integer | 本次请求成功分析的关键词总数。 |       
+分析单个或多个关键词的敏感程度，返回标准化风险标签与置信度结果。  ## 功能概述  - **模型驱动**: 使用先进的分析模型进行语义分析。 - **高性能**: 采用三级缓存策略（持久化存储 → 统一缓存 → 模型分析），确保高频请求的响应速度。 - **并发支持**: 支持批量并发处理，单次最多可分析100个关键词。 - **输入限制**: 单条关键词最多 1,000 字符，总字符数最多 20,000。 - **标准标签**: 返回 `label` 字段，明确区分 `sensitive` 与 `normal`。 - **分类清晰**: 返回 `category` 字段，用于标识具体风险类别。 - **置信度输出**: 返回 `confidence` 字段，范围为0.0到1.0。  ## 响应字段说明  | 字段 | 类型 | 说明 | |------|------|------| | `results` | array | 分析结果对象的数组。 | | `results[].k` | string | 您在请求中提供的原始关键词。 | | `results[].label` | string | 核心判断字段：`sensitive`(敏感)、`normal`(正常)。 | | `results[].category` | string | 风险分类：`safe`(安全)、`threat`(威胁)、`porn`(色情)、`fraud`(欺诈)、`insult`(辱骂)。 | | `results[].confidence` | number | 当前分类的置信度，范围0.0到1.0。 | | `total` | integer | 本次请求成功分析的关键词总数。 |       
 
 ### Example
 
@@ -180,7 +180,7 @@ import {
 const configuration = new Configuration();
 const apiInstance = new DefaultApi(configuration);
 
-let postSensitiveWordAnalyzeRequest: PostSensitiveWordAnalyzeRequest; //包含待检测文本 \'keywords\' 的JSON对象
+let postSensitiveWordAnalyzeRequest: PostSensitiveWordAnalyzeRequest; //包含待检测关键词列表 `keywords` 的 JSON 对象。单条关键词最多 1,000 字符，总字符数最多 20,000。
 
 const { status, data } = await apiInstance.postSensitiveWordAnalyze(
     postSensitiveWordAnalyzeRequest
@@ -191,7 +191,7 @@ const { status, data } = await apiInstance.postSensitiveWordAnalyze(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **postSensitiveWordAnalyzeRequest** | **PostSensitiveWordAnalyzeRequest**| 包含待检测文本 \&#39;keywords\&#39; 的JSON对象 | |
+| **postSensitiveWordAnalyzeRequest** | **PostSensitiveWordAnalyzeRequest**| 包含待检测关键词列表 &#x60;keywords&#x60; 的 JSON 对象。单条关键词最多 1,000 字符，总字符数最多 20,000。 | |
 
 
 ### Return type

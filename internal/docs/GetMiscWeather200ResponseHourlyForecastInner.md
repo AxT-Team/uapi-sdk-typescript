@@ -19,7 +19,7 @@ Name | Type | Description | Notes
 **dew_point** | **number** | 露点温度 °C（可选） | [optional] [default to undefined]
 **visibility** | **number** | 能见度 km（可选） | [optional] [default to undefined]
 **pop** | **number** | 降水概率 %（可选） | [optional] [default to undefined]
-**uv_index** | **number** | 紫外线指数（可选） | [optional] [default to undefined]
+**uv_index** | **number** | 紫外线指数（可选，国内城市通常不返回） | [optional] [default to undefined]
 
 ## Example
 

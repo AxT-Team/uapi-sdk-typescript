@@ -85,7 +85,7 @@ import {
 const configuration = new Configuration();
 const apiInstance = new TextApi(configuration);
 
-let postTextAesDecryptRequest: PostTextAesDecryptRequest; //包含待解密文本 \'text\'、密钥 \'key\' 和随机数 \'nonce\' 的JSON对象
+let postTextAesDecryptRequest: PostTextAesDecryptRequest; //
 
 const { status, data } = await apiInstance.postTextAesDecrypt(
     postTextAesDecryptRequest
@@ -96,7 +96,7 @@ const { status, data } = await apiInstance.postTextAesDecrypt(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **postTextAesDecryptRequest** | **PostTextAesDecryptRequest**| 包含待解密文本 \&#39;text\&#39;、密钥 \&#39;key\&#39; 和随机数 \&#39;nonce\&#39; 的JSON对象 | |
+| **postTextAesDecryptRequest** | **PostTextAesDecryptRequest**|  | |
 
 
 ### Return type
@@ -139,7 +139,7 @@ import {
 const configuration = new Configuration();
 const apiInstance = new TextApi(configuration);
 
-let postTextAesDecryptAdvancedRequest: PostTextAesDecryptAdvancedRequest; //包含解密配置的JSON对象
+let postTextAesDecryptAdvancedRequest: PostTextAesDecryptAdvancedRequest; //
 
 const { status, data } = await apiInstance.postTextAesDecryptAdvanced(
     postTextAesDecryptAdvancedRequest
@@ -150,7 +150,7 @@ const { status, data } = await apiInstance.postTextAesDecryptAdvanced(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **postTextAesDecryptAdvancedRequest** | **PostTextAesDecryptAdvancedRequest**| 包含解密配置的JSON对象 | |
+| **postTextAesDecryptAdvancedRequest** | **PostTextAesDecryptAdvancedRequest**|  | |
 
 
 ### Return type
@@ -192,7 +192,7 @@ import {
 const configuration = new Configuration();
 const apiInstance = new TextApi(configuration);
 
-let postTextAesEncryptRequest: PostTextAesEncryptRequest; //包含待加密文本 \'text\' 和密钥 \'key\' 的JSON对象
+let postTextAesEncryptRequest: PostTextAesEncryptRequest; //
 
 const { status, data } = await apiInstance.postTextAesEncrypt(
     postTextAesEncryptRequest
@@ -203,7 +203,7 @@ const { status, data } = await apiInstance.postTextAesEncrypt(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **postTextAesEncryptRequest** | **PostTextAesEncryptRequest**| 包含待加密文本 \&#39;text\&#39; 和密钥 \&#39;key\&#39; 的JSON对象 | |
+| **postTextAesEncryptRequest** | **PostTextAesEncryptRequest**|  | |
 
 
 ### Return type
@@ -246,7 +246,7 @@ import {
 const configuration = new Configuration();
 const apiInstance = new TextApi(configuration);
 
-let postTextAesEncryptAdvancedRequest: PostTextAesEncryptAdvancedRequest; //包含加密配置的JSON对象
+let postTextAesEncryptAdvancedRequest: PostTextAesEncryptAdvancedRequest; //
 
 const { status, data } = await apiInstance.postTextAesEncryptAdvanced(
     postTextAesEncryptAdvancedRequest
@@ -257,7 +257,7 @@ const { status, data } = await apiInstance.postTextAesEncryptAdvanced(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **postTextAesEncryptAdvancedRequest** | **PostTextAesEncryptAdvancedRequest**| 包含加密配置的JSON对象 | |
+| **postTextAesEncryptAdvancedRequest** | **PostTextAesEncryptAdvancedRequest**|  | |
 
 
 ### Return type
@@ -299,7 +299,7 @@ import {
 const configuration = new Configuration();
 const apiInstance = new TextApi(configuration);
 
-let postTextAnalyzeRequest: PostTextAnalyzeRequest; //包含待分析文本 \'text\' 的JSON对象
+let postTextAnalyzeRequest: PostTextAnalyzeRequest; //
 
 const { status, data } = await apiInstance.postTextAnalyze(
     postTextAnalyzeRequest
@@ -310,7 +310,7 @@ const { status, data } = await apiInstance.postTextAnalyze(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **postTextAnalyzeRequest** | **PostTextAnalyzeRequest**| 包含待分析文本 \&#39;text\&#39; 的JSON对象 | |
+| **postTextAnalyzeRequest** | **PostTextAnalyzeRequest**|  | |
 
 
 ### Return type
@@ -352,7 +352,7 @@ import {
 const configuration = new Configuration();
 const apiInstance = new TextApi(configuration);
 
-let postTextBase64DecodeRequest: PostTextBase64DecodeRequest; //包含待解码文本 \'text\' 的JSON对象
+let postTextBase64DecodeRequest: PostTextBase64DecodeRequest; //
 
 const { status, data } = await apiInstance.postTextBase64Decode(
     postTextBase64DecodeRequest
@@ -363,7 +363,7 @@ const { status, data } = await apiInstance.postTextBase64Decode(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **postTextBase64DecodeRequest** | **PostTextBase64DecodeRequest**| 包含待解码文本 \&#39;text\&#39; 的JSON对象 | |
+| **postTextBase64DecodeRequest** | **PostTextBase64DecodeRequest**|  | |
 
 
 ### Return type
@@ -405,7 +405,7 @@ import {
 const configuration = new Configuration();
 const apiInstance = new TextApi(configuration);
 
-let postTextBase64EncodeRequest: PostTextBase64EncodeRequest; //包含待编码文本 \'text\' 的JSON对象
+let postTextBase64EncodeRequest: PostTextBase64EncodeRequest; //
 
 const { status, data } = await apiInstance.postTextBase64Encode(
     postTextBase64EncodeRequest
@@ -416,7 +416,7 @@ const { status, data } = await apiInstance.postTextBase64Encode(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **postTextBase64EncodeRequest** | **PostTextBase64EncodeRequest**| 包含待编码文本 \&#39;text\&#39; 的JSON对象 | |
+| **postTextBase64EncodeRequest** | **PostTextBase64EncodeRequest**|  | |
 
 
 ### Return type
@@ -458,7 +458,7 @@ import {
 const configuration = new Configuration();
 const apiInstance = new TextApi(configuration);
 
-let postTextConvertRequest: PostTextConvertRequest; //包含转换配置的JSON对象
+let postTextConvertRequest: PostTextConvertRequest; //
 
 const { status, data } = await apiInstance.postTextConvert(
     postTextConvertRequest
@@ -469,7 +469,7 @@ const { status, data } = await apiInstance.postTextConvert(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **postTextConvertRequest** | **PostTextConvertRequest**| 包含转换配置的JSON对象 | |
+| **postTextConvertRequest** | **PostTextConvertRequest**|  | |
 
 
 ### Return type
@@ -564,7 +564,7 @@ import {
 const configuration = new Configuration();
 const apiInstance = new TextApi(configuration);
 
-let postTextMd5VerifyRequest: PostTextMd5VerifyRequest; //包含待校验文本 \'text\' 和哈希值 \'hash\' 的JSON对象
+let postTextMd5VerifyRequest: PostTextMd5VerifyRequest; //
 
 const { status, data } = await apiInstance.postTextMd5Verify(
     postTextMd5VerifyRequest
@@ -575,7 +575,7 @@ const { status, data } = await apiInstance.postTextMd5Verify(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **postTextMd5VerifyRequest** | **PostTextMd5VerifyRequest**| 包含待校验文本 \&#39;text\&#39; 和哈希值 \&#39;hash\&#39; 的JSON对象 | |
+| **postTextMd5VerifyRequest** | **PostTextMd5VerifyRequest**|  | |
 
 
 ### Return type

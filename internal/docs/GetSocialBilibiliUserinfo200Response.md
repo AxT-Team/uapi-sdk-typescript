@@ -5,9 +5,19 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**code** | **number** |  | [optional] [default to undefined]
-**data** | [**GetSocialBilibiliUserinfo200ResponseData**](GetSocialBilibiliUserinfo200ResponseData.md) |  | [optional] [default to undefined]
-**message** | **string** |  | [optional] [default to undefined]
+**mid** | **number** |  | [optional] [default to undefined]
+**name** | **string** |  | [optional] [default to undefined]
+**sex** | **string** |  | [optional] [default to undefined]
+**face** | **string** |  | [optional] [default to undefined]
+**sign** | **string** |  | [optional] [default to undefined]
+**level** | **number** |  | [optional] [default to undefined]
+**birthday** | **string** |  | [optional] [default to undefined]
+**vip_type** | **number** |  | [optional] [default to undefined]
+**vip_status** | **number** |  | [optional] [default to undefined]
+**following** | **number** |  | [optional] [default to undefined]
+**follower** | **number** |  | [optional] [default to undefined]
+**archive_count** | **number** |  | [optional] [default to undefined]
+**article_count** | **number** |  | [optional] [default to undefined]
 
 ## Example
 
@@ -15,9 +25,19 @@ Name | Type | Description | Notes
 import { GetSocialBilibiliUserinfo200Response } from 'uapi-sdk-typescript';
 
 const instance: GetSocialBilibiliUserinfo200Response = {
-    code,
-    data,
-    message,
+    mid,
+    name,
+    sex,
+    face,
+    sign,
+    level,
+    birthday,
+    vip_type,
+    vip_status,
+    following,
+    follower,
+    archive_count,
+    article_count,
 };
 ```
 

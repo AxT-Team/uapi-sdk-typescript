@@ -5,9 +5,11 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**code** | **string** |  | [optional] [default to undefined]
-**message** | **string** |  | [optional] [default to undefined]
-**data** | [**GetMiscTrackingQuery200ResponseData**](GetMiscTrackingQuery200ResponseData.md) |  | [optional] [default to undefined]
+**tracking_number** | **string** | 快递单号 | [optional] [default to undefined]
+**carrier_code** | **string** | 快递公司编码 | [optional] [default to undefined]
+**carrier_name** | **string** | 快递公司名称 | [optional] [default to undefined]
+**track_count** | **number** | 物流轨迹数量 | [optional] [default to undefined]
+**tracks** | [**Array&lt;GetMiscTrackingQuery200ResponseTracksInner&gt;**](GetMiscTrackingQuery200ResponseTracksInner.md) | 物流轨迹列表，按时间倒序排列 | [optional] [default to undefined]
 
 ## Example
 
@@ -15,9 +17,11 @@ Name | Type | Description | Notes
 import { GetMiscTrackingQuery200Response } from 'uapi-sdk-typescript';
 
 const instance: GetMiscTrackingQuery200Response = {
-    code,
-    message,
-    data,
+    tracking_number,
+    carrier_code,
+    carrier_name,
+    track_count,
+    tracks,
 };
 ```
 

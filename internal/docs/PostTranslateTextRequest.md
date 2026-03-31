@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**text** | **string** | 待翻译的文本内容。 | [default to undefined]
+**text** | **string** | 待翻译的文本内容，最大长度3000字符。 | [default to undefined]
 
 ## Example
 

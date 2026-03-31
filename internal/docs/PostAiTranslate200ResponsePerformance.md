@@ -6,7 +6,6 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **processing_time_ms** | **number** |  | [optional] [default to undefined]
-**cache_hit** | **boolean** |  | [optional] [default to undefined]
 
 ## Example
 
@@ -15,7 +14,6 @@ import { PostAiTranslate200ResponsePerformance } from 'uapi-sdk-typescript';
 
 const instance: PostAiTranslate200ResponsePerformance = {
     processing_time_ms,
-    cache_hit,
 };
 ```
 

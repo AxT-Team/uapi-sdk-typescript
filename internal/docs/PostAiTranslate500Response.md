@@ -8,7 +8,6 @@ Name | Type | Description | Notes
 **code** | **number** |  | [optional] [default to undefined]
 **message** | **string** |  | [optional] [default to undefined]
 **error** | **string** |  | [optional] [default to undefined]
-**is_batch** | **boolean** |  | [optional] [default to undefined]
 
 ## Example
 
@@ -19,7 +18,6 @@ const instance: PostAiTranslate500Response = {
     code,
     message,
     error,
-    is_batch,
 };
 ```
 

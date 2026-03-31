@@ -14,7 +14,8 @@ Name | Type | Description | Notes
 **longitude** | **number** | 经度 | [optional] [default to undefined]
 **beginip** | **string** | IP段起始地址（标准查询） | [optional] [default to undefined]
 **endip** | **string** | IP段结束地址（标准查询） | [optional] [default to undefined]
-**district** | **string** | 行政区（商业查询） | [optional] [default to undefined]
+**district** | **string** | 行政区。仅 &#x60;source&#x3D;commercial&#x60; 时可能返回。 | [optional] [default to undefined]
+**time_zone** | **string** | 时区名称。仅 &#x60;source&#x3D;commercial&#x60; 时可能返回。 | [optional] [default to undefined]
 
 ## Example
 
@@ -32,6 +33,7 @@ const instance: GetNetworkMyip200Response = {
     beginip,
     endip,
     district,
+    time_zone,
 };
 ```
 

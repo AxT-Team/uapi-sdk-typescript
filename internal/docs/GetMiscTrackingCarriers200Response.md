@@ -5,9 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**code** | **string** |  | [optional] [default to undefined]
-**message** | **string** |  | [optional] [default to undefined]
-**data** | [**GetMiscTrackingCarriers200ResponseData**](GetMiscTrackingCarriers200ResponseData.md) |  | [optional] [default to undefined]
+**carriers** | [**Array&lt;GetMiscTrackingCarriers200ResponseCarriersInner&gt;**](GetMiscTrackingCarriers200ResponseCarriersInner.md) | 快递公司列表 | [optional] [default to undefined]
+**total** | **number** | 支持的快递公司总数 | [optional] [default to undefined]
 
 ## Example
 
@@ -15,9 +14,8 @@ Name | Type | Description | Notes
 import { GetMiscTrackingCarriers200Response } from 'uapi-sdk-typescript';
 
 const instance: GetMiscTrackingCarriers200Response = {
-    code,
-    message,
-    data,
+    carriers,
+    total,
 };
 ```
 

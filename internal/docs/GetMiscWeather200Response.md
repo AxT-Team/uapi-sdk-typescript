@@ -7,8 +7,10 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **province** | **string** | 省份 | [optional] [default to undefined]
 **city** | **string** | 城市名 | [optional] [default to undefined]
+**district** | **string** | 区县或更细一级的行政区名称。自动按 IP 定位时更常见。 | [optional] [default to undefined]
 **adcode** | **string** | 行政区划代码（部分数据源可能为空） | [optional] [default to undefined]
 **weather** | **string** | 天气状况描述。默认返回中文，传 &#x60;lang&#x3D;en&#x60; 时返回英文。非固定枚举。 | [optional] [default to undefined]
+**weather_icon** | **string** | 天气图标代码。请从[天气图标代码表](#enum-list)中查看所有可能的值。 | [optional] [default to undefined]
 **temperature** | **number** | 当前温度 °C | [optional] [default to undefined]
 **wind_direction** | **string** | 风向 | [optional] [default to undefined]
 **wind_power** | **string** | 风力等级 | [optional] [default to undefined]
@@ -40,8 +42,10 @@ import { GetMiscWeather200Response } from 'uapi-sdk-typescript';
 const instance: GetMiscWeather200Response = {
     province,
     city,
+    district,
     adcode,
     weather,
+    weather_icon,
     temperature,
     wind_direction,
     wind_power,

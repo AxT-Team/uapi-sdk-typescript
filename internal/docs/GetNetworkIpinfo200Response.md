@@ -14,7 +14,6 @@ Name | Type | Description | Notes
 **longitude** | **number** | 经度 | [optional] [default to undefined]
 **beginip** | **string** | IP段起始地址（标准查询） | [optional] [default to undefined]
 **endip** | **string** | IP段结束地址（标准查询） | [optional] [default to undefined]
-**district** | **string** | 行政区（商业查询） | [optional] [default to undefined]
 
 ## Example
 
@@ -31,7 +30,6 @@ const instance: GetNetworkIpinfo200Response = {
     longitude,
     beginip,
     endip,
-    district,
 };
 ```
 

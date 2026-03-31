@@ -5,6 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**message** | **string** | 操作结果描述。 | [optional] [default to undefined]
 **data** | [**Array&lt;GetGameEpicFree200ResponseDataInner&gt;**](GetGameEpicFree200ResponseDataInner.md) | 免费游戏列表数组。 | [optional] [default to undefined]
 
 ## Example
@@ -13,6 +14,7 @@ Name | Type | Description | Notes
 import { GetGameEpicFree200Response } from 'uapi-sdk-typescript';
 
 const instance: GetGameEpicFree200Response = {
+    message,
     data,
 };
 ```

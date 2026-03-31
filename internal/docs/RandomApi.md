@@ -191,7 +191,7 @@ import {
 const configuration = new Configuration();
 const apiInstance = new RandomApi(configuration);
 
-let postAnswerbookAskRequest: PostAnswerbookAskRequest; //包含问题的JSON对象
+let postAnswerbookAskRequest: PostAnswerbookAskRequest; //
 
 const { status, data } = await apiInstance.postAnswerbookAsk(
     postAnswerbookAskRequest
@@ -202,7 +202,7 @@ const { status, data } = await apiInstance.postAnswerbookAsk(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **postAnswerbookAskRequest** | **PostAnswerbookAskRequest**| 包含问题的JSON对象 | |
+| **postAnswerbookAskRequest** | **PostAnswerbookAskRequest**|  | |
 
 
 ### Return type

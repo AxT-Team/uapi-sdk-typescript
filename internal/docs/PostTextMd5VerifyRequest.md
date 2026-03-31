@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**hash** | **string** |  | [default to undefined]
-**text** | **string** |  | [default to undefined]
+**hash** | **string** | 用于比对的 MD5 哈希值（32 位小写十六进制字符串）。 | [default to undefined]
+**text** | **string** | 待校验的原始文本，会先计算其 MD5 再与 hash 进行比对。 | [default to undefined]
 
 ## Example
 

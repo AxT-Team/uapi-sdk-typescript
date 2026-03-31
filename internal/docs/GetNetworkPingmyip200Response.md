@@ -5,12 +5,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**avg** | **number** | 平均延迟(ms) | [optional] [default to undefined]
-**host** | **string** |  | [optional] [default to undefined]
-**ip** | **string** |  | [optional] [default to undefined]
-**location** | **string** |  | [optional] [default to undefined]
-**max** | **number** | 最大延迟(ms) | [optional] [default to undefined]
-**min** | **number** | 最小延迟(ms) | [optional] [default to undefined]
+**client_ip** | **string** | 当前客户端的公网 IP 地址。 | [optional] [default to undefined]
+**ping_successful** | **boolean** | 是否成功完成对当前客户端 IP 的 Ping。 | [optional] [default to undefined]
+**message** | **string** | 操作结果说明。成功时通常会附带平均延迟信息。 | [optional] [default to undefined]
 
 ## Example
 
@@ -18,12 +15,9 @@ Name | Type | Description | Notes
 import { GetNetworkPingmyip200Response } from 'uapi-sdk-typescript';
 
 const instance: GetNetworkPingmyip200Response = {
-    avg,
-    host,
-    ip,
-    location,
-    max,
-    min,
+    client_ip,
+    ping_successful,
+    message,
 };
 ```
 

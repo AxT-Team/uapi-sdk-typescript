@@ -5,9 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**count** | **number** |  | [optional] [default to undefined]
-**images** | **Array&lt;string&gt;** |  | [optional] [default to undefined]
-**url** | **string** |  | [optional] [default to undefined]
+**page_url** | **string** | 实际解析的网页地址。 | [optional] [default to undefined]
+**image_urls** | **Array&lt;string&gt;** | 页面中提取到的图片链接列表。 | [optional] [default to undefined]
 
 ## Example
 
@@ -15,9 +14,8 @@ Name | Type | Description | Notes
 import { GetWebparseExtractimages200Response } from 'uapi-sdk-typescript';
 
 const instance: GetWebparseExtractimages200Response = {
-    count,
-    images,
-    url,
+    page_url,
+    image_urls,
 };
 ```
 
