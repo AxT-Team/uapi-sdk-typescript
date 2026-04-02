@@ -1,15 +1,22 @@
 import axios, { AxiosInstance } from 'axios'
 import type * as Internal from '../internal/index.js'
-import { UapiError, mapError } from './errors.js'
+import { UapiError, type ResponseMeta, extractMetaFromHeaders, mapError } from './errors.js'
+export { UapiError, mapError, extractMetaFromHeaders } from './errors.js'
+export type { RateLimitPolicyEntry, RateLimitStateEntry, ResponseMeta } from './errors.js'
 
 type Config = { baseURL: string; token?: string; timeout?: number }
 
 class HTTP {
   private cli: AxiosInstance
+  private lastMeta?: ResponseMeta
 
   constructor(cfg: Config) {
     this.cli = axios.create({ baseURL: cfg.baseURL, timeout: cfg.timeout ?? 15000 })
     if (cfg.token) this.cli.defaults.headers.common['Authorization'] = `Bearer ${cfg.token}`
+  }
+
+  getLastResponseMeta(): ResponseMeta | undefined {
+    return this.lastMeta
   }
 
   async request(
@@ -19,7 +26,7 @@ class HTTP {
     body?: Record<string, unknown>,
     headers?: Record<string, string>,
     responseKind: 'json' | 'text' | 'arrayBuffer' = 'json',
-  ) {
+    ) {
     try {
       const res = await this.cli.request({
         method,
@@ -29,12 +36,17 @@ class HTTP {
         headers,
         responseType: responseKind === 'arrayBuffer' ? 'arraybuffer' : responseKind,
       })
+      this.lastMeta = extractMetaFromHeaders(res.headers)
       if (responseKind === 'arrayBuffer' && ArrayBuffer.isView(res.data)) {
         return res.data.buffer.slice(res.data.byteOffset, res.data.byteOffset + res.data.byteLength)
       }
       return res.data
     } catch (e: any) {
-      if (e.response) throw mapError(e.response, e.response.data)
+      if (e.response) {
+        const mapped = mapError(e.response, e.response.data)
+        this.lastMeta = mapped.meta
+        throw mapped
+      }
       throw new UapiError('API_ERROR', 500, e.message)
     }
   }
@@ -915,6 +927,10 @@ export class UapiClient {
     const zhiNengSouSuo = new ZhiNengSouSuoApi(this.http)
     this.zhiNengSouSuo = zhiNengSouSuo
     this["智能搜索"] = zhiNengSouSuo
+  }
+
+  get lastResponseMeta(): ResponseMeta | undefined {
+    return this.http.getLastResponseMeta()
   }
 }
 export class ClipzyZaiXianJianTieBanApi {
