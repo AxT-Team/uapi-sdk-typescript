@@ -19,7 +19,7 @@ npm i uapi-sdk-typescript
 import { UapiClient } from 'uapi-sdk-typescript'
 
 const client = new UapiClient('https://uapis.cn/api/v1')
-const result = await (client as any).social.getSocialQqUserinfo({ qq: '10001' })
+const result = await client.social.getSocialQqUserinfo({ qq: '10001' })
 console.log(result)
 ```
 
@@ -36,6 +36,49 @@ console.log(result)
 HTTP 封装基于 Axios，默认 15 秒超时并自动携带 `Authorization` 头；如果你想接入代理、重试或额外的 Header，只需要在实例化后对 Axios 拦截器做扩展即可。
 
 如果你需要查看字段细节或内部逻辑，仓库中的 `./internal` 目录同步保留了由 `openapi-generator` 生成的完整结构体，随时可供参考。
+
+## 响应元信息
+
+每次请求完成后，SDK 会自动把响应 Header 解析成结构化的 `ResponseMeta`，你不用自己拆原始字符串。
+
+成功时可以通过 `client.lastResponseMeta` 读取，失败时可以通过 `err.meta` 读取，两条路径拿到的是同一套字段。
+
+```ts
+import { UapiClient, UapiError } from 'uapi-sdk-typescript'
+
+const client = new UapiClient('https://uapis.cn/api/v1')
+
+// 成功路径
+const result = await client.social.getSocialQqUserinfo({ qq: '10001' })
+const meta = client.lastResponseMeta
+if (meta) {
+  console.log('余额剩余:', meta.balanceRemainingCents ?? 0, '分')
+  console.log('资源包剩余:', meta.quotaRemainingCredits ?? 0, '积分')
+  console.log('Request ID:', meta.requestId)
+}
+
+// 失败路径
+try {
+  await client.social.getSocialQqUserinfo({ qq: '10001' })
+} catch (err) {
+  if (err instanceof UapiError && err.meta) {
+    console.log('限流，稍后重试秒数:', err.meta.retryAfterSeconds ?? 0)
+    console.log('Request ID:', err.meta.requestId)
+  }
+}
+```
+
+常用字段一览：
+
+| 字段 | 说明 |
+|------|------|
+| `balanceRemainingCents` | 账户余额剩余（分） |
+| `quotaRemainingCredits` | 资源包剩余积分 |
+| `visitorQuotaRemainingCredits` | 访客配额剩余积分 |
+| `retryAfterSeconds` | 触发限流后的建议等待时长 |
+| `requestId` | 请求唯一 ID，排障时使用 |
+| `debitStatus` | 本次计费状态 |
+| `rateLimitPolicies` / `rateLimits` | 完整结构化限流策略数据 |
 
 ## 错误模型概览
 
