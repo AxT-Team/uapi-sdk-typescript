@@ -6,12 +6,19 @@ export type { RateLimitPolicyEntry, RateLimitStateEntry, ResponseMeta } from './
 
 type Config = { baseURL: string; token?: string; timeout?: number }
 
+const API_PREFIX = '/api/v1'
+
+function normalizeBaseURL(baseURL: string): string {
+  const trimmed = baseURL.replace(/\/+$/, '')
+  return trimmed.endsWith(API_PREFIX) ? trimmed.slice(0, -API_PREFIX.length) : trimmed
+}
+
 class HTTP {
   private cli: AxiosInstance
   private lastMeta?: ResponseMeta
 
   constructor(cfg: Config) {
-    this.cli = axios.create({ baseURL: cfg.baseURL, timeout: cfg.timeout ?? 15000 })
+    this.cli = axios.create({ baseURL: normalizeBaseURL(cfg.baseURL), timeout: cfg.timeout ?? 15000 })
     if (cfg.token) this.cli.defaults.headers.common['Authorization'] = `Bearer ${cfg.token}`
   }
 

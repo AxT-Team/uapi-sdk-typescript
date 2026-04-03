@@ -18,7 +18,7 @@ npm i uapi-sdk-typescript
 ```ts
 import { UapiClient } from 'uapi-sdk-typescript'
 
-const client = new UapiClient('https://uapis.cn/api/v1')
+const client = new UapiClient('https://uapis.cn', 'YOUR_API_KEY')
 const result = await client.social.getSocialQqUserinfo({ qq: '10001' })
 console.log(result)
 ```
@@ -46,7 +46,7 @@ HTTP 封装基于 Axios，默认 15 秒超时并自动携带 `Authorization` 头
 ```ts
 import { UapiClient, UapiError } from 'uapi-sdk-typescript'
 
-const client = new UapiClient('https://uapis.cn/api/v1')
+const client = new UapiClient('https://uapis.cn', 'YOUR_API_KEY')
 
 // 成功路径
 const result = await client.social.getSocialQqUserinfo({ qq: '10001' })
