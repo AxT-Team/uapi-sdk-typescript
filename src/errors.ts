@@ -14,6 +14,7 @@ export interface RateLimitStateEntry {
 
 export interface ResponseMeta {
   requestId?: string
+  retryAfterRaw?: string
   retryAfterSeconds?: number
   debitStatus?: string
   creditsRequested?: number
@@ -31,6 +32,21 @@ export interface ResponseMeta {
   quotaRemainingCredits?: number
   visitorQuotaLimitCredits?: number
   visitorQuotaRemainingCredits?: number
+  billingKeyRateLimit?: number
+  billingKeyRateRemaining?: number
+  billingKeyRateUnit?: string
+  billingKeyRateWindowSeconds?: number
+  billingKeyRateResetAfterSeconds?: number
+  billingIpRateLimit?: number
+  billingIpRateRemaining?: number
+  billingIpRateUnit?: string
+  billingIpRateWindowSeconds?: number
+  billingIpRateResetAfterSeconds?: number
+  visitorRateLimit?: number
+  visitorRateRemaining?: number
+  visitorRateUnit?: string
+  visitorRateWindowSeconds?: number
+  visitorRateResetAfterSeconds?: number
   rawHeaders: Record<string, string>
 }
 
@@ -197,8 +213,16 @@ export function extractMetaFromHeaders(headers: any): ResponseMeta {
     }
   }
 
+  const billingKeyRatePolicy = rateLimitPolicies['billing-key-rate']
+  const billingKeyRateState = rateLimits['billing-key-rate']
+  const billingIpRatePolicy = rateLimitPolicies['billing-ip-rate']
+  const billingIpRateState = rateLimits['billing-ip-rate']
+  const visitorRatePolicy = rateLimitPolicies['visitor-rate']
+  const visitorRateState = rateLimits['visitor-rate']
+
   return {
     requestId: rawHeaders['x-request-id'],
+    retryAfterRaw: rawHeaders['retry-after'],
     retryAfterSeconds: parseNumber(rawHeaders['retry-after']),
     debitStatus: rawHeaders['uapi-debit-status'],
     creditsRequested: parseNumber(rawHeaders['uapi-credits-requested']),
@@ -216,6 +240,21 @@ export function extractMetaFromHeaders(headers: any): ResponseMeta {
     quotaRemainingCredits: rateLimits['billing-quota']?.remaining,
     visitorQuotaLimitCredits: rateLimitPolicies['visitor-quota']?.quota,
     visitorQuotaRemainingCredits: rateLimits['visitor-quota']?.remaining,
+    billingKeyRateLimit: billingKeyRatePolicy?.quota,
+    billingKeyRateRemaining: billingKeyRateState?.remaining,
+    billingKeyRateUnit: billingKeyRatePolicy?.unit ?? billingKeyRateState?.unit,
+    billingKeyRateWindowSeconds: billingKeyRatePolicy?.windowSeconds,
+    billingKeyRateResetAfterSeconds: billingKeyRateState?.resetAfterSeconds,
+    billingIpRateLimit: billingIpRatePolicy?.quota,
+    billingIpRateRemaining: billingIpRateState?.remaining,
+    billingIpRateUnit: billingIpRatePolicy?.unit ?? billingIpRateState?.unit,
+    billingIpRateWindowSeconds: billingIpRatePolicy?.windowSeconds,
+    billingIpRateResetAfterSeconds: billingIpRateState?.resetAfterSeconds,
+    visitorRateLimit: visitorRatePolicy?.quota,
+    visitorRateRemaining: visitorRateState?.remaining,
+    visitorRateUnit: visitorRatePolicy?.unit ?? visitorRateState?.unit,
+    visitorRateWindowSeconds: visitorRatePolicy?.windowSeconds,
+    visitorRateResetAfterSeconds: visitorRateState?.resetAfterSeconds,
     rawHeaders,
   }
 }

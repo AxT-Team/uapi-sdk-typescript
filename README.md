@@ -51,11 +51,17 @@ import { UapiClient, UapiError } from 'uapi-sdk-typescript'
 const client = new UapiClient('https://uapis.cn', 'YOUR_API_KEY')
 
 // 成功路径
-const result = await client.social.getSocialQqUserinfo({ qq: '10001' })
+await client.social.getSocialQqUserinfo({ qq: '10001' })
 const meta = client.lastResponseMeta
 if (meta) {
+  console.log('这次请求原价:', meta.creditsRequested ?? 0, '积分')
+  console.log('这次实际扣费:', meta.creditsCharged ?? 0, '积分')
+  console.log('特殊计价:', meta.creditsPricing ?? '原价')
   console.log('余额剩余:', meta.balanceRemainingCents ?? 0, '分')
   console.log('资源包剩余:', meta.quotaRemainingCredits ?? 0, '积分')
+  console.log('当前有效额度桶:', meta.activeQuotaBuckets ?? 0)
+  console.log('额度用空即停:', meta.stopOnEmpty ?? false)
+  console.log('Key QPS:', meta.billingKeyRateRemaining ?? 0, '/', meta.billingKeyRateLimit ?? 0, meta.billingKeyRateUnit ?? 'req')
   console.log('Request ID:', meta.requestId)
 }
 
@@ -64,7 +70,9 @@ try {
   await client.social.getSocialQqUserinfo({ qq: '10001' })
 } catch (err) {
   if (err instanceof UapiError && err.meta) {
-    console.log('限流，稍后重试秒数:', err.meta.retryAfterSeconds ?? 0)
+    console.log('Retry-After 秒数:', err.meta.retryAfterSeconds ?? null)
+    console.log('Retry-After 原始值:', err.meta.retryAfterRaw ?? null)
+    console.log('访客 QPS:', err.meta.visitorRateRemaining ?? 0, '/', err.meta.visitorRateLimit ?? 0)
     console.log('Request ID:', err.meta.requestId)
   }
 }
@@ -74,12 +82,18 @@ try {
 
 | 字段 | 说明 |
 |------|------|
+| `creditsRequested` | 这次请求原本要扣多少积分，也就是请求价 |
+| `creditsCharged` | 这次请求实际扣了多少积分 |
+| `creditsPricing` | 特殊计价原因，例如缓存半价 `cache-hit-half-price` |
 | `balanceRemainingCents` | 账户余额剩余（分） |
 | `quotaRemainingCredits` | 资源包剩余积分 |
-| `visitorQuotaRemainingCredits` | 访客配额剩余积分 |
-| `retryAfterSeconds` | 触发限流后的建议等待时长 |
+| `activeQuotaBuckets` | 当前还有多少个有效额度桶参与计费 |
+| `stopOnEmpty` | 额度耗尽后是否直接停止服务 |
+| `retryAfterSeconds` / `retryAfterRaw` | 限流后的等待时长；当服务端返回 HTTP 时间字符串时看 `retryAfterRaw` |
 | `requestId` | 请求唯一 ID，排障时使用 |
-| `debitStatus` | 本次计费状态 |
+| `billingKeyRateLimit` / `billingKeyRateRemaining` | Billing Key 当前 QPS 规则的上限与剩余 |
+| `billingIpRateLimit` / `billingIpRateRemaining` | Billing Key 单 IP 当前 QPS 规则的上限与剩余 |
+| `visitorRateLimit` / `visitorRateRemaining` | 访客当前 QPS 规则的上限与剩余 |
 | `rateLimitPolicies` / `rateLimits` | 完整结构化限流策略数据 |
 
 ## 错误模型概览
