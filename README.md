@@ -35,7 +35,7 @@ console.log(result)
 
 针对 401、404、429 等标准 HTTP 响应，SDK 已将其统一映射为具名的错误类型。这些错误均附带 `code`、`status`、`details` 等关键上下文信息，确保你在日志或 APM 中能第一时间准确、快速地诊断问题。
 
-HTTP 封装基于 Axios，默认 15 秒超时并自动携带 `Authorization` 头；如果你想接入代理、重试或额外的 Header，只需要在实例化后对 Axios 拦截器做扩展即可。
+HTTP 封装基于 Axios，默认 15 秒超时并自动携带 `Authorization` 头。当前公开的构造参数只有 `baseURL` 和 `token`；如果你需要代理、重试或额外的 Header，建议在项目里再封装一层，或者按需扩展源码。
 
 如果你需要查看字段细节或内部逻辑，仓库中的 `./internal` 目录同步保留了由 `openapi-generator` 生成的完整结构体，随时可供参考。
 
