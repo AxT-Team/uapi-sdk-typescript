@@ -1,6 +1,6 @@
 {
   "name": "uapi-sdk-typescript",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "type": "module",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",

@@ -1,27 +1,49 @@
-## uapi-sdk-typescript internal
+## uapi-sdk-typescript@1.0.0
 
-这个目录保留的是 OpenAPI Generator 生成的原始参考文档，主要用来对照 operation、model 和生成器层面的类名。
-如果你是想直接安装并使用 SDK，请优先查看仓库根目录的 `README.md`。
+This generator creates TypeScript/JavaScript client that utilizes [axios](https://github.com/axios/axios). The generated Node module can be used in the following environments:
 
-### 安装
+Environment
+* Node.js
+* Webpack
+* Browserify
 
-```bash
-npm install uapi-sdk-typescript
+Language level
+* ES5 - you must have a Promises/A+ library installed
+* ES6
+
+Module system
+* CommonJS
+* ES6 module system
+
+It can be used in both TypeScript and JavaScript. In TypeScript, the definition will be automatically resolved via `package.json`. ([Reference](https://www.typescriptlang.org/docs/handbook/declaration-files/consumption.html))
+
+### Building
+
+To build and compile the typescript sources to javascript use:
+```
+npm install
+npm run build
 ```
 
-### 最小示例
+### Publishing
 
-```ts
-import { UapiClient } from 'uapi-sdk-typescript'
+First build the package then run `npm publish`
 
-const client = new UapiClient('https://uapis.cn', 'YOUR_API_KEY')
-const result = await client.misc.getMiscHotboard({ type: 'weibo' })
-console.log(result)
+### Consuming
+
+navigate to the folder of your consuming project and run one of the following commands.
+
+_published:_
+
+```
+npm install uapi-sdk-typescript@1.0.0 --save
 ```
 
-### 说明
+_unPublished (not recommended):_
 
-下面继续保留自动生成的 API / Model 索引，方便你按生成器原始命名检索。
+```
+npm install PATH_TO_GENERATED_PACKAGE --save
+```
 
 ### Documentation for API Endpoints
 
@@ -458,3 +480,4 @@ Class | Method | HTTP request | Description
 ## Documentation For Authorization
 
 Endpoints do not require authorization.
+

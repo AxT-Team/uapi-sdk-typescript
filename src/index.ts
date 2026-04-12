@@ -4,7 +4,13 @@ import { UapiError, type ResponseMeta, extractMetaFromHeaders, mapError } from '
 export { UapiError, mapError, extractMetaFromHeaders } from './errors.js'
 export type { RateLimitPolicyEntry, RateLimitStateEntry, ResponseMeta } from './errors.js'
 
-type Config = { baseURL: string; token?: string; timeout?: number }
+export interface UapiClientOptions {
+  timeout?: number
+  disableCache?: boolean
+}
+
+type Config = { baseURL: string; token?: string; timeout?: number; disableCache?: boolean }
+type RequestOptions = { disableCache?: boolean }
 
 const API_PREFIX = '/api/v1'
 
@@ -13,13 +19,37 @@ function normalizeBaseURL(baseURL: string): string {
   return trimmed.endsWith(API_PREFIX) ? trimmed.slice(0, -API_PREFIX.length) : trimmed
 }
 
+function applyCacheControl(
+  method: string,
+  params?: Record<string, unknown>,
+  defaultDisableCache = false,
+  requestDisableCache?: boolean,
+): Record<string, unknown> | undefined {
+  if (method.toUpperCase() !== 'GET') {
+    return params
+  }
+  if (params?.["_t"] !== undefined && params?.["_t"] !== null) {
+    return params
+  }
+  const disableCache = requestDisableCache ?? defaultDisableCache
+  if (!disableCache) {
+    return params
+  }
+  return {
+    ...(params ?? {}),
+    _t: Date.now(),
+  }
+}
+
 class HTTP {
   private cli: AxiosInstance
   private lastMeta?: ResponseMeta
+  private disableCache: boolean
 
   constructor(cfg: Config) {
     this.cli = axios.create({ baseURL: normalizeBaseURL(cfg.baseURL), timeout: cfg.timeout ?? 15000 })
     if (cfg.token) this.cli.defaults.headers.common['Authorization'] = `Bearer ${cfg.token}`
+    this.disableCache = cfg.disableCache ?? false
   }
 
   getLastResponseMeta(): ResponseMeta | undefined {
@@ -33,12 +63,14 @@ class HTTP {
     body?: Record<string, unknown>,
     headers?: Record<string, string>,
     responseKind: 'json' | 'text' | 'arrayBuffer' = 'json',
+    requestOptions?: RequestOptions,
     ) {
     try {
+      const finalParams = applyCacheControl(method, params, this.disableCache, requestOptions?.disableCache)
       const res = await this.cli.request({
         method,
         url: path,
-        params,
+        params: finalParams,
         data: body,
         headers,
         responseType: responseKind === 'arrayBuffer' ? 'arraybuffer' : responseKind,
@@ -61,12 +93,24 @@ class HTTP {
 export type GetClipzyGetResponse =
   Internal.GetClipzyGet200Response
 export interface GetClipzyGetArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 片段的唯一 ID。 */
   id: string;
 }
 export type GetClipzyRawResponse =
   string
 export interface GetClipzyRawArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 片段的唯一 ID。 */
   id: string;
   /** 用于解密的 Base64 编码的 AES 密钥。 */
@@ -75,6 +119,12 @@ export interface GetClipzyRawArgs {
 export type PostClipzyStoreResponse =
   Internal.PostClipzyStore200Response
 export interface PostClipzyStoreArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 必需：经过加密和 LZString 压缩后的 Base64 字符串。请参考文档首页的JS代码示例。 */
   compressedData: string;
   /** 可选：片段的留存时间（秒）。正数表示秒数（最大约30天），-1 表示永久存储。默认为 3600。 */
@@ -83,12 +133,24 @@ export interface PostClipzyStoreArgs {
 export type GetConvertUnixtimeResponse =
   Internal.GetConvertUnixtime200Response
 export interface GetConvertUnixtimeArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 一个智能时间参数，可传入Unix时间戳（10位或13位）或标准日期字符串（如 '2023-10-27 10:30:00'），系统将自动识别并转换。 */
   time: string;
 }
 export type PostConvertJsonResponse =
   Internal.PostConvertJson200Response
 export interface PostConvertJsonArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 需要被格式化的原始JSON字符串。 */
   content: string;
 }
@@ -99,6 +161,12 @@ export type GetGameEpicFreeResponse =
 export type GetGameMinecraftHistoryidResponse =
   Internal.GetGameMinecraftHistoryid200Response
 export interface GetGameMinecraftHistoryidArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 玩家的 Minecraft 用户名。使用此参数查询时，会返回所有匹配用户的列表（包括当前用户名或曾用名匹配的玩家）。 */
   name?: string;
   /** 玩家的 Minecraft UUID，支持带连字符或不带连字符格式。 */
@@ -107,18 +175,36 @@ export interface GetGameMinecraftHistoryidArgs {
 export type GetGameMinecraftServerstatusResponse =
   Internal.GetGameMinecraftServerstatus200Response
 export interface GetGameMinecraftServerstatusArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** Minecraft服务器的地址，可以是域名（如 `hypixel.net`）或 `IP:端口` 的形式（如 `mc.example.com:25565`）。如果省略端口，将默认使用 `25565`。 */
   server: string;
 }
 export type GetGameMinecraftUserinfoResponse =
   Internal.GetGameMinecraftUserinfo200Response
 export interface GetGameMinecraftUserinfoArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 玩家的 Minecraft 游戏内名称（正版ID）。 */
   username: string;
 }
 export type GetGameSteamSummaryResponse =
   Internal.GetGameSteamSummary200Response
 export interface GetGameSteamSummaryArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 用户的 Steam 标识。可以是以下任意一种格式：
 - 纯数字的 **SteamID64**
 - 用户的 **自定义 URL 名称** (Vanity URL)
@@ -135,6 +221,12 @@ export interface GetGameSteamSummaryArgs {
 export type GetAvatarGravatarResponse =
   ArrayBuffer
 export interface GetAvatarGravatarArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 用户的 Email 地址。如果未提供 `hash` 参数，则此参数为必需。 */
   email?: string;
   /** 用户 Email 地址的小写 MD5 哈希值。如果提供此参数，将忽略 `email` 参数。 */
@@ -151,6 +243,12 @@ export type GetImageBingDailyResponse =
 export type GetImageMotouResponse =
   ArrayBuffer
 export interface GetImageMotouArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 你想要摸头的对象的QQ号码。 */
   qq: string;
   /** GIF的背景颜色。留空则由后端服务决定默认值。 */
@@ -161,6 +259,12 @@ export interface GetImageMotouArgs {
 export type GetImageQrcodeResponse =
   Internal.GetImageQrcode200Response
 export interface GetImageQrcodeArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 你希望编码到二维码中的任何文本内容，比如一个URL、一段话或者一个JSON字符串。 */
   text: string;
   /** 二维码图片的边长（正方形），单位是像素。有效范围是 256 到 2048 之间。 */
@@ -177,12 +281,24 @@ export interface GetImageQrcodeArgs {
 export type GetImageTobase64Response =
   Internal.GetImageTobase64200Response
 export interface GetImageTobase64Args {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 需要转换为Base64的、可公开访问的图片URL地址。 */
   url: string;
 }
 export type PostImageCompressResponse =
   ArrayBuffer
 export interface PostImageCompressArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 压缩强度 (1-5)，默认为 3。数字越小，压缩率越高。 */
   level?: number;
   /** 输出图片格式，可以是 'png' 或 'jpeg'。 */
@@ -193,12 +309,24 @@ export interface PostImageCompressArgs {
 export type PostImageFrombase64Response =
   Internal.PostImageFrombase64200Response
 export interface PostImageFrombase64Args {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 图片的Base64 Data URI，必须包含MIME类型头。例如：`data:image/png;base64,...` */
   imageData: string;
 }
 export type PostImageMotouResponse =
   ArrayBuffer
 export interface PostImageMotouArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** GIF的背景颜色。可选值为 'white', 'black', 'transparent'。 */
   bgColor?: string;
   /** Same as `bgColor`. Kept for compatibility. */
@@ -213,6 +341,12 @@ export interface PostImageMotouArgs {
 export type PostImageNsfwResponse =
   Internal.PostImageNsfw200Response
 export interface PostImageNsfwArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 要检测的图片文件。支持 JPG、JPEG、PNG、GIF、WebP 格式，最大 20MB。 */
   file?: string;
   /** 图片的 URL 地址。如果同时提供 file 和 url，将优先使用 file。 */
@@ -221,6 +355,12 @@ export interface PostImageNsfwArgs {
 export type PostImageSpeechlessResponse =
   ArrayBuffer
 export interface PostImageSpeechlessArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 表情包下方的文字内容。求求你_______ */
   bottomText?: string;
   /** Same as `bottomText`. Kept for compatibility. */
@@ -233,6 +373,12 @@ export interface PostImageSpeechlessArgs {
 export type PostImageSvgResponse =
   ArrayBuffer
 export interface PostImageSvgArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 输出图像的目标格式。支持的值：`png`, `jpeg`, `jpg`, `gif`, `tiff`, `bmp`。 */
   format?: string;
   /** 输出图像的宽度（像素）。如果省略，将根据 `height` 保持宽高比，或者使用 SVG 的原始宽度。 */
@@ -247,6 +393,12 @@ export interface PostImageSvgArgs {
 export type GetHistoryProgrammerResponse =
   Internal.GetHistoryProgrammer200Response
 export interface GetHistoryProgrammerArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 月份，1-12之间的整数。 */
   month: number;
   /** 日期，1-31之间的整数。 */
@@ -257,6 +409,12 @@ export type GetHistoryProgrammerTodayResponse =
 export type GetMiscDistrictResponse =
   Internal.GetMiscDistrict200Response
 export interface GetMiscDistrictArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 关键词搜索（城市名、区县名，支持中英文）。 */
   keywords?: string;
   /** 中国行政区划代码精确查询（如 `110000`），同时返回下级行政区。 */
@@ -275,6 +433,12 @@ export interface GetMiscDistrictArgs {
 export type GetMiscHolidayCalendarResponse =
   Internal.GetMiscHolidayCalendar200Response
 export interface GetMiscHolidayCalendarArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 按天查询时填写这个参数，例如查某一天。格式：`YYYY-MM-DD`。和 `month`、`year` 三选一。 */
   date?: string;
   /** 按月查询时填写这个参数，例如查某个月。格式：`YYYY-MM`。和 `date`、`year` 三选一。 */
@@ -299,6 +463,12 @@ export interface GetMiscHolidayCalendarArgs {
 export type GetMiscHotboardResponse =
   Internal.GetMiscHotboard200Response
 export interface GetMiscHotboardArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 你想要查询的热榜平台。请从[支持的平台列表](#enum-list)中选择。 */
   type: string;
   /** 时光机模式：毫秒时间戳，返回最接近该时间的热榜快照。不传则返回当前实时热榜。 */
@@ -321,6 +491,12 @@ export interface GetMiscHotboardArgs {
 export type GetMiscLunartimeResponse =
   Internal.GetMiscLunartime200Response
 export interface GetMiscLunartimeArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** Unix 时间戳，支持 10 位秒级或 13 位毫秒级。不传则默认当前时间。 */
   ts?: string;
   /** 时区名称。支持 IANA 时区（如 Asia/Shanghai）和别名（Shanghai、Beijing）。默认 Asia/Shanghai。 */
@@ -329,12 +505,24 @@ export interface GetMiscLunartimeArgs {
 export type GetMiscPhoneinfoResponse =
   Internal.GetMiscPhoneinfo200Response
 export interface GetMiscPhoneinfoArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 需要查询的11位中国大陆手机号码。 */
   phone: string;
 }
 export type GetMiscRandomnumberResponse =
   Internal.GetMiscRandomnumber200Response
 export interface GetMiscRandomnumberArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 生成随机数的最小值（包含）。 */
   min?: number;
   /** 生成随机数的最大值（包含）。 */
@@ -357,6 +545,12 @@ export interface GetMiscRandomnumberArgs {
 export type GetMiscTimestampResponse =
   Internal.GetMiscTimestamp200Response
 export interface GetMiscTimestampArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 需要转换的Unix时间戳，支持10位（秒）或13位（毫秒）。 */
   ts: string;
 }
@@ -365,6 +559,12 @@ export type GetMiscTrackingCarriersResponse =
 export type GetMiscTrackingDetectResponse =
   Internal.GetMiscTrackingDetect200Response
 export interface GetMiscTrackingDetectArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 需要识别的快递单号。 */
   trackingNumber: string;
   /** Same as `trackingNumber`. Kept for compatibility. */
@@ -373,6 +573,12 @@ export interface GetMiscTrackingDetectArgs {
 export type GetMiscTrackingQueryResponse =
   Internal.GetMiscTrackingQuery200Response
 export interface GetMiscTrackingQueryArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 快递单号，通常是一串10-20位的数字或字母数字组合。 */
   trackingNumber: string;
   /** Same as `trackingNumber`. Kept for compatibility. */
@@ -387,6 +593,12 @@ export interface GetMiscTrackingQueryArgs {
 export type GetMiscWeatherResponse =
   Internal.GetMiscWeather200Response
 export interface GetMiscWeatherArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 城市名称，支持中文（`北京`）和英文（`Tokyo`）。可选参数，不传时会尝试 IP 自动定位。 */
   city?: string;
   /** 城市行政区划代码（如 `110000`），优先级高于 city。可选参数，不传时会尝试 IP 自动定位。 */
@@ -407,12 +619,24 @@ export interface GetMiscWeatherArgs {
 export type GetMiscWorldtimeResponse =
   Internal.GetMiscWorldtime200Response
 export interface GetMiscWorldtimeArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 你需要查询的城市或地区，请使用标准的 IANA 时区数据库名称，例如 'Shanghai', 'Asia/Tokyo', 'America/New_York'。 */
   city: string;
 }
 export type PostMiscDateDiffResponse =
   Internal.PostMiscDateDiff200Response
 export interface PostMiscDateDiffArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 结束日期，支持多种格式自动识别 */
   endDate: string;
   /** Same as `endDate`. Kept for compatibility. */
@@ -427,6 +651,12 @@ export interface PostMiscDateDiffArgs {
 export type GetNetworkDnsResponse =
   Internal.GetNetworkDns200Response
 export interface GetNetworkDnsArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 你需要查询的域名，例如 'cn.bing.com'。 */
   domain: string;
   /** 你想要查询的DNS记录类型。 */
@@ -435,12 +665,24 @@ export interface GetNetworkDnsArgs {
 export type GetNetworkIcpResponse =
   Internal.GetNetworkIcp200Response
 export interface GetNetworkIcpArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 需要查询的域名或URL */
   domain: string;
 }
 export type GetNetworkIpinfoResponse =
   Internal.GetNetworkIpinfo200Response
 export interface GetNetworkIpinfoArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 你需要查询的公网IP地址或域名（支持IPv4和IPv6）。 */
   ip: string;
   /** 查询的数据源。如果留空，将使用默认的数据库。如果设置为 `commercial`，将调用商业级API，返回更详细的地理位置信息，但响应时间可能会稍长。 */
@@ -449,12 +691,24 @@ export interface GetNetworkIpinfoArgs {
 export type GetNetworkMyipResponse =
   Internal.GetNetworkMyip200Response
 export interface GetNetworkMyipArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 查询的数据源。如果留空，将使用默认的数据库。如果设置为 `commercial`，将调用商业级API，返回更详细的地理位置信息，但响应时间可能会稍长。 */
   source?: string;
 }
 export type GetNetworkPingResponse =
   Internal.GetNetworkPing200Response
 export interface GetNetworkPingArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 你需要 Ping 的目标主机，可以是域名或IP地址。 */
   host: string;
 }
@@ -463,6 +717,12 @@ export type GetNetworkPingmyipResponse =
 export type GetNetworkPortscanResponse =
   Internal.GetNetworkPortscan200Response
 export interface GetNetworkPortscanArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 需要扫描的目标主机，可以是域名或IP地址。 */
   host: string;
   /** 需要扫描的端口号，范围是 1 到 65535。 */
@@ -473,12 +733,24 @@ export interface GetNetworkPortscanArgs {
 export type GetNetworkUrlstatusResponse =
   Internal.GetNetworkUrlstatus200Response
 export interface GetNetworkUrlstatusArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 你需要检查其可访问性状态的完整URL。 */
   url: string;
 }
 export type GetNetworkWhoisResponse =
   Internal.GetNetworkWhois200Response
 export interface GetNetworkWhoisArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 你需要查询WHOIS信息的域名。 */
   domain: string;
   /** 返回格式。留空或为 'text' 时返回原始WHOIS文本，设为 'json' 时返回结构化JSON。 */
@@ -487,6 +759,12 @@ export interface GetNetworkWhoisArgs {
 export type GetNetworkWxdomainResponse =
   Internal.GetNetworkWxdomain200Response
 export interface GetNetworkWxdomainArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 需要查询的域名。 */
   domain: string;
 }
@@ -495,12 +773,24 @@ export type GetSayingResponse =
 export type GetAnswerbookAskResponse =
   Internal.GetAnswerbookAsk200Response
 export interface GetAnswerbookAskArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 你想要提问的问题。问题不能为空。 */
   question: string;
 }
 export type GetRandomImageResponse =
   ArrayBuffer
 export interface GetRandomImageArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** （可选）指定图片主类别。
 
 **支持的主类别：**
@@ -532,6 +822,12 @@ export interface GetRandomImageArgs {
 export type GetRandomStringResponse =
   Internal.GetRandomString200Response
 export interface GetRandomStringArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 你希望生成的字符串的长度。有效范围是 1 到 1024。 */
   length?: number;
   /** 指定构成字符串的字符类型。 */
@@ -540,18 +836,36 @@ export interface GetRandomStringArgs {
 export type PostAnswerbookAskResponse =
   Internal.PostAnswerbookAsk200Response
 export interface PostAnswerbookAskArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 你想要提问的问题 */
   question: string;
 }
 export type GetGithubRepoResponse =
   Internal.GetGithubRepo200Response
 export interface GetGithubRepoArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 目标仓库的标识，格式为 `owner/repo`。 */
   repo: string;
 }
 export type GetSocialBilibiliArchivesResponse =
   Internal.GetSocialBilibiliArchives200Response
 export interface GetSocialBilibiliArchivesArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** B站用户的mid（用户ID） */
   mid: string;
   /** 搜索关键词，可为空 */
@@ -566,6 +880,12 @@ export interface GetSocialBilibiliArchivesArgs {
 export type GetSocialBilibiliLiveroomResponse =
   Internal.GetSocialBilibiliLiveroom200Response
 export interface GetSocialBilibiliLiveroomArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 主播的用户ID (`mid`)。与 `room_id` 任选其一。 */
   mid?: string;
   /** 直播间ID，可以是长号（真实ID）或短号（靓号）。与 `mid` 任选其一。 */
@@ -576,6 +896,12 @@ export interface GetSocialBilibiliLiveroomArgs {
 export type GetSocialBilibiliRepliesResponse =
   Internal.GetSocialBilibiliReplies200Response
 export interface GetSocialBilibiliRepliesArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 目标评论区的ID。对于视频，这通常就是它的 `aid`。 */
   oid: string;
   /** 排序方式。支持 `0/time`（按时间）、`1/like`（按点赞）、`2/reply`（按回复数）、`3/hot/hottest/最热`（按最热）。默认为 `0/time`。 */
@@ -588,12 +914,24 @@ export interface GetSocialBilibiliRepliesArgs {
 export type GetSocialBilibiliUserinfoResponse =
   Internal.GetSocialBilibiliUserinfo200Response
 export interface GetSocialBilibiliUserinfoArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** Bilibili用户的UID */
   uid: string;
 }
 export type GetSocialBilibiliVideoinfoResponse =
   Internal.GetSocialBilibiliVideoinfo200Response
 export interface GetSocialBilibiliVideoinfoArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 视频的AV号 (aid)，纯数字格式。`aid`和`bvid`任选其一即可。 */
   aid?: string;
   /** 视频的BV号 (bvid)，例如 `BV117411r7R1`。`aid`和`bvid`任选其一即可。 */
@@ -602,6 +940,12 @@ export interface GetSocialBilibiliVideoinfoArgs {
 export type GetSocialQqGroupinfoResponse =
   Internal.GetSocialQqGroupinfo200Response
 export interface GetSocialQqGroupinfoArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** QQ群号，长度5-12位 */
   groupId: string;
   /** Same as `groupId`. Kept for compatibility. */
@@ -610,12 +954,24 @@ export interface GetSocialQqGroupinfoArgs {
 export type GetSocialQqUserinfoResponse =
   Internal.GetSocialQqUserinfo200Response
 export interface GetSocialQqUserinfoArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 需要查询的QQ号 */
   qq: string;
 }
 export type GetStatusRatelimitResponse =
   Internal.GetStatusRatelimit200Response
 export interface GetStatusRatelimitArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** Bearer类型的API密钥认证头。例如：`Bearer sk-xxx` */
   authorization: string;
   /** Same as `authorization`. Kept for compatibility. */
@@ -624,18 +980,36 @@ export interface GetStatusRatelimitArgs {
 export type GetStatusUsageResponse =
   Internal.GetStatusUsage200Response
 export interface GetStatusUsageArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** （可选）如果你想查询某个特定的端点，请提供它的路径，例如 '/api/v1/image/motou'。如果留空，则返回所有端点的统计列表。 */
   path?: string;
 }
 export type GetTextMd5Response =
   Internal.GetTextMd5200Response
 export interface GetTextMd5Args {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 需要计算哈希值的文本 */
   text: string;
 }
 export type PostTextAesDecryptResponse =
   Internal.PostTextAesDecrypt200Response
 export interface PostTextAesDecryptArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 密钥，长度必须为16、24或32字节，对应AES-128/192/256。 */
   key: string;
   /** 16字节的IV/Nonce，必须为16个字符 */
@@ -646,6 +1020,12 @@ export interface PostTextAesDecryptArgs {
 export type PostTextAesDecryptAdvancedResponse =
   Internal.PostTextAesDecryptAdvanced200Response
 export interface PostTextAesDecryptAdvancedArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 初始化向量（非GCM模式必须提供，Base64编码）。此值来自加密接口返回的iv字段 */
   iv?: string;
   /** 解密密钥（必须与加密时相同） */
@@ -660,6 +1040,12 @@ export interface PostTextAesDecryptAdvancedArgs {
 export type PostTextAesEncryptResponse =
   Internal.PostTextAesEncrypt200Response
 export interface PostTextAesEncryptArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 密钥长度必须为 16、24 或 32 字节，分别对应 AES-128、AES-192、AES-256。 */
   key: string;
   /** 待加密的明文文本。 */
@@ -668,6 +1054,12 @@ export interface PostTextAesEncryptArgs {
 export type PostTextAesEncryptAdvancedResponse =
   Internal.PostTextAesEncryptAdvanced200Response
 export interface PostTextAesEncryptAdvancedArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 自定义IV（可选，Base64编码，16字节）。GCM模式无需此参数 */
   iv?: string;
   /** 加密密钥（支持任意长度） */
@@ -686,24 +1078,48 @@ export interface PostTextAesEncryptAdvancedArgs {
 export type PostTextAnalyzeResponse =
   Internal.PostTextAnalyze200Response
 export interface PostTextAnalyzeArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /**  */
   text: string;
 }
 export type PostTextBase64DecodeResponse =
   Internal.PostTextBase64Decode200Response
 export interface PostTextBase64DecodeArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /**  */
   text: string;
 }
 export type PostTextBase64EncodeResponse =
   Internal.PostTextBase64Encode200Response
 export interface PostTextBase64EncodeArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /**  */
   text: string;
 }
 export type PostTextConvertResponse =
   Internal.PostTextConvert200Response
 export interface PostTextConvertArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 源格式类型 */
   from: string;
   /** 可选参数（预留，当前未使用） */
@@ -716,12 +1132,24 @@ export interface PostTextConvertArgs {
 export type PostTextMd5Response =
   Internal.GetTextMd5200Response
 export interface PostTextMd5Args {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 需要计算哈希值的文本 */
   text: string;
 }
 export type PostTextMd5VerifyResponse =
   Internal.PostTextMd5Verify200Response
 export interface PostTextMd5VerifyArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 用于比对的 MD5 哈希值（32 位小写十六进制字符串）。 */
   hash: string;
   /** 待校验的原始文本，会先计算其 MD5 再与 hash 进行比对。 */
@@ -732,6 +1160,12 @@ export type GetAiTranslateLanguagesResponse =
 export type PostAiTranslateResponse =
   Internal.PostAiTranslate200Response
 export interface PostAiTranslateArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 目标语言代码。请从[支持的语言列表](#enum-list)中选择一个语言代码。 */
   targetLang: string;
   /** Same as `targetLang`. Kept for compatibility. */
@@ -754,6 +1188,12 @@ export interface PostAiTranslateArgs {
 export type PostTranslateStreamResponse =
   string
 export interface PostTranslateStreamArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 源语言，支持：中文、英文、auto（自动检测）。默认为auto */
   fromLang?: string;
   /** Same as `fromLang`. Kept for compatibility. */
@@ -770,6 +1210,12 @@ export interface PostTranslateStreamArgs {
 export type PostTranslateTextResponse =
   Internal.PostTranslateText200Response
 export interface PostTranslateTextArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 目标语言代码。请从[支持的语言列表](#enum-list)中选择一个语言代码。 */
   toLang: string;
   /** Same as `toLang`. Kept for compatibility. */
@@ -780,6 +1226,12 @@ export interface PostTranslateTextArgs {
 export type GetWebTomarkdownAsyncStatusResponse =
   Internal.GetWebTomarkdownAsyncStatus200Response
 export interface GetWebTomarkdownAsyncStatusArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 任务ID（由提交接口返回） */
   taskId: string;
   /** Same as `taskId`. Kept for compatibility. */
@@ -788,36 +1240,72 @@ export interface GetWebTomarkdownAsyncStatusArgs {
 export type GetWebparseExtractimagesResponse =
   Internal.GetWebparseExtractimages200Response
 export interface GetWebparseExtractimagesArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 需要提取图片的网页URL */
   url: string;
 }
 export type GetWebparseMetadataResponse =
   Internal.GetWebparseMetadata200Response
 export interface GetWebparseMetadataArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 需要提取元数据的网页URL */
   url: string;
 }
 export type PostWebTomarkdownAsyncResponse =
   Internal.PostWebTomarkdownAsync202Response
 export interface PostWebTomarkdownAsyncArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 需要转换的网页URL。URL必须经过编码。 */
   url: string;
 }
 export type GetSensitiveWordAnalyzeQueryResponse =
   Internal.PostSensitiveWordAnalyze200Response
 export interface GetSensitiveWordAnalyzeQueryArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 要分析的关键词，最长1,000字符。 */
   keyword: string;
 }
 export type PostSensitiveWordAnalyzeResponse =
   Internal.PostSensitiveWordAnalyze200Response
 export interface PostSensitiveWordAnalyzeArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 要分析的关键词列表，单次最多100个。单条关键词最多1,000字符，总字符数最多20,000。 */
   keywords: unknown[];
 }
 export type PostSensitiveWordQuickCheckResponse =
   Internal.PostSensitiveWordQuickCheck200Response
 export interface PostSensitiveWordQuickCheckArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 需要检测的文本内容。支持简体和繁体中文。 */
   text: string;
 }
@@ -826,6 +1314,12 @@ export type GetSearchEnginesResponse =
 export type PostSearchAggregateResponse =
   Internal.PostSearchAggregate200Response
 export interface PostSearchAggregateArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
   /** 是否获取页面完整正文（会影响响应时间） */
   fetchFull?: boolean;
   /** Same as `fetchFull`. Kept for compatibility. */
@@ -884,8 +1378,10 @@ export class UapiClient {
   readonly zhiNengSouSuo: ZhiNengSouSuoApi
   readonly "智能搜索": ZhiNengSouSuoApi
 
-  constructor(baseURL: string, token?: string) {
-    this.http = new HTTP({ baseURL, token })
+  constructor(baseURL: string, tokenOrOptions?: string | UapiClientOptions, maybeOptions: UapiClientOptions = {}) {
+    const token = typeof tokenOrOptions === 'string' ? tokenOrOptions : undefined
+    const options = typeof tokenOrOptions === 'string' ? maybeOptions : (tokenOrOptions ?? {})
+    this.http = new HTTP({ baseURL, token, ...options })
     const clipzyZaiXianJianTieBan = new ClipzyZaiXianJianTieBanApi(this.http)
     this.clipzyZaiXianJianTieBan = clipzyZaiXianJianTieBan
     this["Clipzy 在线剪贴板"] = clipzyZaiXianJianTieBan
@@ -949,6 +1445,10 @@ export class ClipzyZaiXianJianTieBanApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argId = args.id
     if (argId !== undefined) query["id"] = argId
     let requestPath = '/api/v1/api/get'
@@ -959,6 +1459,7 @@ export class ClipzyZaiXianJianTieBanApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetClipzyGetResponse
   }
 
@@ -968,6 +1469,10 @@ export class ClipzyZaiXianJianTieBanApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argId = args.id
     const argKey = args.key
     if (argKey !== undefined) query["key"] = argKey
@@ -980,6 +1485,7 @@ export class ClipzyZaiXianJianTieBanApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'text',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetClipzyRawResponse
   }
 
@@ -989,6 +1495,10 @@ export class ClipzyZaiXianJianTieBanApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argCompressedData = args.compressedData
     if (argCompressedData !== undefined) body["compressedData"] = argCompressedData
     const argTtl = args.ttl
@@ -1001,6 +1511,7 @@ export class ClipzyZaiXianJianTieBanApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as PostClipzyStoreResponse
   }
 }
@@ -1013,6 +1524,10 @@ export class ConvertApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argTime = args.time
     if (argTime !== undefined) query["time"] = argTime
     let requestPath = '/api/v1/convert/unixtime'
@@ -1023,6 +1538,7 @@ export class ConvertApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetConvertUnixtimeResponse
   }
 
@@ -1032,6 +1548,10 @@ export class ConvertApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argContent = args.content
     if (argContent !== undefined) body["content"] = argContent
     let requestPath = '/api/v1/convert/json'
@@ -1042,6 +1562,7 @@ export class ConvertApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as PostConvertJsonResponse
   }
 }
@@ -1054,6 +1575,7 @@ export class DailyApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
     let requestPath = '/api/v1/daily/news-image'
     return await this.http.request(
       'GET',
@@ -1062,6 +1584,7 @@ export class DailyApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'arrayBuffer',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetDailyNewsImageResponse
   }
 }
@@ -1074,6 +1597,7 @@ export class GameApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
     let requestPath = '/api/v1/game/epic-free'
     return await this.http.request(
       'GET',
@@ -1082,6 +1606,7 @@ export class GameApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetGameEpicFreeResponse
   }
 
@@ -1091,6 +1616,10 @@ export class GameApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argName = args.name
     if (argName !== undefined) query["name"] = argName
     const argUuid = args.uuid
@@ -1103,6 +1632,7 @@ export class GameApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetGameMinecraftHistoryidResponse
   }
 
@@ -1112,6 +1642,10 @@ export class GameApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argServer = args.server
     if (argServer !== undefined) query["server"] = argServer
     let requestPath = '/api/v1/game/minecraft/serverstatus'
@@ -1122,6 +1656,7 @@ export class GameApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetGameMinecraftServerstatusResponse
   }
 
@@ -1131,6 +1666,10 @@ export class GameApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argUsername = args.username
     if (argUsername !== undefined) query["username"] = argUsername
     let requestPath = '/api/v1/game/minecraft/userinfo'
@@ -1141,6 +1680,7 @@ export class GameApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetGameMinecraftUserinfoResponse
   }
 
@@ -1150,6 +1690,10 @@ export class GameApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argSteamid = args.steamid
     if (argSteamid !== undefined) query["steamid"] = argSteamid
     const argId = args.id
@@ -1166,6 +1710,7 @@ export class GameApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetGameSteamSummaryResponse
   }
 }
@@ -1178,6 +1723,10 @@ export class ImageApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argEmail = args.email
     if (argEmail !== undefined) query["email"] = argEmail
     const argHash = args.hash
@@ -1196,6 +1745,7 @@ export class ImageApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'arrayBuffer',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetAvatarGravatarResponse
   }
 
@@ -1205,6 +1755,7 @@ export class ImageApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
     let requestPath = '/api/v1/image/bing-daily'
     return await this.http.request(
       'GET',
@@ -1213,6 +1764,7 @@ export class ImageApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'arrayBuffer',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetImageBingDailyResponse
   }
 
@@ -1222,6 +1774,10 @@ export class ImageApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argQq = args.qq
     if (argQq !== undefined) query["qq"] = argQq
     const argBgColor = args.bgColor ?? args["bg_color"]
@@ -1234,6 +1790,7 @@ export class ImageApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'arrayBuffer',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetImageMotouResponse
   }
 
@@ -1243,6 +1800,10 @@ export class ImageApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argText = args.text
     if (argText !== undefined) query["text"] = argText
     const argSize = args.size
@@ -1263,6 +1824,7 @@ export class ImageApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetImageQrcodeResponse
   }
 
@@ -1272,6 +1834,10 @@ export class ImageApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argUrl = args.url
     if (argUrl !== undefined) query["url"] = argUrl
     let requestPath = '/api/v1/image/tobase64'
@@ -1282,6 +1848,7 @@ export class ImageApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetImageTobase64Response
   }
 
@@ -1291,6 +1858,10 @@ export class ImageApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argLevel = args.level
     if (argLevel !== undefined) query["level"] = argLevel
     const argFormat = args.format
@@ -1305,6 +1876,7 @@ export class ImageApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'arrayBuffer',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as PostImageCompressResponse
   }
 
@@ -1314,6 +1886,10 @@ export class ImageApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argImageData = args.imageData
     if (argImageData !== undefined) body["imageData"] = argImageData
     let requestPath = '/api/v1/image/frombase64'
@@ -1324,6 +1900,7 @@ export class ImageApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as PostImageFrombase64Response
   }
 
@@ -1333,6 +1910,10 @@ export class ImageApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argBgColor = args.bgColor ?? args["bg_color"]
     if (argBgColor !== undefined) body["bg_color"] = argBgColor
     const argFile = args.file
@@ -1347,6 +1928,7 @@ export class ImageApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'arrayBuffer',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as PostImageMotouResponse
   }
 
@@ -1356,6 +1938,10 @@ export class ImageApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argFile = args.file
     if (argFile !== undefined) body["file"] = argFile
     const argUrl = args.url
@@ -1368,6 +1954,7 @@ export class ImageApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as PostImageNsfwResponse
   }
 
@@ -1377,6 +1964,10 @@ export class ImageApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argBottomText = args.bottomText ?? args["bottom_text"]
     if (argBottomText !== undefined) body["bottom_text"] = argBottomText
     const argTopText = args.topText ?? args["top_text"]
@@ -1389,6 +1980,7 @@ export class ImageApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'arrayBuffer',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as PostImageSpeechlessResponse
   }
 
@@ -1398,6 +1990,10 @@ export class ImageApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argFormat = args.format
     if (argFormat !== undefined) query["format"] = argFormat
     const argWidth = args.width
@@ -1416,6 +2012,7 @@ export class ImageApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'arrayBuffer',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as PostImageSvgResponse
   }
 }
@@ -1428,6 +2025,10 @@ export class MiscApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argMonth = args.month
     if (argMonth !== undefined) query["month"] = argMonth
     const argDay = args.day
@@ -1440,6 +2041,7 @@ export class MiscApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetHistoryProgrammerResponse
   }
 
@@ -1449,6 +2051,7 @@ export class MiscApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
     let requestPath = '/api/v1/history/programmer/today'
     return await this.http.request(
       'GET',
@@ -1457,6 +2060,7 @@ export class MiscApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetHistoryProgrammerTodayResponse
   }
 
@@ -1466,6 +2070,10 @@ export class MiscApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argKeywords = args.keywords
     if (argKeywords !== undefined) query["keywords"] = argKeywords
     const argAdcode = args.adcode
@@ -1488,6 +2096,7 @@ export class MiscApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetMiscDistrictResponse
   }
 
@@ -1497,6 +2106,10 @@ export class MiscApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argDate = args.date
     if (argDate !== undefined) query["date"] = argDate
     const argMonth = args.month
@@ -1519,6 +2132,7 @@ export class MiscApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetMiscHolidayCalendarResponse
   }
 
@@ -1528,6 +2142,10 @@ export class MiscApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argType = args.type
     if (argType !== undefined) query["type"] = argType
     const argTime = args.time
@@ -1550,6 +2168,7 @@ export class MiscApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetMiscHotboardResponse
   }
 
@@ -1559,6 +2178,10 @@ export class MiscApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argTs = args.ts
     if (argTs !== undefined) query["ts"] = argTs
     const argTimezone = args.timezone
@@ -1571,6 +2194,7 @@ export class MiscApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetMiscLunartimeResponse
   }
 
@@ -1580,6 +2204,10 @@ export class MiscApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argPhone = args.phone
     if (argPhone !== undefined) query["phone"] = argPhone
     let requestPath = '/api/v1/misc/phoneinfo'
@@ -1590,6 +2218,7 @@ export class MiscApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetMiscPhoneinfoResponse
   }
 
@@ -1599,6 +2228,10 @@ export class MiscApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argMin = args.min
     if (argMin !== undefined) query["min"] = argMin
     const argMax = args.max
@@ -1619,6 +2252,7 @@ export class MiscApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetMiscRandomnumberResponse
   }
 
@@ -1628,6 +2262,10 @@ export class MiscApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argTs = args.ts
     if (argTs !== undefined) query["ts"] = argTs
     let requestPath = '/api/v1/misc/timestamp'
@@ -1638,6 +2276,7 @@ export class MiscApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetMiscTimestampResponse
   }
 
@@ -1647,6 +2286,7 @@ export class MiscApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
     let requestPath = '/api/v1/misc/tracking/carriers'
     return await this.http.request(
       'GET',
@@ -1655,6 +2295,7 @@ export class MiscApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetMiscTrackingCarriersResponse
   }
 
@@ -1664,6 +2305,10 @@ export class MiscApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argTrackingNumber = args.trackingNumber ?? args["tracking_number"]
     if (argTrackingNumber !== undefined) query["tracking_number"] = argTrackingNumber
     let requestPath = '/api/v1/misc/tracking/detect'
@@ -1674,6 +2319,7 @@ export class MiscApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetMiscTrackingDetectResponse
   }
 
@@ -1683,6 +2329,10 @@ export class MiscApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argTrackingNumber = args.trackingNumber ?? args["tracking_number"]
     if (argTrackingNumber !== undefined) query["tracking_number"] = argTrackingNumber
     const argCarrierCode = args.carrierCode ?? args["carrier_code"]
@@ -1697,6 +2347,7 @@ export class MiscApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetMiscTrackingQueryResponse
   }
 
@@ -1706,6 +2357,10 @@ export class MiscApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argCity = args.city
     if (argCity !== undefined) query["city"] = argCity
     const argAdcode = args.adcode
@@ -1730,6 +2385,7 @@ export class MiscApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetMiscWeatherResponse
   }
 
@@ -1739,6 +2395,10 @@ export class MiscApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argCity = args.city
     if (argCity !== undefined) query["city"] = argCity
     let requestPath = '/api/v1/misc/worldtime'
@@ -1749,6 +2409,7 @@ export class MiscApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetMiscWorldtimeResponse
   }
 
@@ -1758,6 +2419,10 @@ export class MiscApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argEndDate = args.endDate ?? args["end_date"]
     if (argEndDate !== undefined) body["end_date"] = argEndDate
     const argFormat = args.format
@@ -1772,6 +2437,7 @@ export class MiscApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as PostMiscDateDiffResponse
   }
 }
@@ -1784,6 +2450,10 @@ export class NetworkApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argDomain = args.domain
     if (argDomain !== undefined) query["domain"] = argDomain
     const argType = args.type
@@ -1796,6 +2466,7 @@ export class NetworkApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetNetworkDnsResponse
   }
 
@@ -1805,6 +2476,10 @@ export class NetworkApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argDomain = args.domain
     if (argDomain !== undefined) query["domain"] = argDomain
     let requestPath = '/api/v1/network/icp'
@@ -1815,6 +2490,7 @@ export class NetworkApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetNetworkIcpResponse
   }
 
@@ -1824,6 +2500,10 @@ export class NetworkApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argIp = args.ip
     if (argIp !== undefined) query["ip"] = argIp
     const argSource = args.source
@@ -1836,6 +2516,7 @@ export class NetworkApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetNetworkIpinfoResponse
   }
 
@@ -1845,6 +2526,10 @@ export class NetworkApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argSource = args.source
     if (argSource !== undefined) query["source"] = argSource
     let requestPath = '/api/v1/network/myip'
@@ -1855,6 +2540,7 @@ export class NetworkApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetNetworkMyipResponse
   }
 
@@ -1864,6 +2550,10 @@ export class NetworkApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argHost = args.host
     if (argHost !== undefined) query["host"] = argHost
     let requestPath = '/api/v1/network/ping'
@@ -1874,6 +2564,7 @@ export class NetworkApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetNetworkPingResponse
   }
 
@@ -1883,6 +2574,7 @@ export class NetworkApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
     let requestPath = '/api/v1/network/pingmyip'
     return await this.http.request(
       'GET',
@@ -1891,6 +2583,7 @@ export class NetworkApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetNetworkPingmyipResponse
   }
 
@@ -1900,6 +2593,10 @@ export class NetworkApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argHost = args.host
     if (argHost !== undefined) query["host"] = argHost
     const argPort = args.port
@@ -1914,6 +2611,7 @@ export class NetworkApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetNetworkPortscanResponse
   }
 
@@ -1923,6 +2621,10 @@ export class NetworkApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argUrl = args.url
     if (argUrl !== undefined) query["url"] = argUrl
     let requestPath = '/api/v1/network/urlstatus'
@@ -1933,6 +2635,7 @@ export class NetworkApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetNetworkUrlstatusResponse
   }
 
@@ -1942,6 +2645,10 @@ export class NetworkApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argDomain = args.domain
     if (argDomain !== undefined) query["domain"] = argDomain
     const argFormat = args.format
@@ -1954,6 +2661,7 @@ export class NetworkApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetNetworkWhoisResponse
   }
 
@@ -1963,6 +2671,10 @@ export class NetworkApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argDomain = args.domain
     if (argDomain !== undefined) query["domain"] = argDomain
     let requestPath = '/api/v1/network/wxdomain'
@@ -1973,6 +2685,7 @@ export class NetworkApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetNetworkWxdomainResponse
   }
 }
@@ -1985,6 +2698,7 @@ export class PoemApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
     let requestPath = '/api/v1/saying'
     return await this.http.request(
       'GET',
@@ -1993,6 +2707,7 @@ export class PoemApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetSayingResponse
   }
 }
@@ -2005,6 +2720,10 @@ export class RandomApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argQuestion = args.question
     if (argQuestion !== undefined) query["question"] = argQuestion
     let requestPath = '/api/v1/answerbook/ask'
@@ -2015,6 +2734,7 @@ export class RandomApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetAnswerbookAskResponse
   }
 
@@ -2024,6 +2744,10 @@ export class RandomApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argCategory = args.category
     if (argCategory !== undefined) query["category"] = argCategory
     const argType = args.type
@@ -2036,6 +2760,7 @@ export class RandomApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'arrayBuffer',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetRandomImageResponse
   }
 
@@ -2045,6 +2770,10 @@ export class RandomApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argLength = args.length
     if (argLength !== undefined) query["length"] = argLength
     const argType = args.type
@@ -2057,6 +2786,7 @@ export class RandomApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetRandomStringResponse
   }
 
@@ -2066,6 +2796,10 @@ export class RandomApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argQuestion = args.question
     if (argQuestion !== undefined) body["question"] = argQuestion
     let requestPath = '/api/v1/answerbook/ask'
@@ -2076,6 +2810,7 @@ export class RandomApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as PostAnswerbookAskResponse
   }
 }
@@ -2088,6 +2823,10 @@ export class SocialApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argRepo = args.repo
     if (argRepo !== undefined) query["repo"] = argRepo
     let requestPath = '/api/v1/github/repo'
@@ -2098,6 +2837,7 @@ export class SocialApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetGithubRepoResponse
   }
 
@@ -2107,6 +2847,10 @@ export class SocialApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argMid = args.mid
     if (argMid !== undefined) query["mid"] = argMid
     const argKeywords = args.keywords
@@ -2125,6 +2869,7 @@ export class SocialApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetSocialBilibiliArchivesResponse
   }
 
@@ -2134,6 +2879,10 @@ export class SocialApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argMid = args.mid
     if (argMid !== undefined) query["mid"] = argMid
     const argRoomId = args.roomId ?? args["room_id"]
@@ -2146,6 +2895,7 @@ export class SocialApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetSocialBilibiliLiveroomResponse
   }
 
@@ -2155,6 +2905,10 @@ export class SocialApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argOid = args.oid
     if (argOid !== undefined) query["oid"] = argOid
     const argSort = args.sort
@@ -2171,6 +2925,7 @@ export class SocialApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetSocialBilibiliRepliesResponse
   }
 
@@ -2180,6 +2935,10 @@ export class SocialApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argUid = args.uid
     if (argUid !== undefined) query["uid"] = argUid
     let requestPath = '/api/v1/social/bilibili/userinfo'
@@ -2190,6 +2949,7 @@ export class SocialApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetSocialBilibiliUserinfoResponse
   }
 
@@ -2199,6 +2959,10 @@ export class SocialApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argAid = args.aid
     if (argAid !== undefined) query["aid"] = argAid
     const argBvid = args.bvid
@@ -2211,6 +2975,7 @@ export class SocialApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetSocialBilibiliVideoinfoResponse
   }
 
@@ -2220,6 +2985,10 @@ export class SocialApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argGroupId = args.groupId ?? args["group_id"]
     if (argGroupId !== undefined) query["group_id"] = argGroupId
     let requestPath = '/api/v1/social/qq/groupinfo'
@@ -2230,6 +2999,7 @@ export class SocialApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetSocialQqGroupinfoResponse
   }
 
@@ -2239,6 +3009,10 @@ export class SocialApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argQq = args.qq
     if (argQq !== undefined) query["qq"] = argQq
     let requestPath = '/api/v1/social/qq/userinfo'
@@ -2249,6 +3023,7 @@ export class SocialApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetSocialQqUserinfoResponse
   }
 }
@@ -2261,6 +3036,10 @@ export class StatusApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argAuthorization = args.authorization ?? args["Authorization"]
     if (argAuthorization !== undefined) headers["Authorization"] = String(argAuthorization)
     let requestPath = '/api/v1/status/ratelimit'
@@ -2271,6 +3050,7 @@ export class StatusApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetStatusRatelimitResponse
   }
 
@@ -2280,6 +3060,10 @@ export class StatusApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argPath = args.path
     if (argPath !== undefined) query["path"] = argPath
     let requestPath = '/api/v1/status/usage'
@@ -2290,6 +3074,7 @@ export class StatusApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetStatusUsageResponse
   }
 }
@@ -2302,6 +3087,10 @@ export class TextApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argText = args.text
     if (argText !== undefined) query["text"] = argText
     let requestPath = '/api/v1/text/md5'
@@ -2312,6 +3101,7 @@ export class TextApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetTextMd5Response
   }
 
@@ -2321,6 +3111,10 @@ export class TextApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argKey = args.key
     if (argKey !== undefined) body["key"] = argKey
     const argNonce = args.nonce
@@ -2335,6 +3129,7 @@ export class TextApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as PostTextAesDecryptResponse
   }
 
@@ -2344,6 +3139,10 @@ export class TextApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argIv = args.iv
     if (argIv !== undefined) body["iv"] = argIv
     const argKey = args.key
@@ -2362,6 +3161,7 @@ export class TextApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as PostTextAesDecryptAdvancedResponse
   }
 
@@ -2371,6 +3171,10 @@ export class TextApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argKey = args.key
     if (argKey !== undefined) body["key"] = argKey
     const argText = args.text
@@ -2383,6 +3187,7 @@ export class TextApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as PostTextAesEncryptResponse
   }
 
@@ -2392,6 +3197,10 @@ export class TextApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argIv = args.iv
     if (argIv !== undefined) body["iv"] = argIv
     const argKey = args.key
@@ -2412,6 +3221,7 @@ export class TextApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as PostTextAesEncryptAdvancedResponse
   }
 
@@ -2421,6 +3231,10 @@ export class TextApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argText = args.text
     if (argText !== undefined) body["text"] = argText
     let requestPath = '/api/v1/text/analyze'
@@ -2431,6 +3245,7 @@ export class TextApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as PostTextAnalyzeResponse
   }
 
@@ -2440,6 +3255,10 @@ export class TextApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argText = args.text
     if (argText !== undefined) body["text"] = argText
     let requestPath = '/api/v1/text/base64/decode'
@@ -2450,6 +3269,7 @@ export class TextApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as PostTextBase64DecodeResponse
   }
 
@@ -2459,6 +3279,10 @@ export class TextApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argText = args.text
     if (argText !== undefined) body["text"] = argText
     let requestPath = '/api/v1/text/base64/encode'
@@ -2469,6 +3293,7 @@ export class TextApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as PostTextBase64EncodeResponse
   }
 
@@ -2478,6 +3303,10 @@ export class TextApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argFrom = args.from
     if (argFrom !== undefined) body["from"] = argFrom
     const argOptions = args.options
@@ -2494,6 +3323,7 @@ export class TextApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as PostTextConvertResponse
   }
 
@@ -2503,6 +3333,10 @@ export class TextApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argText = args.text
     if (argText !== undefined) body["text"] = argText
     let requestPath = '/api/v1/text/md5'
@@ -2513,6 +3347,7 @@ export class TextApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as PostTextMd5Response
   }
 
@@ -2522,6 +3357,10 @@ export class TextApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argHash = args.hash
     if (argHash !== undefined) body["hash"] = argHash
     const argText = args.text
@@ -2534,6 +3373,7 @@ export class TextApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as PostTextMd5VerifyResponse
   }
 }
@@ -2546,6 +3386,7 @@ export class TranslateApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
     let requestPath = '/api/v1/ai/translate/languages'
     return await this.http.request(
       'GET',
@@ -2554,6 +3395,7 @@ export class TranslateApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetAiTranslateLanguagesResponse
   }
 
@@ -2563,6 +3405,10 @@ export class TranslateApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argTargetLang = args.targetLang ?? args["target_lang"]
     if (argTargetLang !== undefined) query["target_lang"] = argTargetLang
     const argContext = args.context
@@ -2583,6 +3429,7 @@ export class TranslateApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as PostAiTranslateResponse
   }
 
@@ -2592,6 +3439,10 @@ export class TranslateApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argFromLang = args.fromLang ?? args["from_lang"]
     if (argFromLang !== undefined) body["from_lang"] = argFromLang
     const argQuery = args.query
@@ -2608,6 +3459,7 @@ export class TranslateApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as PostTranslateStreamResponse
   }
 
@@ -2617,6 +3469,10 @@ export class TranslateApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argToLang = args.toLang ?? args["to_lang"]
     if (argToLang !== undefined) query["to_lang"] = argToLang
     const argText = args.text
@@ -2629,6 +3485,7 @@ export class TranslateApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as PostTranslateTextResponse
   }
 }
@@ -2641,6 +3498,10 @@ export class WebparseApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argTaskId = args.taskId ?? args["task_id"]
     let requestPath = '/api/v1/web/tomarkdown/async/{task_id}'
     if (argTaskId !== undefined) requestPath = requestPath.replace('{'+ 'task_id' +'}', String(argTaskId))
@@ -2651,6 +3512,7 @@ export class WebparseApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetWebTomarkdownAsyncStatusResponse
   }
 
@@ -2660,6 +3522,10 @@ export class WebparseApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argUrl = args.url
     if (argUrl !== undefined) query["url"] = argUrl
     let requestPath = '/api/v1/webparse/extractimages'
@@ -2670,6 +3536,7 @@ export class WebparseApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetWebparseExtractimagesResponse
   }
 
@@ -2679,6 +3546,10 @@ export class WebparseApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argUrl = args.url
     if (argUrl !== undefined) query["url"] = argUrl
     let requestPath = '/api/v1/webparse/metadata'
@@ -2689,6 +3560,7 @@ export class WebparseApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetWebparseMetadataResponse
   }
 
@@ -2698,6 +3570,10 @@ export class WebparseApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argUrl = args.url
     if (argUrl !== undefined) query["url"] = argUrl
     let requestPath = '/api/v1/web/tomarkdown/async'
@@ -2708,6 +3584,7 @@ export class WebparseApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as PostWebTomarkdownAsyncResponse
   }
 }
@@ -2720,6 +3597,10 @@ export class MinGanCiShiBieApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argKeyword = args.keyword
     if (argKeyword !== undefined) query["keyword"] = argKeyword
     let requestPath = '/api/v1/sensitive-word/analyze-query'
@@ -2730,6 +3611,7 @@ export class MinGanCiShiBieApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetSensitiveWordAnalyzeQueryResponse
   }
 
@@ -2739,6 +3621,10 @@ export class MinGanCiShiBieApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argKeywords = args.keywords
     if (argKeywords !== undefined) body["keywords"] = argKeywords
     let requestPath = '/api/v1/sensitive-word/analyze'
@@ -2749,6 +3635,7 @@ export class MinGanCiShiBieApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as PostSensitiveWordAnalyzeResponse
   }
 
@@ -2758,6 +3645,10 @@ export class MinGanCiShiBieApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argText = args.text
     if (argText !== undefined) body["text"] = argText
     let requestPath = '/api/v1/text/profanitycheck'
@@ -2768,6 +3659,7 @@ export class MinGanCiShiBieApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as PostSensitiveWordQuickCheckResponse
   }
 }
@@ -2780,6 +3672,7 @@ export class ZhiNengSouSuoApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
     let requestPath = '/api/v1/search/engines'
     return await this.http.request(
       'GET',
@@ -2788,6 +3681,7 @@ export class ZhiNengSouSuoApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as GetSearchEnginesResponse
   }
 
@@ -2797,6 +3691,10 @@ export class ZhiNengSouSuoApi {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argFetchFull = args.fetchFull ?? args["fetch_full"]
     if (argFetchFull !== undefined) body["fetch_full"] = argFetchFull
     const argFiletype = args.filetype
@@ -2819,6 +3717,7 @@ export class ZhiNengSouSuoApi {
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
       'json',
+      disableCache !== undefined ? { disableCache } : undefined,
     ) as PostSearchAggregateResponse
   }
 }
