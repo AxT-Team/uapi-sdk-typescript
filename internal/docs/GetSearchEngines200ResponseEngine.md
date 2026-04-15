@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 **display_name** | **string** | 引擎显示名称 | [optional] [default to undefined]
 **description** | **string** | 引擎描述 | [optional] [default to undefined]
 **available** | **boolean** | 引擎是否可用 | [optional] [default to undefined]
-**version** | **string** | 引擎版本号 | [optional] [default to undefined]
+**version** | **string** | 配置版本标识 | [optional] [default to undefined]
 **features** | **Array&lt;string&gt;** | 支持的特性列表 | [optional] [default to undefined]
 
 ## Example

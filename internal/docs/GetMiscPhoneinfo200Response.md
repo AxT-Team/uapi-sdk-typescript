@@ -7,7 +7,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **city** | **string** |  | [optional] [default to undefined]
 **province** | **string** |  | [optional] [default to undefined]
-**sp** | **string** | 运营商 (Service Provider) 名称。 | [optional] [default to undefined]
+**sp** | **string** | 运营商名称。 | [optional] [default to undefined]
 
 ## Example
 

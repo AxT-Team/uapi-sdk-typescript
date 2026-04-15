@@ -215,7 +215,7 @@ export interface GetGameSteamSummaryArgs {
   id?: string;
   /** 用户的 Steam ID3 格式标识符。传统的 Steam ID 格式，形如 STEAM_X:Y:Z。 */
   id3?: string;
-  /** 你的 Steam Web API Key。这是一个可选参数，如果提供，它将覆盖我们在后端配置的全局Key。这为你提供了更大的灵活性，但请务必注意Key的保密，不要在前端暴露。 */
+  /** 这个接口可以传的访问凭证。此参数选填，如果传入，将优先使用您提供的值。请注意妥善保管，不要把它写进公开的前端代码中。 */
   key?: string;
 }
 export type GetAvatarGravatarResponse =
@@ -239,7 +239,41 @@ export interface GetAvatarGravatarArgs {
   r?: string;
 }
 export type GetImageBingDailyResponse =
-  ArrayBuffer
+  ArrayBuffer | Internal.FormatJson
+export interface GetImageBingDailyArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
+  /** 壁纸日期，格式是 `YYYY-MM-DD`。不传时返回当天壁纸。 */
+  date?: string;
+  /** 返回图片的目标分辨率。可以传 `4k` 或 `1080`，不传时默认是 `4k`。 */
+  resolution?: string;
+  /** 响应格式。可以传 `image`、`json` 或 `redirect`。不传时默认是 `image`。 */
+  format?: string;
+}
+export type GetImageBingDailyHistoryResponse =
+  Internal.GetImageBingDailyHistory200Response
+export interface GetImageBingDailyHistoryArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
+  /** 壁纸日期，格式是 `YYYY-MM-DD`。传了以后会按日期精确查询，并且忽略 `page` 和 `page_size`。 */
+  date?: string;
+  /** 返回图片的目标分辨率。可以传 `4k` 或 `1080`，不传时默认是 `4k`。 */
+  resolution?: string;
+  /** 分页页码，必须是正整数。不传时默认是 `1`。只有在不传 `date` 时才生效。 */
+  page?: number;
+  /** 每页条数，必须是正整数。不传时默认是 `30`，最大是 `100`。只有在不传 `date` 时才生效。 */
+  pageSize?: number;
+  /** Same as `pageSize`. Kept for compatibility. */
+  "page_size"?: number;
+}
 export type GetImageMotouResponse =
   ArrayBuffer
 export interface GetImageMotouArgs {
@@ -306,6 +340,42 @@ export interface PostImageCompressArgs {
   /** 支持PNG, JPG, JPEG等常见图片格式。文件大小不超过15MB。 */
   file: string;
 }
+export type PostImageDecodeResponse =
+  ArrayBuffer
+export interface PostImageDecodeArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
+  /** 目标宽度，单位是像素。可以单独传，也可以和 `height` 一起传。与 `max_width`、`max_height` 互斥。 */
+  width?: number;
+  /** 目标高度，单位是像素。可以单独传，也可以和 `width` 一起传。与 `max_width`、`max_height` 互斥。 */
+  height?: number;
+  /** 最大宽度，单位是像素。只有在不传 `width`、`height` 时才生效，会按原比例缩放。 */
+  maxWidth?: number;
+  /** Same as `maxWidth`. Kept for compatibility. */
+  "max_width"?: number;
+  /** 最大高度，单位是像素。只有在不传 `width`、`height` 时才生效，会按原比例缩放。 */
+  maxHeight?: number;
+  /** Same as `maxHeight`. Kept for compatibility. */
+  "max_height"?: number;
+  /** 输出格式。可以传 `bmp`、`rgb565` 或 `rgb888`，不传时默认是 `bmp`。 */
+  format?: string;
+  /** BMP 输出的颜色模式。只有在 `format=bmp` 时才生效，可以传 `RGB565` 或 `RGB888`，不传时默认是 `RGB888`。 */
+  colorMode?: string;
+  /** Same as `colorMode`. Kept for compatibility. */
+  "color_mode"?: string;
+  /** 缩放模式。可以传 `contain`、`cover` 或 `fill`，不传时默认是 `contain`。当传 `cover` 或 `fill` 时，`width` 和 `height` 都要传。 */
+  fit?: string;
+  /** 背景色。可以传 `black`、`white` 或 `#RRGGBB`，不传时默认是 `black`。 */
+  background?: string;
+  /** 要处理的图片文件。这个接口适合直接上传 JPG、JPEG、PNG、WebP、BMP 等常见格式。 */
+  file?: string;
+  /** 要处理的图片链接。适合不方便直接上传文件时使用。 */
+  url?: string;
+}
 export type PostImageFrombase64Response =
   Internal.PostImageFrombase64200Response
 export interface PostImageFrombase64Args {
@@ -350,6 +420,40 @@ export interface PostImageNsfwArgs {
   /** 要检测的图片文件。支持 JPG、JPEG、PNG、GIF、WebP 格式，最大 20MB。 */
   file?: string;
   /** 图片的 URL 地址。如果同时提供 file 和 url，将优先使用 file。 */
+  url?: string;
+}
+export type PostImageOcrResponse =
+  Internal.PostImageOcr200Response
+export interface PostImageOcrArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
+  /** 是否开启额外的文字方向校正。请传 `true` 或 `false`，不传时默认是 `false`。 */
+  enableCls?: string;
+  /** Same as `enableCls`. Kept for compatibility. */
+  "enable_cls"?: string;
+  /** 待识别的图片文件。支持 JPG、JPEG、PNG、BMP、GIF、WebP 等常见格式，最大不超过 10MB。请勿与 url 或 image_base64 同时提交。 */
+  file?: string;
+  /** 图片的 Base64 字符串。可以传完整 Data URI，也可以只传纯 Base64 内容。请勿与 file 或 url 同时提交。 */
+  imageBase64?: string;
+  /** Same as `imageBase64`. Kept for compatibility. */
+  "image_base64"?: string;
+  /** 自定义图片文件名。传链接或纯 Base64 时建议一起传，便于保留或推断扩展名。 */
+  imageName?: string;
+  /** Same as `imageName`. Kept for compatibility. */
+  "image_name"?: string;
+  /** 是否返回文字坐标信息。请传 `true` 或 `false`，不传时默认是 `true`。 */
+  needLocation?: string;
+  /** Same as `needLocation`. Kept for compatibility. */
+  "need_location"?: string;
+  /** 是否额外返回整理后的 Markdown 文本。请传 `true` 或 `false`，不传时默认是 `false`。 */
+  returnMarkdown?: string;
+  /** Same as `returnMarkdown`. Kept for compatibility. */
+  "return_markdown"?: string;
+  /** 公网可直接访问的图片地址。请勿与 file 或 image_base64 同时提交。 */
   url?: string;
 }
 export type PostImageSpeechlessResponse =
@@ -459,6 +563,10 @@ export interface GetMiscHolidayCalendarArgs {
   nearbyLimit?: number;
   /** Same as `nearbyLimit`. Kept for compatibility. */
   "nearby_limit"?: number;
+  /** 传 true 时，会过滤今天之前已经过去的节日。默认 false。 */
+  excludePast?: boolean;
+  /** Same as `excludePast`. Kept for compatibility. */
+  "exclude_past"?: boolean;
 }
 export type GetMiscHotboardResponse =
   Internal.GetMiscHotboard200Response
@@ -485,8 +593,6 @@ export interface GetMiscHotboardArgs {
   "time_end"?: number;
   /** 搜索模式下最大返回条数，默认 50，最大 200。 */
   limit?: number;
-  /** 设为 true 时列出所有可用的历史数据源，忽略其他参数。 */
-  sources?: boolean;
 }
 export type GetMiscLunartimeResponse =
   Internal.GetMiscLunartime200Response
@@ -589,6 +695,8 @@ export interface GetMiscTrackingQueryArgs {
   "carrier_code"?: string;
   /** 收件人手机尾号，4位数字（可选）。部分快递公司需要验证手机尾号才能查询详细物流信息。 */
   phone?: string;
+  /** 使用这个参数可以获得完整的物流信息。但会消耗34积分/一次（不过缓存命中半价）。因为成本实在太贵了，否则非常非常亏说是 */
+  full?: boolean;
 }
 export type GetMiscWeatherResponse =
   Internal.GetMiscWeather200Response
@@ -685,7 +793,7 @@ export interface GetNetworkIpinfoArgs {
   _t?: string | number;
   /** 你需要查询的公网IP地址或域名（支持IPv4和IPv6）。 */
   ip: string;
-  /** 查询的数据源。如果留空，将使用默认的数据库。如果设置为 `commercial`，将调用商业级API，返回更详细的地理位置信息，但响应时间可能会稍长。 */
+  /** 查询结果类型。不传时返回标准结果；如果设置为 `commercial`，将返回更完整的地理位置信息，但响应时间可能会稍长。 */
   source?: string;
 }
 export type GetNetworkMyipResponse =
@@ -697,7 +805,7 @@ export interface GetNetworkMyipArgs {
   "disable_cache"?: boolean;
   /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
   _t?: string | number;
-  /** 查询的数据源。如果留空，将使用默认的数据库。如果设置为 `commercial`，将调用商业级API，返回更详细的地理位置信息，但响应时间可能会稍长。 */
+  /** 查询结果类型。不传时返回标准结果；如果设置为 `commercial`，将返回更完整的地理位置信息，但响应时间可能会稍长。 */
   source?: string;
 }
 export type GetNetworkPingResponse =
@@ -857,6 +965,26 @@ export interface GetGithubRepoArgs {
   /** 目标仓库的标识，格式为 `owner/repo`。 */
   repo: string;
 }
+export type GetGithubUserResponse =
+  Internal.GetGithubUser200Response
+export interface GetGithubUserArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
+  /** GitHub 用户名（必需符合 GitHub 命名规范：仅限字母、数字、连字符，最长 39 位）。 */
+  user: string;
+  /** 是否获取最近一年的贡献活动数据（如贡献图、时间线）。传入 true 开启，其他值均视为不开启。 */
+  activity?: boolean;
+  /** 活动数据范围。可选 all 或 organization。只有开启 activity 时才有意义。 */
+  activityScope?: string;
+  /** Same as `activityScope`. Kept for compatibility. */
+  "activity_scope"?: string;
+  /** 组织登录名。如果传入此参数，会自动视为开启 organization 级别的贡献查询，切勿再同时传 activity_scope=all。 */
+  org?: string;
+}
 export type GetSocialBilibiliArchivesResponse =
   Internal.GetSocialBilibiliArchives200Response
 export interface GetSocialBilibiliArchivesArgs {
@@ -1013,7 +1141,7 @@ export interface PostTextAesDecryptArgs {
   /** 密钥，长度必须为16、24或32字节，对应AES-128/192/256。 */
   key: string;
   /** 16字节的IV/Nonce，必须为16个字符 */
-  nonce: string;
+  nonce?: string;
   /** Base64编码的密文。 */
   text: string;
 }
@@ -1128,6 +1256,40 @@ export interface PostTextConvertArgs {
   text: string;
   /** 目标格式类型 */
   to: string;
+}
+export type PostTextMarkdownToHtmlResponse =
+  Internal.PostTextMarkdownToHtml200Response
+export interface PostTextMarkdownToHtmlArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
+  /** 响应格式。传 `json` 时返回 JSON 包裹的 HTML 片段；传 `html` 时直接返回 `text/html`，并且响应内容会自动带完整的网页结构，适合浏览器预览或直接保存为网页文件。默认是 `json`。 */
+  format?: string;
+  /** 是否开启安全模式，过滤掉用户输入中的风险脚本。默认是 `true`。 */
+  sanitize?: boolean;
+  /** 原始 Markdown 字符串，最大不超过 1MB。 */
+  text: string;
+}
+export type PostTextMarkdownToPdfResponse =
+  ArrayBuffer
+export interface PostTextMarkdownToPdfArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
+  /** PDF 的纸张大小。可选 `A4` 或 `Letter`，默认是 `A4`。 */
+  paperSize?: string;
+  /** Same as `paperSize`. Kept for compatibility. */
+  "paper_size"?: string;
+  /** 原始 Markdown 字符串，最大不超过 1MB。 */
+  text: string;
+  /** PDF 的排版主题。可选 `github`、`minimal`、`light`、`dark`，默认是 `github`。 */
+  theme?: string;
 }
 export type PostTextMd5Response =
   Internal.GetTextMd5200Response
@@ -1336,10 +1498,6 @@ export interface PostSearchAggregateArgs {
   timeRange?: string;
   /** Same as `timeRange`. Kept for compatibility. */
   "time_range"?: string;
-  /** 请求超时时间（毫秒），范围 1000-30000 */
-  timeoutMs?: number;
-  /** Same as `timeoutMs`. Kept for compatibility. */
-  "timeout_ms"?: number;
 }
 
 // Facade per tag.
@@ -1452,13 +1610,14 @@ export class ClipzyZaiXianJianTieBanApi {
     const argId = args.id
     if (argId !== undefined) query["id"] = argId
     let requestPath = '/api/v1/api/get'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetClipzyGetResponse
   }
@@ -1478,13 +1637,14 @@ export class ClipzyZaiXianJianTieBanApi {
     if (argKey !== undefined) query["key"] = argKey
     let requestPath = '/api/v1/api/raw/{id}'
     if (argId !== undefined) requestPath = requestPath.replace('{'+ 'id' +'}', String(argId))
+    const responseKind = 'text'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'text',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetClipzyRawResponse
   }
@@ -1504,13 +1664,14 @@ export class ClipzyZaiXianJianTieBanApi {
     const argTtl = args.ttl
     if (argTtl !== undefined) body["ttl"] = argTtl
     let requestPath = '/api/v1/api/store'
+    const responseKind = 'json'
     return await this.http.request(
       'POST',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as PostClipzyStoreResponse
   }
@@ -1531,13 +1692,14 @@ export class ConvertApi {
     const argTime = args.time
     if (argTime !== undefined) query["time"] = argTime
     let requestPath = '/api/v1/convert/unixtime'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetConvertUnixtimeResponse
   }
@@ -1555,13 +1717,14 @@ export class ConvertApi {
     const argContent = args.content
     if (argContent !== undefined) body["content"] = argContent
     let requestPath = '/api/v1/convert/json'
+    const responseKind = 'json'
     return await this.http.request(
       'POST',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as PostConvertJsonResponse
   }
@@ -1577,13 +1740,14 @@ export class DailyApi {
     const body: Record<string, unknown> = {}
     let disableCache: boolean | undefined
     let requestPath = '/api/v1/daily/news-image'
+    const responseKind = 'arrayBuffer'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'arrayBuffer',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetDailyNewsImageResponse
   }
@@ -1599,13 +1763,14 @@ export class GameApi {
     const body: Record<string, unknown> = {}
     let disableCache: boolean | undefined
     let requestPath = '/api/v1/game/epic-free'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetGameEpicFreeResponse
   }
@@ -1625,13 +1790,14 @@ export class GameApi {
     const argUuid = args.uuid
     if (argUuid !== undefined) query["uuid"] = argUuid
     let requestPath = '/api/v1/game/minecraft/historyid'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetGameMinecraftHistoryidResponse
   }
@@ -1649,13 +1815,14 @@ export class GameApi {
     const argServer = args.server
     if (argServer !== undefined) query["server"] = argServer
     let requestPath = '/api/v1/game/minecraft/serverstatus'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetGameMinecraftServerstatusResponse
   }
@@ -1673,13 +1840,14 @@ export class GameApi {
     const argUsername = args.username
     if (argUsername !== undefined) query["username"] = argUsername
     let requestPath = '/api/v1/game/minecraft/userinfo'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetGameMinecraftUserinfoResponse
   }
@@ -1703,13 +1871,14 @@ export class GameApi {
     const argKey = args.key
     if (argKey !== undefined) query["key"] = argKey
     let requestPath = '/api/v1/game/steam/summary'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetGameSteamSummaryResponse
   }
@@ -1738,34 +1907,76 @@ export class ImageApi {
     const argR = args.r
     if (argR !== undefined) query["r"] = argR
     let requestPath = '/api/v1/avatar/gravatar'
+    const responseKind = 'arrayBuffer'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'arrayBuffer',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetAvatarGravatarResponse
   }
 
-  /** 必应壁纸 */
-  async getImageBingDaily(
+  /** 获取必应每日壁纸 */
+  async getImageBingDaily(args: GetImageBingDailyArgs = {} as GetImageBingDailyArgs
   ): Promise<GetImageBingDailyResponse> {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
     const body: Record<string, unknown> = {}
     let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
+    const argDate = args.date
+    if (argDate !== undefined) query["date"] = argDate
+    const argResolution = args.resolution
+    if (argResolution !== undefined) query["resolution"] = argResolution
+    const argFormat = args.format
+    if (argFormat !== undefined) query["format"] = argFormat
     let requestPath = '/api/v1/image/bing-daily'
+    const responseKind = argFormat === 'json' ? 'json' : 'arrayBuffer'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'arrayBuffer',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetImageBingDailyResponse
+  }
+
+  /** 查询必应壁纸历史 */
+  async getImageBingDailyHistory(args: GetImageBingDailyHistoryArgs = {} as GetImageBingDailyHistoryArgs
+  ): Promise<GetImageBingDailyHistoryResponse> {
+    const query: Record<string, unknown> = {}
+    const headers: Record<string, string> = {}
+    const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
+    const argDate = args.date
+    if (argDate !== undefined) query["date"] = argDate
+    const argResolution = args.resolution
+    if (argResolution !== undefined) query["resolution"] = argResolution
+    const argPage = args.page
+    if (argPage !== undefined) query["page"] = argPage
+    const argPageSize = args.pageSize ?? args["page_size"]
+    if (argPageSize !== undefined) query["page_size"] = argPageSize
+    let requestPath = '/api/v1/image/bing-daily/history'
+    const responseKind = 'json'
+    return await this.http.request(
+      'GET',
+      requestPath,
+      Object.keys(query).length > 0 ? query : undefined,
+      Object.keys(body).length > 0 ? body : undefined,
+      Object.keys(headers).length > 0 ? headers : undefined,
+      responseKind,
+      disableCache !== undefined ? { disableCache } : undefined,
+    ) as GetImageBingDailyHistoryResponse
   }
 
   /** 生成摸摸头GIF (QQ号) */
@@ -1783,13 +1994,14 @@ export class ImageApi {
     const argBgColor = args.bgColor ?? args["bg_color"]
     if (argBgColor !== undefined) query["bg_color"] = argBgColor
     let requestPath = '/api/v1/image/motou'
+    const responseKind = 'arrayBuffer'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'arrayBuffer',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetImageMotouResponse
   }
@@ -1817,13 +2029,14 @@ export class ImageApi {
     const argBgcolor = args.bgcolor
     if (argBgcolor !== undefined) query["bgcolor"] = argBgcolor
     let requestPath = '/api/v1/image/qrcode'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetImageQrcodeResponse
   }
@@ -1841,13 +2054,14 @@ export class ImageApi {
     const argUrl = args.url
     if (argUrl !== undefined) query["url"] = argUrl
     let requestPath = '/api/v1/image/tobase64'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetImageTobase64Response
   }
@@ -1869,15 +2083,59 @@ export class ImageApi {
     const argFile = args.file
     if (argFile !== undefined) body["file"] = argFile
     let requestPath = '/api/v1/image/compress'
+    const responseKind = 'arrayBuffer'
     return await this.http.request(
       'POST',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'arrayBuffer',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as PostImageCompressResponse
+  }
+
+  /** 解码并缩放图片 */
+  async postImageDecode(args: PostImageDecodeArgs
+  ): Promise<PostImageDecodeResponse> {
+    const query: Record<string, unknown> = {}
+    const headers: Record<string, string> = {}
+    const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
+    const argWidth = args.width
+    if (argWidth !== undefined) query["width"] = argWidth
+    const argHeight = args.height
+    if (argHeight !== undefined) query["height"] = argHeight
+    const argMaxWidth = args.maxWidth ?? args["max_width"]
+    if (argMaxWidth !== undefined) query["max_width"] = argMaxWidth
+    const argMaxHeight = args.maxHeight ?? args["max_height"]
+    if (argMaxHeight !== undefined) query["max_height"] = argMaxHeight
+    const argFormat = args.format
+    if (argFormat !== undefined) query["format"] = argFormat
+    const argColorMode = args.colorMode ?? args["color_mode"]
+    if (argColorMode !== undefined) query["color_mode"] = argColorMode
+    const argFit = args.fit
+    if (argFit !== undefined) query["fit"] = argFit
+    const argBackground = args.background
+    if (argBackground !== undefined) query["background"] = argBackground
+    const argFile = args.file
+    if (argFile !== undefined) body["file"] = argFile
+    const argUrl = args.url
+    if (argUrl !== undefined) body["url"] = argUrl
+    let requestPath = '/api/v1/image/decode'
+    const responseKind = 'arrayBuffer'
+    return await this.http.request(
+      'POST',
+      requestPath,
+      Object.keys(query).length > 0 ? query : undefined,
+      Object.keys(body).length > 0 ? body : undefined,
+      Object.keys(headers).length > 0 ? headers : undefined,
+      responseKind,
+      disableCache !== undefined ? { disableCache } : undefined,
+    ) as PostImageDecodeResponse
   }
 
   /** 通过Base64编码上传图片 */
@@ -1893,13 +2151,14 @@ export class ImageApi {
     const argImageData = args.imageData
     if (argImageData !== undefined) body["imageData"] = argImageData
     let requestPath = '/api/v1/image/frombase64'
+    const responseKind = 'json'
     return await this.http.request(
       'POST',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as PostImageFrombase64Response
   }
@@ -1921,13 +2180,14 @@ export class ImageApi {
     const argImageUrl = args.imageUrl ?? args["image_url"]
     if (argImageUrl !== undefined) body["image_url"] = argImageUrl
     let requestPath = '/api/v1/image/motou'
+    const responseKind = 'arrayBuffer'
     return await this.http.request(
       'POST',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'arrayBuffer',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as PostImageMotouResponse
   }
@@ -1947,15 +2207,53 @@ export class ImageApi {
     const argUrl = args.url
     if (argUrl !== undefined) body["url"] = argUrl
     let requestPath = '/api/v1/image/nsfw'
+    const responseKind = 'json'
     return await this.http.request(
       'POST',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as PostImageNsfwResponse
+  }
+
+  /** 通用 OCR 文字识别 */
+  async postImageOcr(args: PostImageOcrArgs
+  ): Promise<PostImageOcrResponse> {
+    const query: Record<string, unknown> = {}
+    const headers: Record<string, string> = {}
+    const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
+    const argEnableCls = args.enableCls ?? args["enable_cls"]
+    if (argEnableCls !== undefined) body["enable_cls"] = argEnableCls
+    const argFile = args.file
+    if (argFile !== undefined) body["file"] = argFile
+    const argImageBase64 = args.imageBase64 ?? args["image_base64"]
+    if (argImageBase64 !== undefined) body["image_base64"] = argImageBase64
+    const argImageName = args.imageName ?? args["image_name"]
+    if (argImageName !== undefined) body["image_name"] = argImageName
+    const argNeedLocation = args.needLocation ?? args["need_location"]
+    if (argNeedLocation !== undefined) body["need_location"] = argNeedLocation
+    const argReturnMarkdown = args.returnMarkdown ?? args["return_markdown"]
+    if (argReturnMarkdown !== undefined) body["return_markdown"] = argReturnMarkdown
+    const argUrl = args.url
+    if (argUrl !== undefined) body["url"] = argUrl
+    let requestPath = '/api/v1/image/ocr'
+    const responseKind = 'json'
+    return await this.http.request(
+      'POST',
+      requestPath,
+      Object.keys(query).length > 0 ? query : undefined,
+      Object.keys(body).length > 0 ? body : undefined,
+      Object.keys(headers).length > 0 ? headers : undefined,
+      responseKind,
+      disableCache !== undefined ? { disableCache } : undefined,
+    ) as PostImageOcrResponse
   }
 
   /** 生成你们怎么不说话了表情包 */
@@ -1973,13 +2271,14 @@ export class ImageApi {
     const argTopText = args.topText ?? args["top_text"]
     if (argTopText !== undefined) body["top_text"] = argTopText
     let requestPath = '/api/v1/image/speechless'
+    const responseKind = 'arrayBuffer'
     return await this.http.request(
       'POST',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'arrayBuffer',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as PostImageSpeechlessResponse
   }
@@ -2005,13 +2304,14 @@ export class ImageApi {
     const argFile = args.file
     if (argFile !== undefined) body["file"] = argFile
     let requestPath = '/api/v1/image/svg'
+    const responseKind = 'arrayBuffer'
     return await this.http.request(
       'POST',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'arrayBuffer',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as PostImageSvgResponse
   }
@@ -2034,13 +2334,14 @@ export class MiscApi {
     const argDay = args.day
     if (argDay !== undefined) query["day"] = argDay
     let requestPath = '/api/v1/history/programmer'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetHistoryProgrammerResponse
   }
@@ -2053,13 +2354,14 @@ export class MiscApi {
     const body: Record<string, unknown> = {}
     let disableCache: boolean | undefined
     let requestPath = '/api/v1/history/programmer/today'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetHistoryProgrammerTodayResponse
   }
@@ -2089,13 +2391,14 @@ export class MiscApi {
     const argLimit = args.limit
     if (argLimit !== undefined) query["limit"] = argLimit
     let requestPath = '/api/v1/misc/district'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetMiscDistrictResponse
   }
@@ -2124,14 +2427,17 @@ export class MiscApi {
     if (argIncludeNearby !== undefined) query["include_nearby"] = argIncludeNearby
     const argNearbyLimit = args.nearbyLimit ?? args["nearby_limit"]
     if (argNearbyLimit !== undefined) query["nearby_limit"] = argNearbyLimit
+    const argExcludePast = args.excludePast ?? args["exclude_past"]
+    if (argExcludePast !== undefined) query["exclude_past"] = argExcludePast
     let requestPath = '/api/v1/misc/holiday-calendar'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetMiscHolidayCalendarResponse
   }
@@ -2158,16 +2464,15 @@ export class MiscApi {
     if (argTimeEnd !== undefined) query["time_end"] = argTimeEnd
     const argLimit = args.limit
     if (argLimit !== undefined) query["limit"] = argLimit
-    const argSources = args.sources
-    if (argSources !== undefined) query["sources"] = argSources
     let requestPath = '/api/v1/misc/hotboard'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetMiscHotboardResponse
   }
@@ -2187,13 +2492,14 @@ export class MiscApi {
     const argTimezone = args.timezone
     if (argTimezone !== undefined) query["timezone"] = argTimezone
     let requestPath = '/api/v1/misc/lunartime'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetMiscLunartimeResponse
   }
@@ -2211,13 +2517,14 @@ export class MiscApi {
     const argPhone = args.phone
     if (argPhone !== undefined) query["phone"] = argPhone
     let requestPath = '/api/v1/misc/phoneinfo'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetMiscPhoneinfoResponse
   }
@@ -2245,13 +2552,14 @@ export class MiscApi {
     const argDecimalPlaces = args.decimalPlaces ?? args["decimal_places"]
     if (argDecimalPlaces !== undefined) query["decimal_places"] = argDecimalPlaces
     let requestPath = '/api/v1/misc/randomnumber'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetMiscRandomnumberResponse
   }
@@ -2269,13 +2577,14 @@ export class MiscApi {
     const argTs = args.ts
     if (argTs !== undefined) query["ts"] = argTs
     let requestPath = '/api/v1/misc/timestamp'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetMiscTimestampResponse
   }
@@ -2288,13 +2597,14 @@ export class MiscApi {
     const body: Record<string, unknown> = {}
     let disableCache: boolean | undefined
     let requestPath = '/api/v1/misc/tracking/carriers'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetMiscTrackingCarriersResponse
   }
@@ -2312,13 +2622,14 @@ export class MiscApi {
     const argTrackingNumber = args.trackingNumber ?? args["tracking_number"]
     if (argTrackingNumber !== undefined) query["tracking_number"] = argTrackingNumber
     let requestPath = '/api/v1/misc/tracking/detect'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetMiscTrackingDetectResponse
   }
@@ -2339,14 +2650,17 @@ export class MiscApi {
     if (argCarrierCode !== undefined) query["carrier_code"] = argCarrierCode
     const argPhone = args.phone
     if (argPhone !== undefined) query["phone"] = argPhone
+    const argFull = args.full
+    if (argFull !== undefined) query["full"] = argFull
     let requestPath = '/api/v1/misc/tracking/query'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetMiscTrackingQueryResponse
   }
@@ -2378,13 +2692,14 @@ export class MiscApi {
     const argLang = args.lang
     if (argLang !== undefined) query["lang"] = argLang
     let requestPath = '/api/v1/misc/weather'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetMiscWeatherResponse
   }
@@ -2402,13 +2717,14 @@ export class MiscApi {
     const argCity = args.city
     if (argCity !== undefined) query["city"] = argCity
     let requestPath = '/api/v1/misc/worldtime'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetMiscWorldtimeResponse
   }
@@ -2430,13 +2746,14 @@ export class MiscApi {
     const argStartDate = args.startDate ?? args["start_date"]
     if (argStartDate !== undefined) body["start_date"] = argStartDate
     let requestPath = '/api/v1/misc/date-diff'
+    const responseKind = 'json'
     return await this.http.request(
       'POST',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as PostMiscDateDiffResponse
   }
@@ -2459,13 +2776,14 @@ export class NetworkApi {
     const argType = args.type
     if (argType !== undefined) query["type"] = argType
     let requestPath = '/api/v1/network/dns'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetNetworkDnsResponse
   }
@@ -2483,13 +2801,14 @@ export class NetworkApi {
     const argDomain = args.domain
     if (argDomain !== undefined) query["domain"] = argDomain
     let requestPath = '/api/v1/network/icp'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetNetworkIcpResponse
   }
@@ -2509,13 +2828,14 @@ export class NetworkApi {
     const argSource = args.source
     if (argSource !== undefined) query["source"] = argSource
     let requestPath = '/api/v1/network/ipinfo'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetNetworkIpinfoResponse
   }
@@ -2533,13 +2853,14 @@ export class NetworkApi {
     const argSource = args.source
     if (argSource !== undefined) query["source"] = argSource
     let requestPath = '/api/v1/network/myip'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetNetworkMyipResponse
   }
@@ -2557,13 +2878,14 @@ export class NetworkApi {
     const argHost = args.host
     if (argHost !== undefined) query["host"] = argHost
     let requestPath = '/api/v1/network/ping'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetNetworkPingResponse
   }
@@ -2576,13 +2898,14 @@ export class NetworkApi {
     const body: Record<string, unknown> = {}
     let disableCache: boolean | undefined
     let requestPath = '/api/v1/network/pingmyip'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetNetworkPingmyipResponse
   }
@@ -2604,13 +2927,14 @@ export class NetworkApi {
     const argProtocol = args.protocol
     if (argProtocol !== undefined) query["protocol"] = argProtocol
     let requestPath = '/api/v1/network/portscan'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetNetworkPortscanResponse
   }
@@ -2628,13 +2952,14 @@ export class NetworkApi {
     const argUrl = args.url
     if (argUrl !== undefined) query["url"] = argUrl
     let requestPath = '/api/v1/network/urlstatus'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetNetworkUrlstatusResponse
   }
@@ -2654,13 +2979,14 @@ export class NetworkApi {
     const argFormat = args.format
     if (argFormat !== undefined) query["format"] = argFormat
     let requestPath = '/api/v1/network/whois'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetNetworkWhoisResponse
   }
@@ -2678,13 +3004,14 @@ export class NetworkApi {
     const argDomain = args.domain
     if (argDomain !== undefined) query["domain"] = argDomain
     let requestPath = '/api/v1/network/wxdomain'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetNetworkWxdomainResponse
   }
@@ -2700,13 +3027,14 @@ export class PoemApi {
     const body: Record<string, unknown> = {}
     let disableCache: boolean | undefined
     let requestPath = '/api/v1/saying'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetSayingResponse
   }
@@ -2727,13 +3055,14 @@ export class RandomApi {
     const argQuestion = args.question
     if (argQuestion !== undefined) query["question"] = argQuestion
     let requestPath = '/api/v1/answerbook/ask'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetAnswerbookAskResponse
   }
@@ -2753,13 +3082,14 @@ export class RandomApi {
     const argType = args.type
     if (argType !== undefined) query["type"] = argType
     let requestPath = '/api/v1/random/image'
+    const responseKind = 'arrayBuffer'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'arrayBuffer',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetRandomImageResponse
   }
@@ -2779,13 +3109,14 @@ export class RandomApi {
     const argType = args.type
     if (argType !== undefined) query["type"] = argType
     let requestPath = '/api/v1/random/string'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetRandomStringResponse
   }
@@ -2803,13 +3134,14 @@ export class RandomApi {
     const argQuestion = args.question
     if (argQuestion !== undefined) body["question"] = argQuestion
     let requestPath = '/api/v1/answerbook/ask'
+    const responseKind = 'json'
     return await this.http.request(
       'POST',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as PostAnswerbookAskResponse
   }
@@ -2830,15 +3162,47 @@ export class SocialApi {
     const argRepo = args.repo
     if (argRepo !== undefined) query["repo"] = argRepo
     let requestPath = '/api/v1/github/repo'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetGithubRepoResponse
+  }
+
+  /** 查询 GitHub 用户信息 */
+  async getGithubUser(args: GetGithubUserArgs
+  ): Promise<GetGithubUserResponse> {
+    const query: Record<string, unknown> = {}
+    const headers: Record<string, string> = {}
+    const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
+    const argUser = args.user
+    if (argUser !== undefined) query["user"] = argUser
+    const argActivity = args.activity
+    if (argActivity !== undefined) query["activity"] = argActivity
+    const argActivityScope = args.activityScope ?? args["activity_scope"]
+    if (argActivityScope !== undefined) query["activity_scope"] = argActivityScope
+    const argOrg = args.org
+    if (argOrg !== undefined) query["org"] = argOrg
+    let requestPath = '/api/v1/github/user'
+    const responseKind = 'json'
+    return await this.http.request(
+      'GET',
+      requestPath,
+      Object.keys(query).length > 0 ? query : undefined,
+      Object.keys(body).length > 0 ? body : undefined,
+      Object.keys(headers).length > 0 ? headers : undefined,
+      responseKind,
+      disableCache !== undefined ? { disableCache } : undefined,
+    ) as GetGithubUserResponse
   }
 
   /** 查询 B站投稿 */
@@ -2862,13 +3226,14 @@ export class SocialApi {
     const argPn = args.pn
     if (argPn !== undefined) query["pn"] = argPn
     let requestPath = '/api/v1/social/bilibili/archives'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetSocialBilibiliArchivesResponse
   }
@@ -2888,13 +3253,14 @@ export class SocialApi {
     const argRoomId = args.roomId ?? args["room_id"]
     if (argRoomId !== undefined) query["room_id"] = argRoomId
     let requestPath = '/api/v1/social/bilibili/liveroom'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetSocialBilibiliLiveroomResponse
   }
@@ -2918,13 +3284,14 @@ export class SocialApi {
     const argPn = args.pn
     if (argPn !== undefined) query["pn"] = argPn
     let requestPath = '/api/v1/social/bilibili/replies'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetSocialBilibiliRepliesResponse
   }
@@ -2942,13 +3309,14 @@ export class SocialApi {
     const argUid = args.uid
     if (argUid !== undefined) query["uid"] = argUid
     let requestPath = '/api/v1/social/bilibili/userinfo'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetSocialBilibiliUserinfoResponse
   }
@@ -2968,13 +3336,14 @@ export class SocialApi {
     const argBvid = args.bvid
     if (argBvid !== undefined) query["bvid"] = argBvid
     let requestPath = '/api/v1/social/bilibili/videoinfo'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetSocialBilibiliVideoinfoResponse
   }
@@ -2992,13 +3361,14 @@ export class SocialApi {
     const argGroupId = args.groupId ?? args["group_id"]
     if (argGroupId !== undefined) query["group_id"] = argGroupId
     let requestPath = '/api/v1/social/qq/groupinfo'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetSocialQqGroupinfoResponse
   }
@@ -3016,13 +3386,14 @@ export class SocialApi {
     const argQq = args.qq
     if (argQq !== undefined) query["qq"] = argQq
     let requestPath = '/api/v1/social/qq/userinfo'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetSocialQqUserinfoResponse
   }
@@ -3043,13 +3414,14 @@ export class StatusApi {
     const argAuthorization = args.authorization ?? args["Authorization"]
     if (argAuthorization !== undefined) headers["Authorization"] = String(argAuthorization)
     let requestPath = '/api/v1/status/ratelimit'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetStatusRatelimitResponse
   }
@@ -3067,13 +3439,14 @@ export class StatusApi {
     const argPath = args.path
     if (argPath !== undefined) query["path"] = argPath
     let requestPath = '/api/v1/status/usage'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetStatusUsageResponse
   }
@@ -3094,13 +3467,14 @@ export class TextApi {
     const argText = args.text
     if (argText !== undefined) query["text"] = argText
     let requestPath = '/api/v1/text/md5'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetTextMd5Response
   }
@@ -3122,13 +3496,14 @@ export class TextApi {
     const argText = args.text
     if (argText !== undefined) body["text"] = argText
     let requestPath = '/api/v1/text/aes/decrypt'
+    const responseKind = 'json'
     return await this.http.request(
       'POST',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as PostTextAesDecryptResponse
   }
@@ -3154,13 +3529,14 @@ export class TextApi {
     const argText = args.text
     if (argText !== undefined) body["text"] = argText
     let requestPath = '/api/v1/text/aes/decrypt-advanced'
+    const responseKind = 'json'
     return await this.http.request(
       'POST',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as PostTextAesDecryptAdvancedResponse
   }
@@ -3180,13 +3556,14 @@ export class TextApi {
     const argText = args.text
     if (argText !== undefined) body["text"] = argText
     let requestPath = '/api/v1/text/aes/encrypt'
+    const responseKind = 'json'
     return await this.http.request(
       'POST',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as PostTextAesEncryptResponse
   }
@@ -3214,13 +3591,14 @@ export class TextApi {
     const argText = args.text
     if (argText !== undefined) body["text"] = argText
     let requestPath = '/api/v1/text/aes/encrypt-advanced'
+    const responseKind = 'json'
     return await this.http.request(
       'POST',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as PostTextAesEncryptAdvancedResponse
   }
@@ -3238,13 +3616,14 @@ export class TextApi {
     const argText = args.text
     if (argText !== undefined) body["text"] = argText
     let requestPath = '/api/v1/text/analyze'
+    const responseKind = 'json'
     return await this.http.request(
       'POST',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as PostTextAnalyzeResponse
   }
@@ -3262,13 +3641,14 @@ export class TextApi {
     const argText = args.text
     if (argText !== undefined) body["text"] = argText
     let requestPath = '/api/v1/text/base64/decode'
+    const responseKind = 'json'
     return await this.http.request(
       'POST',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as PostTextBase64DecodeResponse
   }
@@ -3286,13 +3666,14 @@ export class TextApi {
     const argText = args.text
     if (argText !== undefined) body["text"] = argText
     let requestPath = '/api/v1/text/base64/encode'
+    const responseKind = 'json'
     return await this.http.request(
       'POST',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as PostTextBase64EncodeResponse
   }
@@ -3316,15 +3697,74 @@ export class TextApi {
     const argTo = args.to
     if (argTo !== undefined) body["to"] = argTo
     let requestPath = '/api/v1/text/convert'
+    const responseKind = 'json'
     return await this.http.request(
       'POST',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as PostTextConvertResponse
+  }
+
+  /** Markdown 转 HTML */
+  async postTextMarkdownToHtml(args: PostTextMarkdownToHtmlArgs
+  ): Promise<PostTextMarkdownToHtmlResponse> {
+    const query: Record<string, unknown> = {}
+    const headers: Record<string, string> = {}
+    const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
+    const argFormat = args.format
+    if (argFormat !== undefined) body["format"] = argFormat
+    const argSanitize = args.sanitize
+    if (argSanitize !== undefined) body["sanitize"] = argSanitize
+    const argText = args.text
+    if (argText !== undefined) body["text"] = argText
+    let requestPath = '/api/v1/text/markdown-to-html'
+    const responseKind = 'json'
+    return await this.http.request(
+      'POST',
+      requestPath,
+      Object.keys(query).length > 0 ? query : undefined,
+      Object.keys(body).length > 0 ? body : undefined,
+      Object.keys(headers).length > 0 ? headers : undefined,
+      responseKind,
+      disableCache !== undefined ? { disableCache } : undefined,
+    ) as PostTextMarkdownToHtmlResponse
+  }
+
+  /** Markdown 转 PDF */
+  async postTextMarkdownToPdf(args: PostTextMarkdownToPdfArgs
+  ): Promise<PostTextMarkdownToPdfResponse> {
+    const query: Record<string, unknown> = {}
+    const headers: Record<string, string> = {}
+    const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
+    const argPaperSize = args.paperSize ?? args["paper_size"]
+    if (argPaperSize !== undefined) body["paper_size"] = argPaperSize
+    const argText = args.text
+    if (argText !== undefined) body["text"] = argText
+    const argTheme = args.theme
+    if (argTheme !== undefined) body["theme"] = argTheme
+    let requestPath = '/api/v1/text/markdown-to-pdf'
+    const responseKind = 'arrayBuffer'
+    return await this.http.request(
+      'POST',
+      requestPath,
+      Object.keys(query).length > 0 ? query : undefined,
+      Object.keys(body).length > 0 ? body : undefined,
+      Object.keys(headers).length > 0 ? headers : undefined,
+      responseKind,
+      disableCache !== undefined ? { disableCache } : undefined,
+    ) as PostTextMarkdownToPdfResponse
   }
 
   /** MD5 哈希 (POST) */
@@ -3340,13 +3780,14 @@ export class TextApi {
     const argText = args.text
     if (argText !== undefined) body["text"] = argText
     let requestPath = '/api/v1/text/md5'
+    const responseKind = 'json'
     return await this.http.request(
       'POST',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as PostTextMd5Response
   }
@@ -3366,13 +3807,14 @@ export class TextApi {
     const argText = args.text
     if (argText !== undefined) body["text"] = argText
     let requestPath = '/api/v1/text/md5/verify'
+    const responseKind = 'json'
     return await this.http.request(
       'POST',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as PostTextMd5VerifyResponse
   }
@@ -3388,13 +3830,14 @@ export class TranslateApi {
     const body: Record<string, unknown> = {}
     let disableCache: boolean | undefined
     let requestPath = '/api/v1/ai/translate/languages'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetAiTranslateLanguagesResponse
   }
@@ -3422,13 +3865,14 @@ export class TranslateApi {
     const argText = args.text
     if (argText !== undefined) body["text"] = argText
     let requestPath = '/api/v1/ai/translate'
+    const responseKind = 'json'
     return await this.http.request(
       'POST',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as PostAiTranslateResponse
   }
@@ -3452,13 +3896,14 @@ export class TranslateApi {
     const argTone = args.tone
     if (argTone !== undefined) body["tone"] = argTone
     let requestPath = '/api/v1/translate/stream'
+    const responseKind = 'json'
     return await this.http.request(
       'POST',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as PostTranslateStreamResponse
   }
@@ -3478,13 +3923,14 @@ export class TranslateApi {
     const argText = args.text
     if (argText !== undefined) body["text"] = argText
     let requestPath = '/api/v1/translate/text'
+    const responseKind = 'json'
     return await this.http.request(
       'POST',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as PostTranslateTextResponse
   }
@@ -3505,13 +3951,14 @@ export class WebparseApi {
     const argTaskId = args.taskId ?? args["task_id"]
     let requestPath = '/api/v1/web/tomarkdown/async/{task_id}'
     if (argTaskId !== undefined) requestPath = requestPath.replace('{'+ 'task_id' +'}', String(argTaskId))
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetWebTomarkdownAsyncStatusResponse
   }
@@ -3529,13 +3976,14 @@ export class WebparseApi {
     const argUrl = args.url
     if (argUrl !== undefined) query["url"] = argUrl
     let requestPath = '/api/v1/webparse/extractimages'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetWebparseExtractimagesResponse
   }
@@ -3553,13 +4001,14 @@ export class WebparseApi {
     const argUrl = args.url
     if (argUrl !== undefined) query["url"] = argUrl
     let requestPath = '/api/v1/webparse/metadata'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetWebparseMetadataResponse
   }
@@ -3577,13 +4026,14 @@ export class WebparseApi {
     const argUrl = args.url
     if (argUrl !== undefined) query["url"] = argUrl
     let requestPath = '/api/v1/web/tomarkdown/async'
+    const responseKind = 'json'
     return await this.http.request(
       'POST',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as PostWebTomarkdownAsyncResponse
   }
@@ -3604,13 +4054,14 @@ export class MinGanCiShiBieApi {
     const argKeyword = args.keyword
     if (argKeyword !== undefined) query["keyword"] = argKeyword
     let requestPath = '/api/v1/sensitive-word/analyze-query'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetSensitiveWordAnalyzeQueryResponse
   }
@@ -3628,13 +4079,14 @@ export class MinGanCiShiBieApi {
     const argKeywords = args.keywords
     if (argKeywords !== undefined) body["keywords"] = argKeywords
     let requestPath = '/api/v1/sensitive-word/analyze'
+    const responseKind = 'json'
     return await this.http.request(
       'POST',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as PostSensitiveWordAnalyzeResponse
   }
@@ -3652,13 +4104,14 @@ export class MinGanCiShiBieApi {
     const argText = args.text
     if (argText !== undefined) body["text"] = argText
     let requestPath = '/api/v1/text/profanitycheck'
+    const responseKind = 'json'
     return await this.http.request(
       'POST',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as PostSensitiveWordQuickCheckResponse
   }
@@ -3674,13 +4127,14 @@ export class ZhiNengSouSuoApi {
     const body: Record<string, unknown> = {}
     let disableCache: boolean | undefined
     let requestPath = '/api/v1/search/engines'
+    const responseKind = 'json'
     return await this.http.request(
       'GET',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetSearchEnginesResponse
   }
@@ -3707,16 +4161,15 @@ export class ZhiNengSouSuoApi {
     if (argSort !== undefined) body["sort"] = argSort
     const argTimeRange = args.timeRange ?? args["time_range"]
     if (argTimeRange !== undefined) body["time_range"] = argTimeRange
-    const argTimeoutMs = args.timeoutMs ?? args["timeout_ms"]
-    if (argTimeoutMs !== undefined) body["timeout_ms"] = argTimeoutMs
     let requestPath = '/api/v1/search/aggregate'
+    const responseKind = 'json'
     return await this.http.request(
       'POST',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
       Object.keys(body).length > 0 ? body : undefined,
       Object.keys(headers).length > 0 ? headers : undefined,
-      'json',
+      responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as PostSearchAggregateResponse
   }

@@ -47,8 +47,8 @@ No authorization required
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 |**200** | 请求成功！响应体是JPEG格式的图片二进制数据。你可以直接将其显示或保存为图片文件。 |  -  |
-|**500** | 服务器内部错误。这可能是我们的图片渲染服务遇到了临时故障。我们已经被自动通知，请稍后重试。 |  -  |
-|**502** | 上游服务错误。我们在尝试从新闻源（如微博、知乎等）获取数据时失败了。这可能是因为上游服务暂时不可用或更改了接口。这个问题通常很快会解决，请稍后重试。 |  -  |
+|**500** | 服务器内部错误。暂时无法生成图片，请稍后重试。 |  -  |
+|**502** | 暂时无法获取相关内容，请稍后重试。 |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

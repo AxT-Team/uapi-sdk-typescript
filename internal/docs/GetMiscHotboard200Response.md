@@ -12,7 +12,6 @@ Name | Type | Description | Notes
 **keyword** | **string** | 搜索关键词。 | [optional] [default to undefined]
 **count** | **number** | 匹配到的结果数量。 | [optional] [default to undefined]
 **results** | [**Array&lt;GetMiscHotboard200ResponseOneOf1ResultsInner&gt;**](GetMiscHotboard200ResponseOneOf1ResultsInner.md) | 搜索结果数组。 | [optional] [default to undefined]
-**sources** | **Array&lt;string&gt;** | 支持历史数据的平台列表。 | [optional] [default to undefined]
 
 ## Example
 
@@ -27,7 +26,6 @@ const instance: GetMiscHotboard200Response = {
     keyword,
     count,
     results,
-    sources,
 };
 ```
 

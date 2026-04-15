@@ -11,6 +11,7 @@ Name | Type | Description | Notes
 **motd_clean** | **string** | 纯文本格式的服务器MOTD（每日消息），去除了所有颜色和格式代码。 | [optional] [default to undefined]
 **motd_html** | **string** | HTML格式的服务器MOTD，保留了颜色和样式，方便你在网页上直接渲染。 | [optional] [default to undefined]
 **online** | **boolean** | 服务器当前是否在线。 | [optional] [default to undefined]
+**online_players** | [**Array&lt;GetGameMinecraftServerstatus200ResponseOnlinePlayersInner&gt;**](GetGameMinecraftServerstatus200ResponseOnlinePlayersInner.md) | 当前在线玩家列表。如果服务器没有返回这个字段，它会省略。部分服务器返回的列表可能不完整。 | [optional] [default to undefined]
 **players** | **number** | 当前在线的玩家数量。 | [optional] [default to undefined]
 **port** | **number** | 服务器使用的端口。 | [optional] [default to undefined]
 **version** | **string** | 服务器报告的版本信息。 | [optional] [default to undefined]
@@ -27,6 +28,7 @@ const instance: GetGameMinecraftServerstatus200Response = {
     motd_clean,
     motd_html,
     online,
+    online_players,
     players,
     port,
     version,

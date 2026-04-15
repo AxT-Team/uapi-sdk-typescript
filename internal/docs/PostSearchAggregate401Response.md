@@ -7,7 +7,6 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **code** | **string** |  | [optional] [default to undefined]
 **message** | **string** |  | [optional] [default to undefined]
-**timestamp** | **string** |  | [optional] [default to undefined]
 
 ## Example
 
@@ -17,7 +16,6 @@ import { PostSearchAggregate401Response } from 'uapi-sdk-typescript';
 const instance: PostSearchAggregate401Response = {
     code,
     message,
-    timestamp,
 };
 ```
 

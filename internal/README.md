@@ -68,14 +68,17 @@ Class | Method | HTTP request | Description
 *GameApi* | [**getGameMinecraftUserinfo**](docs/GameApi.md#getgameminecraftuserinfo) | **GET** /game/minecraft/userinfo | 查询 MC 玩家
 *GameApi* | [**getGameSteamSummary**](docs/GameApi.md#getgamesteamsummary) | **GET** /game/steam/summary | 查询 Steam 用户
 *ImageApi* | [**getAvatarGravatar**](docs/ImageApi.md#getavatargravatar) | **GET** /avatar/gravatar | 获取Gravatar头像
-*ImageApi* | [**getImageBingDaily**](docs/ImageApi.md#getimagebingdaily) | **GET** /image/bing-daily | 必应壁纸
+*ImageApi* | [**getImageBingDaily**](docs/ImageApi.md#getimagebingdaily) | **GET** /image/bing-daily | 获取必应每日壁纸
+*ImageApi* | [**getImageBingDailyHistory**](docs/ImageApi.md#getimagebingdailyhistory) | **GET** /image/bing-daily/history | 查询必应壁纸历史
 *ImageApi* | [**getImageMotou**](docs/ImageApi.md#getimagemotou) | **GET** /image/motou | 生成摸摸头GIF (QQ号)
 *ImageApi* | [**getImageQrcode**](docs/ImageApi.md#getimageqrcode) | **GET** /image/qrcode | 生成二维码
 *ImageApi* | [**getImageTobase64**](docs/ImageApi.md#getimagetobase64) | **GET** /image/tobase64 | 图片转 Base64
 *ImageApi* | [**postImageCompress**](docs/ImageApi.md#postimagecompress) | **POST** /image/compress | 无损压缩图片
+*ImageApi* | [**postImageDecode**](docs/ImageApi.md#postimagedecode) | **POST** /image/decode | 解码并缩放图片
 *ImageApi* | [**postImageFrombase64**](docs/ImageApi.md#postimagefrombase64) | **POST** /image/frombase64 | 通过Base64编码上传图片
 *ImageApi* | [**postImageMotou**](docs/ImageApi.md#postimagemotou) | **POST** /image/motou | 生成摸摸头GIF
 *ImageApi* | [**postImageNsfw**](docs/ImageApi.md#postimagensfw) | **POST** /image/nsfw | 图片敏感检测
+*ImageApi* | [**postImageOcr**](docs/ImageApi.md#postimageocr) | **POST** /image/ocr | 通用 OCR 文字识别
 *ImageApi* | [**postImageSpeechless**](docs/ImageApi.md#postimagespeechless) | **POST** /image/speechless | 生成你们怎么不说话了表情包
 *ImageApi* | [**postImageSvg**](docs/ImageApi.md#postimagesvg) | **POST** /image/svg | SVG转图片
 *MiscApi* | [**getHistoryProgrammer**](docs/MiscApi.md#gethistoryprogrammer) | **GET** /history/programmer | 程序员历史事件
@@ -109,6 +112,7 @@ Class | Method | HTTP request | Description
 *RandomApi* | [**getRandomString**](docs/RandomApi.md#getrandomstring) | **GET** /random/string | 随机字符串
 *RandomApi* | [**postAnswerbookAsk**](docs/RandomApi.md#postanswerbookask) | **POST** /answerbook/ask | 答案之书 (POST)
 *SocialApi* | [**getGithubRepo**](docs/SocialApi.md#getgithubrepo) | **GET** /github/repo | 查询 GitHub 仓库
+*SocialApi* | [**getGithubUser**](docs/SocialApi.md#getgithubuser) | **GET** /github/user | 查询 GitHub 用户信息
 *SocialApi* | [**getSocialBilibiliArchives**](docs/SocialApi.md#getsocialbilibiliarchives) | **GET** /social/bilibili/archives | 查询 B站投稿
 *SocialApi* | [**getSocialBilibiliLiveroom**](docs/SocialApi.md#getsocialbilibililiveroom) | **GET** /social/bilibili/liveroom | 查询 B站直播间
 *SocialApi* | [**getSocialBilibiliReplies**](docs/SocialApi.md#getsocialbilibilireplies) | **GET** /social/bilibili/replies | 查询 B站评论
@@ -127,6 +131,8 @@ Class | Method | HTTP request | Description
 *TextApi* | [**postTextBase64Decode**](docs/TextApi.md#posttextbase64decode) | **POST** /text/base64/decode | Base64 解码
 *TextApi* | [**postTextBase64Encode**](docs/TextApi.md#posttextbase64encode) | **POST** /text/base64/encode | Base64 编码
 *TextApi* | [**postTextConvert**](docs/TextApi.md#posttextconvert) | **POST** /text/convert | 格式转换
+*TextApi* | [**postTextMarkdownToHtml**](docs/TextApi.md#posttextmarkdowntohtml) | **POST** /text/markdown-to-html | Markdown 转 HTML
+*TextApi* | [**postTextMarkdownToPdf**](docs/TextApi.md#posttextmarkdowntopdf) | **POST** /text/markdown-to-pdf | Markdown 转 PDF
 *TextApi* | [**postTextMd5**](docs/TextApi.md#posttextmd5) | **POST** /text/md5 | MD5 哈希 (POST)
 *TextApi* | [**postTextMd5Verify**](docs/TextApi.md#posttextmd5verify) | **POST** /text/md5/verify | MD5 校验
 *TranslateApi* | [**getAiTranslateLanguages**](docs/TranslateApi.md#getaitranslatelanguages) | **GET** /ai/translate/languages | AI翻译配置
@@ -141,6 +147,10 @@ Class | Method | HTTP request | Description
 
 ### Documentation For Models
 
+ - [Base64](docs/Base64.md)
+ - [FormatJson](docs/FormatJson.md)
+ - [FormatJsonTrivia](docs/FormatJsonTrivia.md)
+ - [FormatJsonTriviaOptionsInner](docs/FormatJsonTriviaOptionsInner.md)
  - [GetAiTranslateLanguages200Response](docs/GetAiTranslateLanguages200Response.md)
  - [GetAiTranslateLanguages200ResponseData](docs/GetAiTranslateLanguages200ResponseData.md)
  - [GetAiTranslateLanguages200ResponseDataContextsInner](docs/GetAiTranslateLanguages200ResponseDataContextsInner.md)
@@ -172,6 +182,7 @@ Class | Method | HTTP request | Description
  - [GetGameMinecraftHistoryid404Response](docs/GetGameMinecraftHistoryid404Response.md)
  - [GetGameMinecraftHistoryid502Response](docs/GetGameMinecraftHistoryid502Response.md)
  - [GetGameMinecraftServerstatus200Response](docs/GetGameMinecraftServerstatus200Response.md)
+ - [GetGameMinecraftServerstatus200ResponseOnlinePlayersInner](docs/GetGameMinecraftServerstatus200ResponseOnlinePlayersInner.md)
  - [GetGameMinecraftServerstatus400Response](docs/GetGameMinecraftServerstatus400Response.md)
  - [GetGameMinecraftServerstatus404Response](docs/GetGameMinecraftServerstatus404Response.md)
  - [GetGameMinecraftServerstatus502Response](docs/GetGameMinecraftServerstatus502Response.md)
@@ -183,19 +194,36 @@ Class | Method | HTTP request | Description
  - [GetGameSteamSummary400Response](docs/GetGameSteamSummary400Response.md)
  - [GetGameSteamSummary401Response](docs/GetGameSteamSummary401Response.md)
  - [GetGameSteamSummary404Response](docs/GetGameSteamSummary404Response.md)
- - [GetGameSteamSummary502Response](docs/GetGameSteamSummary502Response.md)
  - [GetGithubRepo200Response](docs/GetGithubRepo200Response.md)
  - [GetGithubRepo200ResponseCollaboratorsInner](docs/GetGithubRepo200ResponseCollaboratorsInner.md)
  - [GetGithubRepo200ResponseLatestRelease](docs/GetGithubRepo200ResponseLatestRelease.md)
  - [GetGithubRepo400Response](docs/GetGithubRepo400Response.md)
  - [GetGithubRepo502Response](docs/GetGithubRepo502Response.md)
+ - [GetGithubUser200Response](docs/GetGithubUser200Response.md)
+ - [GetGithubUser200ResponseActivity](docs/GetGithubUser200ResponseActivity.md)
+ - [GetGithubUser200ResponseActivityContributionCalendar](docs/GetGithubUser200ResponseActivityContributionCalendar.md)
+ - [GetGithubUser200ResponseActivityContributionCalendarWeeksInner](docs/GetGithubUser200ResponseActivityContributionCalendarWeeksInner.md)
+ - [GetGithubUser200ResponseActivityContributionCalendarWeeksInnerContributionDaysInner](docs/GetGithubUser200ResponseActivityContributionCalendarWeeksInnerContributionDaysInner.md)
+ - [GetGithubUser200ResponseActivityTimelineInner](docs/GetGithubUser200ResponseActivityTimelineInner.md)
+ - [GetGithubUser200ResponseOrganizationsInner](docs/GetGithubUser200ResponseOrganizationsInner.md)
+ - [GetGithubUser400Response](docs/GetGithubUser400Response.md)
+ - [GetGithubUser400ResponseOneOf](docs/GetGithubUser400ResponseOneOf.md)
+ - [GetGithubUser400ResponseOneOf1](docs/GetGithubUser400ResponseOneOf1.md)
+ - [GetGithubUser404Response](docs/GetGithubUser404Response.md)
+ - [GetGithubUser502Response](docs/GetGithubUser502Response.md)
  - [GetHistoryProgrammer200Response](docs/GetHistoryProgrammer200Response.md)
  - [GetHistoryProgrammer200ResponseEventsInner](docs/GetHistoryProgrammer200ResponseEventsInner.md)
  - [GetHistoryProgrammer400Response](docs/GetHistoryProgrammer400Response.md)
  - [GetHistoryProgrammerToday200Response](docs/GetHistoryProgrammerToday200Response.md)
  - [GetHistoryProgrammerToday200ResponseEventsInner](docs/GetHistoryProgrammerToday200ResponseEventsInner.md)
  - [GetHistoryProgrammerToday500Response](docs/GetHistoryProgrammerToday500Response.md)
- - [GetImageBingDaily502Response](docs/GetImageBingDaily502Response.md)
+ - [GetImageBingDaily400Response](docs/GetImageBingDaily400Response.md)
+ - [GetImageBingDaily404Response](docs/GetImageBingDaily404Response.md)
+ - [GetImageBingDaily500Response](docs/GetImageBingDaily500Response.md)
+ - [GetImageBingDailyHistory200Response](docs/GetImageBingDailyHistory200Response.md)
+ - [GetImageBingDailyHistory200ResponseItemsInner](docs/GetImageBingDailyHistory200ResponseItemsInner.md)
+ - [GetImageBingDailyHistory200ResponsePagination](docs/GetImageBingDailyHistory200ResponsePagination.md)
+ - [GetImageBingDailyHistory400Response](docs/GetImageBingDailyHistory400Response.md)
  - [GetImageMotou400Response](docs/GetImageMotou400Response.md)
  - [GetImageMotou500Response](docs/GetImageMotou500Response.md)
  - [GetImageQrcode200Response](docs/GetImageQrcode200Response.md)
@@ -223,7 +251,6 @@ Class | Method | HTTP request | Description
  - [GetMiscHotboard200ResponseOneOf](docs/GetMiscHotboard200ResponseOneOf.md)
  - [GetMiscHotboard200ResponseOneOf1](docs/GetMiscHotboard200ResponseOneOf1.md)
  - [GetMiscHotboard200ResponseOneOf1ResultsInner](docs/GetMiscHotboard200ResponseOneOf1ResultsInner.md)
- - [GetMiscHotboard200ResponseOneOf2](docs/GetMiscHotboard200ResponseOneOf2.md)
  - [GetMiscHotboard200ResponseOneOfListInner](docs/GetMiscHotboard200ResponseOneOfListInner.md)
  - [GetMiscHotboard400Response](docs/GetMiscHotboard400Response.md)
  - [GetMiscHotboard500Response](docs/GetMiscHotboard500Response.md)
@@ -381,6 +408,8 @@ Class | Method | HTTP request | Description
  - [GetWebparseExtractimages500Response](docs/GetWebparseExtractimages500Response.md)
  - [GetWebparseMetadata200Response](docs/GetWebparseMetadata200Response.md)
  - [GetWebparseMetadata500Response](docs/GetWebparseMetadata500Response.md)
+ - [HTML](docs/HTML.md)
+ - [Markdown](docs/Markdown.md)
  - [PostAiTranslate200Response](docs/PostAiTranslate200Response.md)
  - [PostAiTranslate200ResponseData](docs/PostAiTranslate200ResponseData.md)
  - [PostAiTranslate200ResponsePerformance](docs/PostAiTranslate200ResponsePerformance.md)
@@ -400,6 +429,12 @@ Class | Method | HTTP request | Description
  - [PostConvertJsonRequest](docs/PostConvertJsonRequest.md)
  - [PostImageCompress400Response](docs/PostImageCompress400Response.md)
  - [PostImageCompress500Response](docs/PostImageCompress500Response.md)
+ - [PostImageDecode400Response](docs/PostImageDecode400Response.md)
+ - [PostImageDecode413Response](docs/PostImageDecode413Response.md)
+ - [PostImageDecode500Response](docs/PostImageDecode500Response.md)
+ - [PostImageDecode502Response](docs/PostImageDecode502Response.md)
+ - [PostImageDecode503Response](docs/PostImageDecode503Response.md)
+ - [PostImageDecode504Response](docs/PostImageDecode504Response.md)
  - [PostImageFrombase64200Response](docs/PostImageFrombase64200Response.md)
  - [PostImageFrombase64400Response](docs/PostImageFrombase64400Response.md)
  - [PostImageFrombase64500Response](docs/PostImageFrombase64500Response.md)
@@ -410,6 +445,17 @@ Class | Method | HTTP request | Description
  - [PostImageNsfw400Response](docs/PostImageNsfw400Response.md)
  - [PostImageNsfw413Response](docs/PostImageNsfw413Response.md)
  - [PostImageNsfw500Response](docs/PostImageNsfw500Response.md)
+ - [PostImageOcr200Response](docs/PostImageOcr200Response.md)
+ - [PostImageOcr200ResponseWordsResultInner](docs/PostImageOcr200ResponseWordsResultInner.md)
+ - [PostImageOcr200ResponseWordsResultInnerLocation](docs/PostImageOcr200ResponseWordsResultInnerLocation.md)
+ - [PostImageOcr200ResponseWordsResultInnerVertexesLocationInner](docs/PostImageOcr200ResponseWordsResultInnerVertexesLocationInner.md)
+ - [PostImageOcr400Response](docs/PostImageOcr400Response.md)
+ - [PostImageOcr400ResponseOneOf](docs/PostImageOcr400ResponseOneOf.md)
+ - [PostImageOcr400ResponseOneOf1](docs/PostImageOcr400ResponseOneOf1.md)
+ - [PostImageOcr413Response](docs/PostImageOcr413Response.md)
+ - [PostImageOcr415Response](docs/PostImageOcr415Response.md)
+ - [PostImageOcr502Response](docs/PostImageOcr502Response.md)
+ - [PostImageOcr503Response](docs/PostImageOcr503Response.md)
  - [PostImageSpeechless400Response](docs/PostImageSpeechless400Response.md)
  - [PostImageSpeechless500Response](docs/PostImageSpeechless500Response.md)
  - [PostImageSpeechlessRequest](docs/PostImageSpeechlessRequest.md)
@@ -419,6 +465,8 @@ Class | Method | HTTP request | Description
  - [PostMiscDateDiff400Response](docs/PostMiscDateDiff400Response.md)
  - [PostMiscDateDiffRequest](docs/PostMiscDateDiffRequest.md)
  - [PostSearchAggregate200Response](docs/PostSearchAggregate200Response.md)
+ - [PostSearchAggregate200ResponseMetadata](docs/PostSearchAggregate200ResponseMetadata.md)
+ - [PostSearchAggregate200ResponseMetadataRequestParams](docs/PostSearchAggregate200ResponseMetadataRequestParams.md)
  - [PostSearchAggregate200ResponseResultsInner](docs/PostSearchAggregate200ResponseResultsInner.md)
  - [PostSearchAggregate200ResponseSourcesInner](docs/PostSearchAggregate200ResponseSourcesInner.md)
  - [PostSearchAggregate400Response](docs/PostSearchAggregate400Response.md)
@@ -460,6 +508,29 @@ Class | Method | HTTP request | Description
  - [PostTextConvert200Response](docs/PostTextConvert200Response.md)
  - [PostTextConvert400Response](docs/PostTextConvert400Response.md)
  - [PostTextConvertRequest](docs/PostTextConvertRequest.md)
+ - [PostTextMarkdownToHtml200Response](docs/PostTextMarkdownToHtml200Response.md)
+ - [PostTextMarkdownToHtml200ResponseData](docs/PostTextMarkdownToHtml200ResponseData.md)
+ - [PostTextMarkdownToHtml400Response](docs/PostTextMarkdownToHtml400Response.md)
+ - [PostTextMarkdownToHtml400ResponseOneOf](docs/PostTextMarkdownToHtml400ResponseOneOf.md)
+ - [PostTextMarkdownToHtml400ResponseOneOf1](docs/PostTextMarkdownToHtml400ResponseOneOf1.md)
+ - [PostTextMarkdownToHtml413Response](docs/PostTextMarkdownToHtml413Response.md)
+ - [PostTextMarkdownToHtml500Response](docs/PostTextMarkdownToHtml500Response.md)
+ - [PostTextMarkdownToHtml503Response](docs/PostTextMarkdownToHtml503Response.md)
+ - [PostTextMarkdownToHtmlRequest](docs/PostTextMarkdownToHtmlRequest.md)
+ - [PostTextMarkdownToPdf400Response](docs/PostTextMarkdownToPdf400Response.md)
+ - [PostTextMarkdownToPdf400ResponseOneOf](docs/PostTextMarkdownToPdf400ResponseOneOf.md)
+ - [PostTextMarkdownToPdf400ResponseOneOf1](docs/PostTextMarkdownToPdf400ResponseOneOf1.md)
+ - [PostTextMarkdownToPdf400ResponseOneOf2](docs/PostTextMarkdownToPdf400ResponseOneOf2.md)
+ - [PostTextMarkdownToPdf400ResponseOneOf3](docs/PostTextMarkdownToPdf400ResponseOneOf3.md)
+ - [PostTextMarkdownToPdf413Response](docs/PostTextMarkdownToPdf413Response.md)
+ - [PostTextMarkdownToPdf413ResponseOneOf](docs/PostTextMarkdownToPdf413ResponseOneOf.md)
+ - [PostTextMarkdownToPdf500Response](docs/PostTextMarkdownToPdf500Response.md)
+ - [PostTextMarkdownToPdf502Response](docs/PostTextMarkdownToPdf502Response.md)
+ - [PostTextMarkdownToPdf503Response](docs/PostTextMarkdownToPdf503Response.md)
+ - [PostTextMarkdownToPdf503ResponseOneOf](docs/PostTextMarkdownToPdf503ResponseOneOf.md)
+ - [PostTextMarkdownToPdf503ResponseOneOf1](docs/PostTextMarkdownToPdf503ResponseOneOf1.md)
+ - [PostTextMarkdownToPdf504Response](docs/PostTextMarkdownToPdf504Response.md)
+ - [PostTextMarkdownToPdfRequest](docs/PostTextMarkdownToPdfRequest.md)
  - [PostTextMd5400Response](docs/PostTextMd5400Response.md)
  - [PostTextMd5Request](docs/PostTextMd5Request.md)
  - [PostTextMd5Verify200Response](docs/PostTextMd5Verify200Response.md)

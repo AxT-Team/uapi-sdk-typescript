@@ -5,12 +5,12 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**query** | **string** | 实际执行的搜索查询 | [optional] [default to undefined]
-**total_results** | **number** | 搜索结果总数 | [optional] [default to undefined]
+**query** | **string** | 执行的搜索查询 | [optional] [default to undefined]
+**total_results** | **number** | 返回的搜索结果总数 | [optional] [default to undefined]
 **results** | [**Array&lt;PostSearchAggregate200ResponseResultsInner&gt;**](PostSearchAggregate200ResponseResultsInner.md) | 搜索结果列表 | [optional] [default to undefined]
-**sources** | [**Array&lt;PostSearchAggregate200ResponseSourcesInner&gt;**](PostSearchAggregate200ResponseSourcesInner.md) | 各搜索源的结果统计 | [optional] [default to undefined]
-**process_time_ms** | **number** | 处理耗时（毫秒） | [optional] [default to undefined]
-**cached** | **boolean** | 结果是否来自缓存 | [optional] [default to undefined]
+**sources** | [**Array&lt;PostSearchAggregate200ResponseSourcesInner&gt;**](PostSearchAggregate200ResponseSourcesInner.md) | 本次请求实际命中的搜索引擎信息 | [optional] [default to undefined]
+**process_time_ms** | **number** | 本次请求总耗时（毫秒） | [optional] [default to undefined]
+**metadata** | [**PostSearchAggregate200ResponseMetadata**](PostSearchAggregate200ResponseMetadata.md) |  | [optional] [default to undefined]
 
 ## Example
 
@@ -23,7 +23,7 @@ const instance: PostSearchAggregate200Response = {
     results,
     sources,
     process_time_ms,
-    cached,
+    metadata,
 };
 ```
 

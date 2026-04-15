@@ -10,7 +10,7 @@ All URIs are relative to *https://uapis.cn/api/v1*
 # **getStatusRatelimit**
 > GetStatusRatelimit200Response getStatusRatelimit()
 
-想了解我们API的当前负载情况吗？这个接口为你提供了服务的“心电图”。  ## 功能概述 此接口返回我们后端自适应限流器的实时状态。你可以看到当前并发请求数、并发上限、系统负载、请求接受/拒绝数等核心指标。这对于监控API健康状况和性能表现至关重要。  > [!IMPORTANT] > 此接口为管理接口，需要提供有效的管理员级别API密钥才能访问。  ### 认证方式 请在请求头中添加 `Authorization: Bearer <你的API密钥>`。
+想了解当前服务的运行状态吗？这个接口可以返回关键监控指标。  ## 功能概述 此接口用于查看当前服务状态，包括并发请求数、当前限制值、系统负载等信息，适合管理员排查运行情况。  > [!IMPORTANT] > 此接口为管理接口，需要提供有效的管理员级别API密钥才能访问。  ### 认证方式 请在请求头中添加 `Authorization: Bearer <你的API密钥>`。
 
 ### Example
 

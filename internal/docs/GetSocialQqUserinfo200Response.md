@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 **age** | **number** | 年龄 | [optional] [default to undefined]
 **sex** | **string** | 性别 | [optional] [default to undefined]
 **qid** | **string** | QQ个性域名 | [optional] [default to undefined]
-**qq_level** | **number** | QQ等级 | [optional] [default to undefined]
+**qq_level** | **number** | QQ等级。用户隐藏时返回 null | [optional] [default to undefined]
 **location** | **string** | 地理位置（省市） | [optional] [default to undefined]
 **email** | **string** | QQ邮箱 | [optional] [default to undefined]
 **is_vip** | **boolean** | 是否为VIP用户 | [optional] [default to undefined]
