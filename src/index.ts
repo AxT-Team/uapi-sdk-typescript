@@ -1,4 +1,6 @@
 import axios, { AxiosInstance } from 'axios'
+import { readFile } from 'node:fs/promises'
+import { basename } from 'node:path'
 import type * as Internal from '../internal/index.js'
 import { UapiError, type ResponseMeta, extractMetaFromHeaders, mapError } from './errors.js'
 export { UapiError, mapError, extractMetaFromHeaders } from './errors.js'
@@ -11,6 +13,8 @@ export interface UapiClientOptions {
 
 type Config = { baseURL: string; token?: string; timeout?: number; disableCache?: boolean }
 type RequestOptions = { disableCache?: boolean }
+type RequestBodyPayload = Record<string, unknown> | FormData
+export type NodeUpload = string | Blob | ArrayBuffer | ArrayBufferView
 
 const API_PREFIX = '/api/v1'
 
@@ -41,6 +45,41 @@ function applyCacheControl(
   }
 }
 
+async function toNodeFilePart(value: NodeUpload): Promise<{ value: Blob; fileName: string }> {
+  if (typeof value === 'string') {
+    const content = await readFile(value)
+    return {
+      value: new Blob([content]),
+      fileName: basename(value) || 'upload.bin',
+    }
+  }
+  if (value instanceof Blob) {
+    return { value, fileName: 'upload.bin' }
+  }
+  if (value instanceof ArrayBuffer) {
+    return {
+      value: new Blob([new Uint8Array(value)]),
+      fileName: 'upload.bin',
+    }
+  }
+  if (ArrayBuffer.isView(value)) {
+    const bytes = new Uint8Array(value.byteLength)
+    bytes.set(new Uint8Array(value.buffer, value.byteOffset, value.byteLength))
+    return {
+      value: new Blob([bytes]),
+      fileName: 'upload.bin',
+    }
+  }
+  throw new TypeError('Unsupported multipart file value')
+}
+
+function toMultipartText(value: unknown): string {
+  if (typeof value === 'boolean') {
+    return value ? 'true' : 'false'
+  }
+  return String(value)
+}
+
 class HTTP {
   private cli: AxiosInstance
   private lastMeta?: ResponseMeta
@@ -60,19 +99,26 @@ class HTTP {
     method: string,
     path: string,
     params?: Record<string, unknown>,
-    body?: Record<string, unknown>,
+    body?: RequestBodyPayload,
     headers?: Record<string, string>,
     responseKind: 'json' | 'text' | 'arrayBuffer' = 'json',
     requestOptions?: RequestOptions,
     ) {
     try {
       const finalParams = applyCacheControl(method, params, this.disableCache, requestOptions?.disableCache)
+      const isFormDataBody = typeof FormData !== 'undefined' && body instanceof FormData
+      const requestHeaders: Record<string, string> = {
+        ...(headers ?? {}),
+      }
+      if (!isFormDataBody && body !== undefined && requestHeaders['Content-Type'] === undefined) {
+        requestHeaders['Content-Type'] = 'application/json'
+      }
       const res = await this.cli.request({
         method,
         url: path,
         params: finalParams,
         data: body,
-        headers,
+        headers: Object.keys(requestHeaders).length > 0 ? requestHeaders : undefined,
         responseType: responseKind === 'arrayBuffer' ? 'arraybuffer' : responseKind,
       })
       this.lastMeta = extractMetaFromHeaders(res.headers)
@@ -338,7 +384,7 @@ export interface PostImageCompressArgs {
   /** 输出图片格式，可以是 'png' 或 'jpeg'。 */
   format?: string;
   /** 支持PNG, JPG, JPEG等常见图片格式。文件大小不超过15MB。 */
-  file: string;
+  file: NodeUpload;
 }
 export type PostImageDecodeResponse =
   ArrayBuffer
@@ -372,7 +418,7 @@ export interface PostImageDecodeArgs {
   /** 背景色。可以传 `black`、`white` 或 `#RRGGBB`，不传时默认是 `black`。 */
   background?: string;
   /** 要处理的图片文件。这个接口适合直接上传 JPG、JPEG、PNG、WebP、BMP 等常见格式。 */
-  file?: string;
+  file?: NodeUpload;
   /** 要处理的图片链接。适合不方便直接上传文件时使用。 */
   url?: string;
 }
@@ -402,7 +448,7 @@ export interface PostImageMotouArgs {
   /** Same as `bgColor`. Kept for compatibility. */
   "bg_color"?: string;
   /** 上传的图片文件。支持JPG、PNG、GIF等常见格式。 */
-  file?: string;
+  file?: NodeUpload;
   /** 图片的URL地址。如果提供此项，将优先使用该URL的图片。 */
   imageUrl?: string;
   /** Same as `imageUrl`. Kept for compatibility. */
@@ -418,7 +464,7 @@ export interface PostImageNsfwArgs {
   /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
   _t?: string | number;
   /** 要检测的图片文件。支持 JPG、JPEG、PNG、GIF、WebP 格式，最大 20MB。 */
-  file?: string;
+  file?: NodeUpload;
   /** 图片的 URL 地址。如果同时提供 file 和 url，将优先使用 file。 */
   url?: string;
 }
@@ -436,7 +482,7 @@ export interface PostImageOcrArgs {
   /** Same as `enableCls`. Kept for compatibility. */
   "enable_cls"?: string;
   /** 待识别的图片文件。支持 JPG、JPEG、PNG、BMP、GIF、WebP 等常见格式，最大不超过 10MB。请勿与 url 或 image_base64 同时提交。 */
-  file?: string;
+  file?: NodeUpload;
   /** 图片的 Base64 字符串。可以传完整 Data URI，也可以只传纯 Base64 内容。请勿与 file 或 url 同时提交。 */
   imageBase64?: string;
   /** Same as `imageBase64`. Kept for compatibility. */
@@ -492,7 +538,7 @@ export interface PostImageSvgArgs {
   /** JPEG 图像的压缩质量（1-100）。仅当 `format` 为 `jpeg` 或 `jpg` 时有效。 */
   quality?: number;
   /** 支持SVG文件 */
-  file?: string;
+  file?: NodeUpload;
 }
 export type GetHistoryProgrammerResponse =
   Internal.GetHistoryProgrammer200Response
@@ -1660,9 +1706,13 @@ export class ClipzyZaiXianJianTieBanApi {
     const argCacheBuster = args._t
     if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argCompressedData = args.compressedData
-    if (argCompressedData !== undefined) body["compressedData"] = argCompressedData
+    if (argCompressedData !== undefined) {
+      body["compressedData"] = argCompressedData
+    }
     const argTtl = args.ttl
-    if (argTtl !== undefined) body["ttl"] = argTtl
+    if (argTtl !== undefined) {
+      body["ttl"] = argTtl
+    }
     let requestPath = '/api/v1/api/store'
     const responseKind = 'json'
     return await this.http.request(
@@ -1715,7 +1765,9 @@ export class ConvertApi {
     const argCacheBuster = args._t
     if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argContent = args.content
-    if (argContent !== undefined) body["content"] = argContent
+    if (argContent !== undefined) {
+      body["content"] = argContent
+    }
     let requestPath = '/api/v1/convert/json'
     const responseKind = 'json'
     return await this.http.request(
@@ -2071,7 +2123,7 @@ export class ImageApi {
   ): Promise<PostImageCompressResponse> {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
-    const body: Record<string, unknown> = {}
+    const body = new FormData()
     let disableCache: boolean | undefined
     disableCache = args.disableCache ?? args["disable_cache"]
     const argCacheBuster = args._t
@@ -2081,14 +2133,17 @@ export class ImageApi {
     const argFormat = args.format
     if (argFormat !== undefined) query["format"] = argFormat
     const argFile = args.file
-    if (argFile !== undefined) body["file"] = argFile
+    if (argFile !== undefined) {
+      const multipartPartFile = await toNodeFilePart(argFile)
+      body.append("file", multipartPartFile.value, multipartPartFile.fileName)
+    }
     let requestPath = '/api/v1/image/compress'
     const responseKind = 'arrayBuffer'
     return await this.http.request(
       'POST',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
-      Object.keys(body).length > 0 ? body : undefined,
+      body,
       Object.keys(headers).length > 0 ? headers : undefined,
       responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
@@ -2100,7 +2155,7 @@ export class ImageApi {
   ): Promise<PostImageDecodeResponse> {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
-    const body: Record<string, unknown> = {}
+    const body = new FormData()
     let disableCache: boolean | undefined
     disableCache = args.disableCache ?? args["disable_cache"]
     const argCacheBuster = args._t
@@ -2122,16 +2177,21 @@ export class ImageApi {
     const argBackground = args.background
     if (argBackground !== undefined) query["background"] = argBackground
     const argFile = args.file
-    if (argFile !== undefined) body["file"] = argFile
+    if (argFile !== undefined) {
+      const multipartPartFile = await toNodeFilePart(argFile)
+      body.append("file", multipartPartFile.value, multipartPartFile.fileName)
+    }
     const argUrl = args.url
-    if (argUrl !== undefined) body["url"] = argUrl
+    if (argUrl !== undefined) {
+      body.append("url", toMultipartText(argUrl))
+    }
     let requestPath = '/api/v1/image/decode'
     const responseKind = 'arrayBuffer'
     return await this.http.request(
       'POST',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
-      Object.keys(body).length > 0 ? body : undefined,
+      body,
       Object.keys(headers).length > 0 ? headers : undefined,
       responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
@@ -2149,7 +2209,9 @@ export class ImageApi {
     const argCacheBuster = args._t
     if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argImageData = args.imageData
-    if (argImageData !== undefined) body["imageData"] = argImageData
+    if (argImageData !== undefined) {
+      body["imageData"] = argImageData
+    }
     let requestPath = '/api/v1/image/frombase64'
     const responseKind = 'json'
     return await this.http.request(
@@ -2168,24 +2230,31 @@ export class ImageApi {
   ): Promise<PostImageMotouResponse> {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
-    const body: Record<string, unknown> = {}
+    const body = new FormData()
     let disableCache: boolean | undefined
     disableCache = args.disableCache ?? args["disable_cache"]
     const argCacheBuster = args._t
     if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argBgColor = args.bgColor ?? args["bg_color"]
-    if (argBgColor !== undefined) body["bg_color"] = argBgColor
+    if (argBgColor !== undefined) {
+      body.append("bg_color", toMultipartText(argBgColor))
+    }
     const argFile = args.file
-    if (argFile !== undefined) body["file"] = argFile
+    if (argFile !== undefined) {
+      const multipartPartFile = await toNodeFilePart(argFile)
+      body.append("file", multipartPartFile.value, multipartPartFile.fileName)
+    }
     const argImageUrl = args.imageUrl ?? args["image_url"]
-    if (argImageUrl !== undefined) body["image_url"] = argImageUrl
+    if (argImageUrl !== undefined) {
+      body.append("image_url", toMultipartText(argImageUrl))
+    }
     let requestPath = '/api/v1/image/motou'
     const responseKind = 'arrayBuffer'
     return await this.http.request(
       'POST',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
-      Object.keys(body).length > 0 ? body : undefined,
+      body,
       Object.keys(headers).length > 0 ? headers : undefined,
       responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
@@ -2197,22 +2266,27 @@ export class ImageApi {
   ): Promise<PostImageNsfwResponse> {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
-    const body: Record<string, unknown> = {}
+    const body = new FormData()
     let disableCache: boolean | undefined
     disableCache = args.disableCache ?? args["disable_cache"]
     const argCacheBuster = args._t
     if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argFile = args.file
-    if (argFile !== undefined) body["file"] = argFile
+    if (argFile !== undefined) {
+      const multipartPartFile = await toNodeFilePart(argFile)
+      body.append("file", multipartPartFile.value, multipartPartFile.fileName)
+    }
     const argUrl = args.url
-    if (argUrl !== undefined) body["url"] = argUrl
+    if (argUrl !== undefined) {
+      body.append("url", toMultipartText(argUrl))
+    }
     let requestPath = '/api/v1/image/nsfw'
     const responseKind = 'json'
     return await this.http.request(
       'POST',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
-      Object.keys(body).length > 0 ? body : undefined,
+      body,
       Object.keys(headers).length > 0 ? headers : undefined,
       responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
@@ -2224,32 +2298,47 @@ export class ImageApi {
   ): Promise<PostImageOcrResponse> {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
-    const body: Record<string, unknown> = {}
+    const body = new FormData()
     let disableCache: boolean | undefined
     disableCache = args.disableCache ?? args["disable_cache"]
     const argCacheBuster = args._t
     if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argEnableCls = args.enableCls ?? args["enable_cls"]
-    if (argEnableCls !== undefined) body["enable_cls"] = argEnableCls
+    if (argEnableCls !== undefined) {
+      body.append("enable_cls", toMultipartText(argEnableCls))
+    }
     const argFile = args.file
-    if (argFile !== undefined) body["file"] = argFile
+    if (argFile !== undefined) {
+      const multipartPartFile = await toNodeFilePart(argFile)
+      body.append("file", multipartPartFile.value, multipartPartFile.fileName)
+    }
     const argImageBase64 = args.imageBase64 ?? args["image_base64"]
-    if (argImageBase64 !== undefined) body["image_base64"] = argImageBase64
+    if (argImageBase64 !== undefined) {
+      body.append("image_base64", toMultipartText(argImageBase64))
+    }
     const argImageName = args.imageName ?? args["image_name"]
-    if (argImageName !== undefined) body["image_name"] = argImageName
+    if (argImageName !== undefined) {
+      body.append("image_name", toMultipartText(argImageName))
+    }
     const argNeedLocation = args.needLocation ?? args["need_location"]
-    if (argNeedLocation !== undefined) body["need_location"] = argNeedLocation
+    if (argNeedLocation !== undefined) {
+      body.append("need_location", toMultipartText(argNeedLocation))
+    }
     const argReturnMarkdown = args.returnMarkdown ?? args["return_markdown"]
-    if (argReturnMarkdown !== undefined) body["return_markdown"] = argReturnMarkdown
+    if (argReturnMarkdown !== undefined) {
+      body.append("return_markdown", toMultipartText(argReturnMarkdown))
+    }
     const argUrl = args.url
-    if (argUrl !== undefined) body["url"] = argUrl
+    if (argUrl !== undefined) {
+      body.append("url", toMultipartText(argUrl))
+    }
     let requestPath = '/api/v1/image/ocr'
     const responseKind = 'json'
     return await this.http.request(
       'POST',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
-      Object.keys(body).length > 0 ? body : undefined,
+      body,
       Object.keys(headers).length > 0 ? headers : undefined,
       responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
@@ -2267,9 +2356,13 @@ export class ImageApi {
     const argCacheBuster = args._t
     if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argBottomText = args.bottomText ?? args["bottom_text"]
-    if (argBottomText !== undefined) body["bottom_text"] = argBottomText
+    if (argBottomText !== undefined) {
+      body["bottom_text"] = argBottomText
+    }
     const argTopText = args.topText ?? args["top_text"]
-    if (argTopText !== undefined) body["top_text"] = argTopText
+    if (argTopText !== undefined) {
+      body["top_text"] = argTopText
+    }
     let requestPath = '/api/v1/image/speechless'
     const responseKind = 'arrayBuffer'
     return await this.http.request(
@@ -2288,7 +2381,7 @@ export class ImageApi {
   ): Promise<PostImageSvgResponse> {
     const query: Record<string, unknown> = {}
     const headers: Record<string, string> = {}
-    const body: Record<string, unknown> = {}
+    const body = new FormData()
     let disableCache: boolean | undefined
     disableCache = args.disableCache ?? args["disable_cache"]
     const argCacheBuster = args._t
@@ -2302,14 +2395,17 @@ export class ImageApi {
     const argQuality = args.quality
     if (argQuality !== undefined) query["quality"] = argQuality
     const argFile = args.file
-    if (argFile !== undefined) body["file"] = argFile
+    if (argFile !== undefined) {
+      const multipartPartFile = await toNodeFilePart(argFile)
+      body.append("file", multipartPartFile.value, multipartPartFile.fileName)
+    }
     let requestPath = '/api/v1/image/svg'
     const responseKind = 'arrayBuffer'
     return await this.http.request(
       'POST',
       requestPath,
       Object.keys(query).length > 0 ? query : undefined,
-      Object.keys(body).length > 0 ? body : undefined,
+      body,
       Object.keys(headers).length > 0 ? headers : undefined,
       responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
@@ -2740,11 +2836,17 @@ export class MiscApi {
     const argCacheBuster = args._t
     if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argEndDate = args.endDate ?? args["end_date"]
-    if (argEndDate !== undefined) body["end_date"] = argEndDate
+    if (argEndDate !== undefined) {
+      body["end_date"] = argEndDate
+    }
     const argFormat = args.format
-    if (argFormat !== undefined) body["format"] = argFormat
+    if (argFormat !== undefined) {
+      body["format"] = argFormat
+    }
     const argStartDate = args.startDate ?? args["start_date"]
-    if (argStartDate !== undefined) body["start_date"] = argStartDate
+    if (argStartDate !== undefined) {
+      body["start_date"] = argStartDate
+    }
     let requestPath = '/api/v1/misc/date-diff'
     const responseKind = 'json'
     return await this.http.request(
@@ -3132,7 +3234,9 @@ export class RandomApi {
     const argCacheBuster = args._t
     if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argQuestion = args.question
-    if (argQuestion !== undefined) body["question"] = argQuestion
+    if (argQuestion !== undefined) {
+      body["question"] = argQuestion
+    }
     let requestPath = '/api/v1/answerbook/ask'
     const responseKind = 'json'
     return await this.http.request(
@@ -3490,11 +3594,17 @@ export class TextApi {
     const argCacheBuster = args._t
     if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argKey = args.key
-    if (argKey !== undefined) body["key"] = argKey
+    if (argKey !== undefined) {
+      body["key"] = argKey
+    }
     const argNonce = args.nonce
-    if (argNonce !== undefined) body["nonce"] = argNonce
+    if (argNonce !== undefined) {
+      body["nonce"] = argNonce
+    }
     const argText = args.text
-    if (argText !== undefined) body["text"] = argText
+    if (argText !== undefined) {
+      body["text"] = argText
+    }
     let requestPath = '/api/v1/text/aes/decrypt'
     const responseKind = 'json'
     return await this.http.request(
@@ -3519,15 +3629,25 @@ export class TextApi {
     const argCacheBuster = args._t
     if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argIv = args.iv
-    if (argIv !== undefined) body["iv"] = argIv
+    if (argIv !== undefined) {
+      body["iv"] = argIv
+    }
     const argKey = args.key
-    if (argKey !== undefined) body["key"] = argKey
+    if (argKey !== undefined) {
+      body["key"] = argKey
+    }
     const argMode = args.mode
-    if (argMode !== undefined) body["mode"] = argMode
+    if (argMode !== undefined) {
+      body["mode"] = argMode
+    }
     const argPadding = args.padding
-    if (argPadding !== undefined) body["padding"] = argPadding
+    if (argPadding !== undefined) {
+      body["padding"] = argPadding
+    }
     const argText = args.text
-    if (argText !== undefined) body["text"] = argText
+    if (argText !== undefined) {
+      body["text"] = argText
+    }
     let requestPath = '/api/v1/text/aes/decrypt-advanced'
     const responseKind = 'json'
     return await this.http.request(
@@ -3552,9 +3672,13 @@ export class TextApi {
     const argCacheBuster = args._t
     if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argKey = args.key
-    if (argKey !== undefined) body["key"] = argKey
+    if (argKey !== undefined) {
+      body["key"] = argKey
+    }
     const argText = args.text
-    if (argText !== undefined) body["text"] = argText
+    if (argText !== undefined) {
+      body["text"] = argText
+    }
     let requestPath = '/api/v1/text/aes/encrypt'
     const responseKind = 'json'
     return await this.http.request(
@@ -3579,17 +3703,29 @@ export class TextApi {
     const argCacheBuster = args._t
     if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argIv = args.iv
-    if (argIv !== undefined) body["iv"] = argIv
+    if (argIv !== undefined) {
+      body["iv"] = argIv
+    }
     const argKey = args.key
-    if (argKey !== undefined) body["key"] = argKey
+    if (argKey !== undefined) {
+      body["key"] = argKey
+    }
     const argMode = args.mode
-    if (argMode !== undefined) body["mode"] = argMode
+    if (argMode !== undefined) {
+      body["mode"] = argMode
+    }
     const argOutputFormat = args.outputFormat ?? args["output_format"]
-    if (argOutputFormat !== undefined) body["output_format"] = argOutputFormat
+    if (argOutputFormat !== undefined) {
+      body["output_format"] = argOutputFormat
+    }
     const argPadding = args.padding
-    if (argPadding !== undefined) body["padding"] = argPadding
+    if (argPadding !== undefined) {
+      body["padding"] = argPadding
+    }
     const argText = args.text
-    if (argText !== undefined) body["text"] = argText
+    if (argText !== undefined) {
+      body["text"] = argText
+    }
     let requestPath = '/api/v1/text/aes/encrypt-advanced'
     const responseKind = 'json'
     return await this.http.request(
@@ -3614,7 +3750,9 @@ export class TextApi {
     const argCacheBuster = args._t
     if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argText = args.text
-    if (argText !== undefined) body["text"] = argText
+    if (argText !== undefined) {
+      body["text"] = argText
+    }
     let requestPath = '/api/v1/text/analyze'
     const responseKind = 'json'
     return await this.http.request(
@@ -3639,7 +3777,9 @@ export class TextApi {
     const argCacheBuster = args._t
     if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argText = args.text
-    if (argText !== undefined) body["text"] = argText
+    if (argText !== undefined) {
+      body["text"] = argText
+    }
     let requestPath = '/api/v1/text/base64/decode'
     const responseKind = 'json'
     return await this.http.request(
@@ -3664,7 +3804,9 @@ export class TextApi {
     const argCacheBuster = args._t
     if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argText = args.text
-    if (argText !== undefined) body["text"] = argText
+    if (argText !== undefined) {
+      body["text"] = argText
+    }
     let requestPath = '/api/v1/text/base64/encode'
     const responseKind = 'json'
     return await this.http.request(
@@ -3689,13 +3831,21 @@ export class TextApi {
     const argCacheBuster = args._t
     if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argFrom = args.from
-    if (argFrom !== undefined) body["from"] = argFrom
+    if (argFrom !== undefined) {
+      body["from"] = argFrom
+    }
     const argOptions = args.options
-    if (argOptions !== undefined) body["options"] = argOptions
+    if (argOptions !== undefined) {
+      body["options"] = argOptions
+    }
     const argText = args.text
-    if (argText !== undefined) body["text"] = argText
+    if (argText !== undefined) {
+      body["text"] = argText
+    }
     const argTo = args.to
-    if (argTo !== undefined) body["to"] = argTo
+    if (argTo !== undefined) {
+      body["to"] = argTo
+    }
     let requestPath = '/api/v1/text/convert'
     const responseKind = 'json'
     return await this.http.request(
@@ -3720,11 +3870,17 @@ export class TextApi {
     const argCacheBuster = args._t
     if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argFormat = args.format
-    if (argFormat !== undefined) body["format"] = argFormat
+    if (argFormat !== undefined) {
+      body["format"] = argFormat
+    }
     const argSanitize = args.sanitize
-    if (argSanitize !== undefined) body["sanitize"] = argSanitize
+    if (argSanitize !== undefined) {
+      body["sanitize"] = argSanitize
+    }
     const argText = args.text
-    if (argText !== undefined) body["text"] = argText
+    if (argText !== undefined) {
+      body["text"] = argText
+    }
     let requestPath = '/api/v1/text/markdown-to-html'
     const responseKind = 'json'
     return await this.http.request(
@@ -3749,11 +3905,17 @@ export class TextApi {
     const argCacheBuster = args._t
     if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argPaperSize = args.paperSize ?? args["paper_size"]
-    if (argPaperSize !== undefined) body["paper_size"] = argPaperSize
+    if (argPaperSize !== undefined) {
+      body["paper_size"] = argPaperSize
+    }
     const argText = args.text
-    if (argText !== undefined) body["text"] = argText
+    if (argText !== undefined) {
+      body["text"] = argText
+    }
     const argTheme = args.theme
-    if (argTheme !== undefined) body["theme"] = argTheme
+    if (argTheme !== undefined) {
+      body["theme"] = argTheme
+    }
     let requestPath = '/api/v1/text/markdown-to-pdf'
     const responseKind = 'arrayBuffer'
     return await this.http.request(
@@ -3778,7 +3940,9 @@ export class TextApi {
     const argCacheBuster = args._t
     if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argText = args.text
-    if (argText !== undefined) body["text"] = argText
+    if (argText !== undefined) {
+      body["text"] = argText
+    }
     let requestPath = '/api/v1/text/md5'
     const responseKind = 'json'
     return await this.http.request(
@@ -3803,9 +3967,13 @@ export class TextApi {
     const argCacheBuster = args._t
     if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argHash = args.hash
-    if (argHash !== undefined) body["hash"] = argHash
+    if (argHash !== undefined) {
+      body["hash"] = argHash
+    }
     const argText = args.text
-    if (argText !== undefined) body["text"] = argText
+    if (argText !== undefined) {
+      body["text"] = argText
+    }
     let requestPath = '/api/v1/text/md5/verify'
     const responseKind = 'json'
     return await this.http.request(
@@ -3855,15 +4023,25 @@ export class TranslateApi {
     const argTargetLang = args.targetLang ?? args["target_lang"]
     if (argTargetLang !== undefined) query["target_lang"] = argTargetLang
     const argContext = args.context
-    if (argContext !== undefined) body["context"] = argContext
+    if (argContext !== undefined) {
+      body["context"] = argContext
+    }
     const argPreserveFormat = args.preserveFormat ?? args["preserve_format"]
-    if (argPreserveFormat !== undefined) body["preserve_format"] = argPreserveFormat
+    if (argPreserveFormat !== undefined) {
+      body["preserve_format"] = argPreserveFormat
+    }
     const argSourceLang = args.sourceLang ?? args["source_lang"]
-    if (argSourceLang !== undefined) body["source_lang"] = argSourceLang
+    if (argSourceLang !== undefined) {
+      body["source_lang"] = argSourceLang
+    }
     const argStyle = args.style
-    if (argStyle !== undefined) body["style"] = argStyle
+    if (argStyle !== undefined) {
+      body["style"] = argStyle
+    }
     const argText = args.text
-    if (argText !== undefined) body["text"] = argText
+    if (argText !== undefined) {
+      body["text"] = argText
+    }
     let requestPath = '/api/v1/ai/translate'
     const responseKind = 'json'
     return await this.http.request(
@@ -3888,13 +4066,21 @@ export class TranslateApi {
     const argCacheBuster = args._t
     if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argFromLang = args.fromLang ?? args["from_lang"]
-    if (argFromLang !== undefined) body["from_lang"] = argFromLang
+    if (argFromLang !== undefined) {
+      body["from_lang"] = argFromLang
+    }
     const argQuery = args.query
-    if (argQuery !== undefined) body["query"] = argQuery
+    if (argQuery !== undefined) {
+      body["query"] = argQuery
+    }
     const argToLang = args.toLang ?? args["to_lang"]
-    if (argToLang !== undefined) body["to_lang"] = argToLang
+    if (argToLang !== undefined) {
+      body["to_lang"] = argToLang
+    }
     const argTone = args.tone
-    if (argTone !== undefined) body["tone"] = argTone
+    if (argTone !== undefined) {
+      body["tone"] = argTone
+    }
     let requestPath = '/api/v1/translate/stream'
     const responseKind = 'json'
     return await this.http.request(
@@ -3921,7 +4107,9 @@ export class TranslateApi {
     const argToLang = args.toLang ?? args["to_lang"]
     if (argToLang !== undefined) query["to_lang"] = argToLang
     const argText = args.text
-    if (argText !== undefined) body["text"] = argText
+    if (argText !== undefined) {
+      body["text"] = argText
+    }
     let requestPath = '/api/v1/translate/text'
     const responseKind = 'json'
     return await this.http.request(
@@ -4077,7 +4265,9 @@ export class MinGanCiShiBieApi {
     const argCacheBuster = args._t
     if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argKeywords = args.keywords
-    if (argKeywords !== undefined) body["keywords"] = argKeywords
+    if (argKeywords !== undefined) {
+      body["keywords"] = argKeywords
+    }
     let requestPath = '/api/v1/sensitive-word/analyze'
     const responseKind = 'json'
     return await this.http.request(
@@ -4102,7 +4292,9 @@ export class MinGanCiShiBieApi {
     const argCacheBuster = args._t
     if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argText = args.text
-    if (argText !== undefined) body["text"] = argText
+    if (argText !== undefined) {
+      body["text"] = argText
+    }
     let requestPath = '/api/v1/text/profanitycheck'
     const responseKind = 'json'
     return await this.http.request(
@@ -4150,17 +4342,29 @@ export class ZhiNengSouSuoApi {
     const argCacheBuster = args._t
     if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argFetchFull = args.fetchFull ?? args["fetch_full"]
-    if (argFetchFull !== undefined) body["fetch_full"] = argFetchFull
+    if (argFetchFull !== undefined) {
+      body["fetch_full"] = argFetchFull
+    }
     const argFiletype = args.filetype
-    if (argFiletype !== undefined) body["filetype"] = argFiletype
+    if (argFiletype !== undefined) {
+      body["filetype"] = argFiletype
+    }
     const argQuery = args.query
-    if (argQuery !== undefined) body["query"] = argQuery
+    if (argQuery !== undefined) {
+      body["query"] = argQuery
+    }
     const argSite = args.site
-    if (argSite !== undefined) body["site"] = argSite
+    if (argSite !== undefined) {
+      body["site"] = argSite
+    }
     const argSort = args.sort
-    if (argSort !== undefined) body["sort"] = argSort
+    if (argSort !== undefined) {
+      body["sort"] = argSort
+    }
     const argTimeRange = args.timeRange ?? args["time_range"]
-    if (argTimeRange !== undefined) body["time_range"] = argTimeRange
+    if (argTimeRange !== undefined) {
+      body["time_range"] = argTimeRange
+    }
     let requestPath = '/api/v1/search/aggregate'
     const responseKind = 'json'
     return await this.http.request(
