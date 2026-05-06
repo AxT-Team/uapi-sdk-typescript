@@ -24,5 +24,29 @@
   "devDependencies": {
     "typescript": "^5.4.0",
     "@types/node": "^20.11.0"
-  }
+  },
+  "description": "Official TypeScript / Node.js SDK for UAPI / uapis.cn — a strongly-typed wrapper around 100+ free public-API endpoints (network, text, image, social, translation, search). Generated from the live OpenAPI 3.1 spec.",
+  "homepage": "https://uapis.cn/docs/sdk/typescript",
+  "bugs": {
+    "url": "https://github.com/AxT-Team/uapi-sdk-typescript/issues"
+  },
+  "author": "UAPI <dev@uapis.cn>",
+  "license": "MIT",
+  "keywords": [
+    "uapi",
+    "uapis",
+    "uapis.cn",
+    "sdk",
+    "typescript",
+    "nodejs",
+    "public-api",
+    "free-api",
+    "rest",
+    "rest-api",
+    "openapi",
+    "axios",
+    "client",
+    "agent",
+    "mcp"
+  ]
 }
