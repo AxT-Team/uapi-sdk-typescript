@@ -5,14 +5,14 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**domain** | **string** | 来源域名 | [optional] [default to undefined]
+**position** | **number** | 原始排名位置 | [optional] [default to undefined]
+**publish_time** | **string** | 发布时间（ISO 8601 格式） | [optional] [default to undefined]
+**score** | **number** | 综合得分（0-1，已经过排序） | [optional] [default to undefined]
+**snippet** | **string** | 结果摘要/描述 | [optional] [default to undefined]
+**source** | **string** |  | [optional] [default to undefined]
 **title** | **string** | 结果标题 | [optional] [default to undefined]
 **url** | **string** | 结果链接 | [optional] [default to undefined]
-**snippet** | **string** | 结果摘要/描述 | [optional] [default to undefined]
-**domain** | **string** | 来源域名 | [optional] [default to undefined]
-**source** | **string** |  | [optional] [default to undefined]
-**position** | **number** | 原始排名位置 | [optional] [default to undefined]
-**score** | **number** | 综合得分（0-1，已经过排序） | [optional] [default to undefined]
-**publish_time** | **string** | 发布时间（ISO 8601 格式） | [optional] [default to undefined]
 
 ## Example
 
@@ -20,14 +20,14 @@ Name | Type | Description | Notes
 import { PostSearchAggregate200ResponseResultsInner } from 'uapi-sdk-typescript';
 
 const instance: PostSearchAggregate200ResponseResultsInner = {
+    domain,
+    position,
+    publish_time,
+    score,
+    snippet,
+    source,
     title,
     url,
-    snippet,
-    domain,
-    source,
-    position,
-    score,
-    publish_time,
 };
 ```
 

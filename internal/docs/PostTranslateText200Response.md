@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**source_lang** | **string** | The source language detected. | [optional] [default to undefined]
-**translated_text** | **string** | The translated text. | [optional] [default to undefined]
+**text** | **string** | 原始文本。 | [optional] [default to undefined]
+**translate** | **string** | 翻译后的文本。 | [optional] [default to undefined]
 
 ## Example
 
@@ -14,8 +14,8 @@ Name | Type | Description | Notes
 import { PostTranslateText200Response } from 'uapi-sdk-typescript';
 
 const instance: PostTranslateText200Response = {
-    source_lang,
-    translated_text,
+    text,
+    translate,
 };
 ```
 

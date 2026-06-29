@@ -5,10 +5,10 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**k** | **string** |  | [optional] [default to undefined]
-**label** | **string** |  | [optional] [default to undefined]
 **category** | **string** |  | [optional] [default to undefined]
 **confidence** | **number** |  | [optional] [default to undefined]
+**k** | **string** |  | [optional] [default to undefined]
+**label** | **string** |  | [optional] [default to undefined]
 
 ## Example
 
@@ -16,10 +16,10 @@ Name | Type | Description | Notes
 import { PostSensitiveWordAnalyze200ResponseResultsInner } from 'uapi-sdk-typescript';
 
 const instance: PostSensitiveWordAnalyze200ResponseResultsInner = {
-    k,
-    label,
     category,
     confidence,
+    k,
+    label,
 };
 ```
 

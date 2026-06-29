@@ -5,10 +5,10 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**status** | **string** |  | [optional] [default to undefined]
-**original_text** | **string** |  | [optional] [default to undefined]
-**masked_text** | **string** |  | [optional] [default to undefined]
 **forbidden_words** | **Array&lt;string&gt;** |  | [optional] [default to undefined]
+**masked_text** | **string** |  | [optional] [default to undefined]
+**original_text** | **string** |  | [optional] [default to undefined]
+**status** | **string** |  | [optional] [default to undefined]
 
 ## Example
 
@@ -16,10 +16,10 @@ Name | Type | Description | Notes
 import { PostSensitiveWordQuickCheck200Response } from 'uapi-sdk-typescript';
 
 const instance: PostSensitiveWordQuickCheck200Response = {
-    status,
-    original_text,
-    masked_text,
     forbidden_words,
+    masked_text,
+    original_text,
+    status,
 };
 ```
 

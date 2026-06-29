@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**question** | **string** |  | [optional] [default to undefined]
 **answer** | **string** |  | [optional] [default to undefined]
+**question** | **string** |  | [optional] [default to undefined]
 
 ## Example
 
@@ -14,8 +14,8 @@ Name | Type | Description | Notes
 import { GetAnswerbookAsk200Response } from 'uapi-sdk-typescript';
 
 const instance: GetAnswerbookAsk200Response = {
-    question,
     answer,
+    question,
 };
 ```
 

@@ -5,10 +5,10 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**message** | **string** |  | [optional] [default to undefined]
 **data** | [**PostAiTranslate200ResponseData**](PostAiTranslate200ResponseData.md) |  | [optional] [default to undefined]
-**performance** | [**PostAiTranslate200ResponsePerformance**](PostAiTranslate200ResponsePerformance.md) |  | [optional] [default to undefined]
 **is_batch** | **boolean** | 是否为批量翻译请求。 | [optional] [default to undefined]
+**message** | **string** |  | [optional] [default to undefined]
+**performance** | [**PostAiTranslate200ResponsePerformance**](PostAiTranslate200ResponsePerformance.md) |  | [optional] [default to undefined]
 
 ## Example
 
@@ -16,10 +16,10 @@ Name | Type | Description | Notes
 import { PostAiTranslate200Response } from 'uapi-sdk-typescript';
 
 const instance: PostAiTranslate200Response = {
-    message,
     data,
-    performance,
     is_batch,
+    message,
+    performance,
 };
 ```
 

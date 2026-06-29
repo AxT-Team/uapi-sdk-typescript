@@ -6,10 +6,10 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**height** | **number** |  | [optional] [default to undefined]
 **left** | **number** |  | [optional] [default to undefined]
 **top** | **number** |  | [optional] [default to undefined]
 **width** | **number** |  | [optional] [default to undefined]
-**height** | **number** |  | [optional] [default to undefined]
 
 ## Example
 
@@ -17,10 +17,10 @@ Name | Type | Description | Notes
 import { PostImageOcr200ResponseWordsResultInnerLocation } from 'uapi-sdk-typescript';
 
 const instance: PostImageOcr200ResponseWordsResultInnerLocation = {
+    height,
     left,
     top,
     width,
-    height,
 };
 ```
 

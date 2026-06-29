@@ -7,8 +7,8 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **endpoints** | [**Array&lt;GetStatusUsage200ResponseAnyOfEndpointsInner&gt;**](GetStatusUsage200ResponseAnyOfEndpointsInner.md) |  | [optional] [default to undefined]
 **unaggregated** | [**GetStatusUsage200ResponseAnyOfUnaggregated**](GetStatusUsage200ResponseAnyOfUnaggregated.md) |  | [optional] [default to undefined]
-**path** | **string** |  | [optional] [default to undefined]
 **count** | **number** |  | [optional] [default to undefined]
+**path** | **string** |  | [optional] [default to undefined]
 
 ## Example
 
@@ -18,8 +18,8 @@ import { GetStatusUsage200Response } from 'uapi-sdk-typescript';
 const instance: GetStatusUsage200Response = {
     endpoints,
     unaggregated,
-    path,
     count,
+    path,
 };
 ```
 

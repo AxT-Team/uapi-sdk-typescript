@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**error** | **string** | 错误描述 | [optional] [default to undefined]
 **code** | **string** |  | [optional] [default to undefined]
+**error** | **string** | 错误描述 | [optional] [default to undefined]
 
 ## Example
 
@@ -14,8 +14,8 @@ Name | Type | Description | Notes
 import { PostTranslateStream500Response } from 'uapi-sdk-typescript';
 
 const instance: PostTranslateStream500Response = {
-    error,
     code,
+    error,
 };
 ```
 

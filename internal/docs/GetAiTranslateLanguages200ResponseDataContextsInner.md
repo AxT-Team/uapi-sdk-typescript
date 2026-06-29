@@ -6,8 +6,8 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **code** | **string** |  | [optional] [default to undefined]
-**name** | **string** |  | [optional] [default to undefined]
 **description** | **string** |  | [optional] [default to undefined]
+**name** | **string** |  | [optional] [default to undefined]
 
 ## Example
 
@@ -16,8 +16,8 @@ import { GetAiTranslateLanguages200ResponseDataContextsInner } from 'uapi-sdk-ty
 
 const instance: GetAiTranslateLanguages200ResponseDataContextsInner = {
     code,
-    name,
     description,
+    name,
 };
 ```
 

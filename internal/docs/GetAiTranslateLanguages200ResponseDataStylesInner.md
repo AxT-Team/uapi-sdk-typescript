@@ -6,8 +6,8 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **code** | **string** |  | [optional] [default to undefined]
-**name** | **string** |  | [optional] [default to undefined]
 **description** | **string** |  | [optional] [default to undefined]
+**name** | **string** |  | [optional] [default to undefined]
 
 ## Example
 
@@ -16,8 +16,8 @@ import { GetAiTranslateLanguages200ResponseDataStylesInner } from 'uapi-sdk-type
 
 const instance: GetAiTranslateLanguages200ResponseDataStylesInner = {
     code,
-    name,
     description,
+    name,
 };
 ```
 

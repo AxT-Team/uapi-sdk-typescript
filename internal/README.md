@@ -47,7 +47,7 @@ npm install PATH_TO_GENERATED_PACKAGE --save
 
 ### Documentation for API Endpoints
 
-All URIs are relative to *https://uapis.cn/api/v1*
+All URIs are relative to *https://uapis.cn*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
@@ -56,16 +56,26 @@ Class | Method | HTTP request | Description
 *DefaultApi* | [**postSearchAggregate**](docs/DefaultApi.md#postsearchaggregate) | **POST** /search/aggregate | 智能搜索
 *DefaultApi* | [**postSensitiveWordAnalyze**](docs/DefaultApi.md#postsensitivewordanalyze) | **POST** /sensitive-word/analyze | 分析敏感词
 *DefaultApi* | [**postSensitiveWordQuickCheck**](docs/DefaultApi.md#postsensitivewordquickcheck) | **POST** /text/profanitycheck | 敏感词检测（快速）
+*AIGCApi* | [**postWatermarkDecode**](docs/AIGCApi.md#postwatermarkdecode) | **POST** /watermark/decode | 提取图片隐水印
+*AIGCApi* | [**postWatermarkEmbed**](docs/AIGCApi.md#postwatermarkembed) | **POST** /watermark/embed | 添加图片隐水印
+*AIGCApi* | [**postWatermarkLabel**](docs/AIGCApi.md#postwatermarklabel) | **POST** /watermark/label | 添加 AI 生成内容标识
+*AIGCApi* | [**postWatermarkProducerCode**](docs/AIGCApi.md#postwatermarkproducercode) | **POST** /watermark/producer-code | 生成 AIGC 服务提供者编码
 *ClipzyApi* | [**getClipzyGet**](docs/ClipzyApi.md#getclipzyget) | **GET** /api/get | 步骤2 (方法一): 获取加密数据
 *ClipzyApi* | [**getClipzyRaw**](docs/ClipzyApi.md#getclipzyraw) | **GET** /api/raw/{id} | 步骤2 (方法二): 获取原始文本
 *ClipzyApi* | [**postClipzyStore**](docs/ClipzyApi.md#postclipzystore) | **POST** /api/store | 步骤1：上传加密数据
 *ConvertApi* | [**getConvertUnixtime**](docs/ConvertApi.md#getconvertunixtime) | **GET** /convert/unixtime | 时间戳转换
 *ConvertApi* | [**postConvertJson**](docs/ConvertApi.md#postconvertjson) | **POST** /convert/json | JSON 格式化
 *DailyApi* | [**getDailyNewsImage**](docs/DailyApi.md#getdailynewsimage) | **GET** /daily/news-image | 每日新闻图
+*DailyApi* | [**getDailyWord**](docs/DailyApi.md#getdailyword) | **GET** /daily/word | 每日单词
+*DictionaryApi* | [**getDictionaryAudio**](docs/DictionaryApi.md#getdictionaryaudio) | **GET** /dictionary/audio | 单词发音
+*DictionaryApi* | [**getDictionaryLookup**](docs/DictionaryApi.md#getdictionarylookup) | **GET** /dictionary/lookup | 单词查询
 *GameApi* | [**getGameEpicFree**](docs/GameApi.md#getgameepicfree) | **GET** /game/epic-free | Epic 免费游戏
 *GameApi* | [**getGameMinecraftHistoryid**](docs/GameApi.md#getgameminecrafthistoryid) | **GET** /game/minecraft/historyid | 查询 MC 曾用名
+*GameApi* | [**getGameMinecraftMods**](docs/GameApi.md#getgameminecraftmods) | **GET** /game/minecraft/mods | 搜索 MC Mod/插件
 *GameApi* | [**getGameMinecraftServerstatus**](docs/GameApi.md#getgameminecraftserverstatus) | **GET** /game/minecraft/serverstatus | 查询 MC 服务器
 *GameApi* | [**getGameMinecraftUserinfo**](docs/GameApi.md#getgameminecraftuserinfo) | **GET** /game/minecraft/userinfo | 查询 MC 玩家
+*GameApi* | [**getGameMinecraftVersion**](docs/GameApi.md#getgameminecraftversion) | **GET** /game/minecraft/version | Minecraft 最新版本
+*GameApi* | [**getGameSteamServers**](docs/GameApi.md#getgamesteamservers) | **GET** /game/steam/servers | 查询 Steam 游戏服务器
 *GameApi* | [**getGameSteamSummary**](docs/GameApi.md#getgamesteamsummary) | **GET** /game/steam/summary | 查询 Steam 用户
 *ImageApi* | [**getAvatarGravatar**](docs/ImageApi.md#getavatargravatar) | **GET** /avatar/gravatar | 获取Gravatar头像
 *ImageApi* | [**getImageBingDaily**](docs/ImageApi.md#getimagebingdaily) | **GET** /image/bing-daily | 获取必应每日壁纸
@@ -87,6 +97,8 @@ Class | Method | HTTP request | Description
 *MiscApi* | [**getMiscHolidayCalendar**](docs/MiscApi.md#getmischolidaycalendar) | **GET** /misc/holiday-calendar | 查询节假日与万年历
 *MiscApi* | [**getMiscHotboard**](docs/MiscApi.md#getmischotboard) | **GET** /misc/hotboard | 查询热榜
 *MiscApi* | [**getMiscLunartime**](docs/MiscApi.md#getmisclunartime) | **GET** /misc/lunartime | 查询农历时间
+*MiscApi* | [**getMiscMovieBoxOffice**](docs/MiscApi.md#getmiscmovieboxoffice) | **GET** /misc/movie-box-office | 查询电影票房
+*MiscApi* | [**getMiscMovieRatingRank**](docs/MiscApi.md#getmiscmovieratingrank) | **GET** /misc/movie-rating-rank | 电影收视排行查询
 *MiscApi* | [**getMiscPhoneinfo**](docs/MiscApi.md#getmiscphoneinfo) | **GET** /misc/phoneinfo | 查询手机归属地
 *MiscApi* | [**getMiscRandomnumber**](docs/MiscApi.md#getmiscrandomnumber) | **GET** /misc/randomnumber | 随机数生成
 *MiscApi* | [**getMiscTimestamp**](docs/MiscApi.md#getmisctimestamp) | **GET** /misc/timestamp | 转换时间戳 (旧版，推荐使用/convert/unixtime)
@@ -94,6 +106,7 @@ Class | Method | HTTP request | Description
 *MiscApi* | [**getMiscTrackingDetect**](docs/MiscApi.md#getmisctrackingdetect) | **GET** /misc/tracking/detect | 识别快递公司
 *MiscApi* | [**getMiscTrackingQuery**](docs/MiscApi.md#getmisctrackingquery) | **GET** /misc/tracking/query | 查询快递物流信息
 *MiscApi* | [**getMiscWeather**](docs/MiscApi.md#getmiscweather) | **GET** /misc/weather | 查询天气
+*MiscApi* | [**getMiscWeatherHistory**](docs/MiscApi.md#getmiscweatherhistory) | **GET** /misc/weather/history | 查询历史天气
 *MiscApi* | [**getMiscWorldtime**](docs/MiscApi.md#getmiscworldtime) | **GET** /misc/worldtime | 查询世界时间
 *MiscApi* | [**postMiscDateDiff**](docs/MiscApi.md#postmiscdatediff) | **POST** /misc/date-diff | 计算两个日期之间的时间差值
 *NetworkApi* | [**getNetworkDns**](docs/NetworkApi.md#getnetworkdns) | **GET** /network/dns | 执行DNS解析查询
@@ -107,6 +120,7 @@ Class | Method | HTTP request | Description
 *NetworkApi* | [**getNetworkWhois**](docs/NetworkApi.md#getnetworkwhois) | **GET** /network/whois | 查询域名的WHOIS注册信息
 *NetworkApi* | [**getNetworkWxdomain**](docs/NetworkApi.md#getnetworkwxdomain) | **GET** /network/wxdomain | 检查域名在微信中的访问状态
 *PoemApi* | [**getSaying**](docs/PoemApi.md#getsaying) | **GET** /saying | 一言
+*PoemApi* | [**getSayingRandom**](docs/PoemApi.md#getsayingrandom) | **GET** /saying/random | 一言（随机/每日/场景/此刻）
 *RandomApi* | [**getAnswerbookAsk**](docs/RandomApi.md#getanswerbookask) | **GET** /answerbook/ask | 答案之书
 *RandomApi* | [**getRandomImage**](docs/RandomApi.md#getrandomimage) | **GET** /random/image | 随机图片
 *RandomApi* | [**getRandomString**](docs/RandomApi.md#getrandomstring) | **GET** /random/string | 随机字符串
@@ -148,6 +162,9 @@ Class | Method | HTTP request | Description
 ### Documentation For Models
 
  - [Base64](docs/Base64.md)
+ - [DailyRecommendMoment](docs/DailyRecommendMoment.md)
+ - [DailyRecommendMomentItem](docs/DailyRecommendMomentItem.md)
+ - [DailyRecommendMomentScene](docs/DailyRecommendMomentScene.md)
  - [FormatJson](docs/FormatJson.md)
  - [FormatJsonTrivia](docs/FormatJsonTrivia.md)
  - [FormatJsonTriviaOptionsInner](docs/FormatJsonTriviaOptionsInner.md)
@@ -171,6 +188,24 @@ Class | Method | HTTP request | Description
  - [GetConvertUnixtime400Response](docs/GetConvertUnixtime400Response.md)
  - [GetDailyNewsImage500Response](docs/GetDailyNewsImage500Response.md)
  - [GetDailyNewsImage502Response](docs/GetDailyNewsImage502Response.md)
+ - [GetDailyWord200Response](docs/GetDailyWord200Response.md)
+ - [GetDailyWord200ResponseWordsInner](docs/GetDailyWord200ResponseWordsInner.md)
+ - [GetDailyWord200ResponseWordsInnerExamplesInner](docs/GetDailyWord200ResponseWordsInnerExamplesInner.md)
+ - [GetDictionaryAudio404Response](docs/GetDictionaryAudio404Response.md)
+ - [GetDictionaryAudio502Response](docs/GetDictionaryAudio502Response.md)
+ - [GetDictionaryLookup200Response](docs/GetDictionaryLookup200Response.md)
+ - [GetDictionaryLookup200ResponseEntry](docs/GetDictionaryLookup200ResponseEntry.md)
+ - [GetDictionaryLookup200ResponseEntryDefinitionsInner](docs/GetDictionaryLookup200ResponseEntryDefinitionsInner.md)
+ - [GetDictionaryLookup200ResponseEntryEnglishDefinitionsInner](docs/GetDictionaryLookup200ResponseEntryEnglishDefinitionsInner.md)
+ - [GetDictionaryLookup200ResponseEntryExamplesInner](docs/GetDictionaryLookup200ResponseEntryExamplesInner.md)
+ - [GetDictionaryLookup200ResponseEntryPhonetics](docs/GetDictionaryLookup200ResponseEntryPhonetics.md)
+ - [GetDictionaryLookup200ResponseEntryPhoneticsUk](docs/GetDictionaryLookup200ResponseEntryPhoneticsUk.md)
+ - [GetDictionaryLookup200ResponseEntryPhoneticsUs](docs/GetDictionaryLookup200ResponseEntryPhoneticsUs.md)
+ - [GetDictionaryLookup200ResponseEntryPhrasesInner](docs/GetDictionaryLookup200ResponseEntryPhrasesInner.md)
+ - [GetDictionaryLookup200ResponseEntrySynonymsInner](docs/GetDictionaryLookup200ResponseEntrySynonymsInner.md)
+ - [GetDictionaryLookup200ResponseEntryWordFormsInner](docs/GetDictionaryLookup200ResponseEntryWordFormsInner.md)
+ - [GetDictionaryLookup404Response](docs/GetDictionaryLookup404Response.md)
+ - [GetDictionaryLookup502Response](docs/GetDictionaryLookup502Response.md)
  - [GetGameEpicFree200Response](docs/GetGameEpicFree200Response.md)
  - [GetGameEpicFree200ResponseDataInner](docs/GetGameEpicFree200ResponseDataInner.md)
  - [GetGameEpicFree500Response](docs/GetGameEpicFree500Response.md)
@@ -181,6 +216,8 @@ Class | Method | HTTP request | Description
  - [GetGameMinecraftHistoryid400Response](docs/GetGameMinecraftHistoryid400Response.md)
  - [GetGameMinecraftHistoryid404Response](docs/GetGameMinecraftHistoryid404Response.md)
  - [GetGameMinecraftHistoryid502Response](docs/GetGameMinecraftHistoryid502Response.md)
+ - [GetGameMinecraftMods200Response](docs/GetGameMinecraftMods200Response.md)
+ - [GetGameMinecraftMods200ResponseResultsInner](docs/GetGameMinecraftMods200ResponseResultsInner.md)
  - [GetGameMinecraftServerstatus200Response](docs/GetGameMinecraftServerstatus200Response.md)
  - [GetGameMinecraftServerstatus200ResponseOnlinePlayersInner](docs/GetGameMinecraftServerstatus200ResponseOnlinePlayersInner.md)
  - [GetGameMinecraftServerstatus400Response](docs/GetGameMinecraftServerstatus400Response.md)
@@ -190,6 +227,12 @@ Class | Method | HTTP request | Description
  - [GetGameMinecraftUserinfo400Response](docs/GetGameMinecraftUserinfo400Response.md)
  - [GetGameMinecraftUserinfo404Response](docs/GetGameMinecraftUserinfo404Response.md)
  - [GetGameMinecraftUserinfo502Response](docs/GetGameMinecraftUserinfo502Response.md)
+ - [GetGameMinecraftVersion200Response](docs/GetGameMinecraftVersion200Response.md)
+ - [GetGameMinecraftVersion200ResponseLatest](docs/GetGameMinecraftVersion200ResponseLatest.md)
+ - [GetGameMinecraftVersion200ResponseVersionsInner](docs/GetGameMinecraftVersion200ResponseVersionsInner.md)
+ - [GetGameMinecraftVersion503Response](docs/GetGameMinecraftVersion503Response.md)
+ - [GetGameSteamServers200Response](docs/GetGameSteamServers200Response.md)
+ - [GetGameSteamServers200ResponseServersInner](docs/GetGameSteamServers200ResponseServersInner.md)
  - [GetGameSteamSummary200Response](docs/GetGameSteamSummary200Response.md)
  - [GetGameSteamSummary400Response](docs/GetGameSteamSummary400Response.md)
  - [GetGameSteamSummary401Response](docs/GetGameSteamSummary401Response.md)
@@ -206,6 +249,8 @@ Class | Method | HTTP request | Description
  - [GetGithubUser200ResponseActivityContributionCalendarWeeksInnerContributionDaysInner](docs/GetGithubUser200ResponseActivityContributionCalendarWeeksInnerContributionDaysInner.md)
  - [GetGithubUser200ResponseActivityTimelineInner](docs/GetGithubUser200ResponseActivityTimelineInner.md)
  - [GetGithubUser200ResponseOrganizationsInner](docs/GetGithubUser200ResponseOrganizationsInner.md)
+ - [GetGithubUser200ResponsePinnedRepositoriesInner](docs/GetGithubUser200ResponsePinnedRepositoriesInner.md)
+ - [GetGithubUser200ResponseRepositoriesInner](docs/GetGithubUser200ResponseRepositoriesInner.md)
  - [GetGithubUser400Response](docs/GetGithubUser400Response.md)
  - [GetGithubUser400ResponseOneOf](docs/GetGithubUser400ResponseOneOf.md)
  - [GetGithubUser400ResponseOneOf1](docs/GetGithubUser400ResponseOneOf1.md)
@@ -214,9 +259,9 @@ Class | Method | HTTP request | Description
  - [GetHistoryProgrammer200Response](docs/GetHistoryProgrammer200Response.md)
  - [GetHistoryProgrammer200ResponseEventsInner](docs/GetHistoryProgrammer200ResponseEventsInner.md)
  - [GetHistoryProgrammer400Response](docs/GetHistoryProgrammer400Response.md)
+ - [GetHistoryProgrammer500Response](docs/GetHistoryProgrammer500Response.md)
  - [GetHistoryProgrammerToday200Response](docs/GetHistoryProgrammerToday200Response.md)
  - [GetHistoryProgrammerToday200ResponseEventsInner](docs/GetHistoryProgrammerToday200ResponseEventsInner.md)
- - [GetHistoryProgrammerToday500Response](docs/GetHistoryProgrammerToday500Response.md)
  - [GetImageBingDaily400Response](docs/GetImageBingDaily400Response.md)
  - [GetImageBingDaily404Response](docs/GetImageBingDaily404Response.md)
  - [GetImageBingDaily500Response](docs/GetImageBingDaily500Response.md)
@@ -257,6 +302,13 @@ Class | Method | HTTP request | Description
  - [GetMiscHotboard502Response](docs/GetMiscHotboard502Response.md)
  - [GetMiscLunartime200Response](docs/GetMiscLunartime200Response.md)
  - [GetMiscLunartime400Response](docs/GetMiscLunartime400Response.md)
+ - [GetMiscMovieBoxOffice200Response](docs/GetMiscMovieBoxOffice200Response.md)
+ - [GetMiscMovieBoxOffice200ResponseListInner](docs/GetMiscMovieBoxOffice200ResponseListInner.md)
+ - [GetMiscMovieBoxOffice200ResponseMarket](docs/GetMiscMovieBoxOffice200ResponseMarket.md)
+ - [GetMiscMovieBoxOffice503Response](docs/GetMiscMovieBoxOffice503Response.md)
+ - [GetMiscMovieRatingRank200Response](docs/GetMiscMovieRatingRank200Response.md)
+ - [GetMiscMovieRatingRank200ResponseChannelsInner](docs/GetMiscMovieRatingRank200ResponseChannelsInner.md)
+ - [GetMiscMovieRatingRank200ResponseChannelsInnerItemsInner](docs/GetMiscMovieRatingRank200ResponseChannelsInnerItemsInner.md)
  - [GetMiscPhoneinfo200Response](docs/GetMiscPhoneinfo200Response.md)
  - [GetMiscPhoneinfo400Response](docs/GetMiscPhoneinfo400Response.md)
  - [GetMiscPhoneinfo500Response](docs/GetMiscPhoneinfo500Response.md)
@@ -275,6 +327,7 @@ Class | Method | HTTP request | Description
  - [GetMiscTrackingQuery404Response](docs/GetMiscTrackingQuery404Response.md)
  - [GetMiscWeather200Response](docs/GetMiscWeather200Response.md)
  - [GetMiscWeather200ResponseAirPollutants](docs/GetMiscWeather200ResponseAirPollutants.md)
+ - [GetMiscWeather200ResponseAlertsInner](docs/GetMiscWeather200ResponseAlertsInner.md)
  - [GetMiscWeather200ResponseForecastInner](docs/GetMiscWeather200ResponseForecastInner.md)
  - [GetMiscWeather200ResponseHourlyForecastInner](docs/GetMiscWeather200ResponseHourlyForecastInner.md)
  - [GetMiscWeather200ResponseLifeIndices](docs/GetMiscWeather200ResponseLifeIndices.md)
@@ -302,6 +355,8 @@ Class | Method | HTTP request | Description
  - [GetMiscWeather404Response](docs/GetMiscWeather404Response.md)
  - [GetMiscWeather500Response](docs/GetMiscWeather500Response.md)
  - [GetMiscWeather503Response](docs/GetMiscWeather503Response.md)
+ - [GetMiscWeatherHistory200Response](docs/GetMiscWeatherHistory200Response.md)
+ - [GetMiscWeatherHistory200ResponseDaysInner](docs/GetMiscWeatherHistory200ResponseDaysInner.md)
  - [GetMiscWorldtime200Response](docs/GetMiscWorldtime200Response.md)
  - [GetMiscWorldtime400Response](docs/GetMiscWorldtime400Response.md)
  - [GetMiscWorldtime404Response](docs/GetMiscWorldtime404Response.md)
@@ -343,6 +398,9 @@ Class | Method | HTTP request | Description
  - [GetRandomString500Response](docs/GetRandomString500Response.md)
  - [GetSaying200Response](docs/GetSaying200Response.md)
  - [GetSaying500Response](docs/GetSaying500Response.md)
+ - [GetSayingRandom200Response](docs/GetSayingRandom200Response.md)
+ - [GetSayingRandom400Response](docs/GetSayingRandom400Response.md)
+ - [GetSayingRandom404Response](docs/GetSayingRandom404Response.md)
  - [GetSearchEngines200Response](docs/GetSearchEngines200Response.md)
  - [GetSearchEngines200ResponseEngine](docs/GetSearchEngines200ResponseEngine.md)
  - [GetSearchEngines200ResponseLimits](docs/GetSearchEngines200ResponseLimits.md)
@@ -385,6 +443,7 @@ Class | Method | HTTP request | Description
  - [GetSocialQqGroupinfo400Response](docs/GetSocialQqGroupinfo400Response.md)
  - [GetSocialQqGroupinfo404Response](docs/GetSocialQqGroupinfo404Response.md)
  - [GetSocialQqUserinfo200Response](docs/GetSocialQqUserinfo200Response.md)
+ - [GetSocialQqUserinfo200ResponsePrivilegeIcons](docs/GetSocialQqUserinfo200ResponsePrivilegeIcons.md)
  - [GetSocialQqUserinfo400Response](docs/GetSocialQqUserinfo400Response.md)
  - [GetSocialQqUserinfo404Response](docs/GetSocialQqUserinfo404Response.md)
  - [GetStatusRatelimit200Response](docs/GetStatusRatelimit200Response.md)
@@ -543,12 +602,29 @@ Class | Method | HTTP request | Description
  - [PostTranslateText400Response](docs/PostTranslateText400Response.md)
  - [PostTranslateText500Response](docs/PostTranslateText500Response.md)
  - [PostTranslateTextRequest](docs/PostTranslateTextRequest.md)
+ - [PostWatermarkDecode200Response](docs/PostWatermarkDecode200Response.md)
+ - [PostWatermarkDecode400Response](docs/PostWatermarkDecode400Response.md)
+ - [PostWatermarkDecode503Response](docs/PostWatermarkDecode503Response.md)
+ - [PostWatermarkEmbed200Response](docs/PostWatermarkEmbed200Response.md)
+ - [PostWatermarkEmbed413Response](docs/PostWatermarkEmbed413Response.md)
+ - [PostWatermarkLabel200Response](docs/PostWatermarkLabel200Response.md)
+ - [PostWatermarkLabel400Response](docs/PostWatermarkLabel400Response.md)
+ - [PostWatermarkProducerCode200Response](docs/PostWatermarkProducerCode200Response.md)
+ - [PostWatermarkProducerCode400Response](docs/PostWatermarkProducerCode400Response.md)
+ - [PostWatermarkProducerCodeRequest](docs/PostWatermarkProducerCodeRequest.md)
  - [PostWebTomarkdownAsync202Response](docs/PostWebTomarkdownAsync202Response.md)
  - [PostWebTomarkdownAsync400Response](docs/PostWebTomarkdownAsync400Response.md)
+ - [Random](docs/Random.md)
+ - [RandomAuthorinfo](docs/RandomAuthorinfo.md)
 
 
 <a id="documentation-for-authorization"></a>
 ## Documentation For Authorization
 
-Endpoints do not require authorization.
+
+Authentication schemes defined for the API:
+<a id="BearerAuth"></a>
+### BearerAuth
+
+- **Type**: Bearer authentication (JWT)
 

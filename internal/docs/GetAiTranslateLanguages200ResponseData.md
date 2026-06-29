@@ -5,9 +5,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**contexts** | [**Array&lt;GetAiTranslateLanguages200ResponseDataContextsInner&gt;**](GetAiTranslateLanguages200ResponseDataContextsInner.md) |  | [optional] [default to undefined]
 **languages** | [**Array&lt;GetAiTranslateLanguages200ResponseDataLanguagesInner&gt;**](GetAiTranslateLanguages200ResponseDataLanguagesInner.md) |  | [optional] [default to undefined]
 **styles** | [**Array&lt;GetAiTranslateLanguages200ResponseDataStylesInner&gt;**](GetAiTranslateLanguages200ResponseDataStylesInner.md) |  | [optional] [default to undefined]
-**contexts** | [**Array&lt;GetAiTranslateLanguages200ResponseDataContextsInner&gt;**](GetAiTranslateLanguages200ResponseDataContextsInner.md) |  | [optional] [default to undefined]
 
 ## Example
 
@@ -15,9 +15,9 @@ Name | Type | Description | Notes
 import { GetAiTranslateLanguages200ResponseData } from 'uapi-sdk-typescript';
 
 const instance: GetAiTranslateLanguages200ResponseData = {
+    contexts,
     languages,
     styles,
-    contexts,
 };
 ```
 

@@ -5,9 +5,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**message** | **string** |  | [optional] [default to undefined]
 **date** | **string** |  | [optional] [default to undefined]
 **events** | [**Array&lt;GetHistoryProgrammerToday200ResponseEventsInner&gt;**](GetHistoryProgrammerToday200ResponseEventsInner.md) |  | [optional] [default to undefined]
+**message** | **string** |  | [optional] [default to undefined]
 
 ## Example
 
@@ -15,9 +15,9 @@ Name | Type | Description | Notes
 import { GetHistoryProgrammerToday200Response } from 'uapi-sdk-typescript';
 
 const instance: GetHistoryProgrammerToday200Response = {
-    message,
     date,
     events,
+    message,
 };
 ```
 

@@ -6,10 +6,10 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**request_params** | [**PostSearchAggregate200ResponseMetadataRequestParams**](PostSearchAggregate200ResponseMetadataRequestParams.md) |  | [optional] [default to undefined]
-**dedupe_removed** | **number** | 去重后移除的结果数 | [optional] [default to undefined]
-**rerank_applied** | **boolean** | 是否执行了排序重排 | [optional] [default to undefined]
 **content_fetched** | **number** | 额外抓取正文的结果数 | [optional] [default to undefined]
+**dedupe_removed** | **number** | 去重后移除的结果数 | [optional] [default to undefined]
+**request_params** | [**PostSearchAggregate200ResponseMetadataRequestParams**](PostSearchAggregate200ResponseMetadataRequestParams.md) |  | [optional] [default to undefined]
+**rerank_applied** | **boolean** | 是否执行了排序重排 | [optional] [default to undefined]
 
 ## Example
 
@@ -17,10 +17,10 @@ Name | Type | Description | Notes
 import { PostSearchAggregate200ResponseMetadata } from 'uapi-sdk-typescript';
 
 const instance: PostSearchAggregate200ResponseMetadata = {
-    request_params,
-    dedupe_removed,
-    rerank_applied,
     content_fetched,
+    dedupe_removed,
+    request_params,
+    rerank_applied,
 };
 ```
 

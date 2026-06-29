@@ -1,6 +1,6 @@
 # WebParseApi
 
-All URIs are relative to *https://uapis.cn/api/v1*
+All URIs are relative to *https://uapis.cn*
 
 |Method | HTTP request | Description|
 |------------- | ------------- | -------------|

@@ -5,9 +5,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**date** | **string** | 当天日期。 | [optional] [default to undefined]
-**contribution_count** | **number** | 当天的贡献次数。 | [optional] [default to undefined]
 **color** | **string** | 当天贡献等级对应的颜色值。 | [optional] [default to undefined]
+**contribution_count** | **number** | 当天的贡献次数。 | [optional] [default to undefined]
+**date** | **string** | 当天日期。 | [optional] [default to undefined]
 **weekday** | **number** | 星期索引，0 表示周日，6 表示周六。 | [optional] [default to undefined]
 
 ## Example
@@ -16,9 +16,9 @@ Name | Type | Description | Notes
 import { GetGithubUser200ResponseActivityContributionCalendarWeeksInnerContributionDaysInner } from 'uapi-sdk-typescript';
 
 const instance: GetGithubUser200ResponseActivityContributionCalendarWeeksInnerContributionDaysInner = {
-    date,
-    contribution_count,
     color,
+    contribution_count,
+    date,
     weekday,
 };
 ```

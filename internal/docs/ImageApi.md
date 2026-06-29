@@ -1,6 +1,6 @@
 # ImageApi
 
-All URIs are relative to *https://uapis.cn/api/v1*
+All URIs are relative to *https://uapis.cn*
 
 |Method | HTTP request | Description|
 |------------- | ------------- | -------------|
@@ -72,7 +72,7 @@ No authorization required
 ### HTTP request headers
 
  - **Content-Type**: Not defined
- - **Accept**: image/*, application/json
+ - **Accept**: image/png, application/json
 
 
 ### HTTP response details
@@ -101,11 +101,13 @@ const configuration = new Configuration();
 const apiInstance = new ImageApi(configuration);
 
 let date: string; //壁纸日期，格式是 `YYYY-MM-DD`。不传时返回当天壁纸。 (optional) (default to undefined)
+let random: boolean; //是否每次请求随机返回一张历史壁纸。传 `true` 时生效；不能和 `date` 同时使用。不传或传 `false` 时保持默认当天/指定日期逻辑。 (optional) (default to false)
 let resolution: '4k' | '1080'; //返回图片的目标分辨率。可以传 `4k` 或 `1080`，不传时默认是 `4k`。 (optional) (default to '4k')
 let format: 'image' | 'json' | 'redirect'; //响应格式。可以传 `image`、`json` 或 `redirect`。不传时默认是 `image`。 (optional) (default to 'image')
 
 const { status, data } = await apiInstance.getImageBingDaily(
     date,
+    random,
     resolution,
     format
 );
@@ -116,6 +118,7 @@ const { status, data } = await apiInstance.getImageBingDaily(
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
 | **date** | [**string**] | 壁纸日期，格式是 &#x60;YYYY-MM-DD&#x60;。不传时返回当天壁纸。 | (optional) defaults to undefined|
+| **random** | [**boolean**] | 是否每次请求随机返回一张历史壁纸。传 &#x60;true&#x60; 时生效；不能和 &#x60;date&#x60; 同时使用。不传或传 &#x60;false&#x60; 时保持默认当天/指定日期逻辑。 | (optional) defaults to false|
 | **resolution** | [**&#39;4k&#39; | &#39;1080&#39;**]**Array<&#39;4k&#39; &#124; &#39;1080&#39;>** | 返回图片的目标分辨率。可以传 &#x60;4k&#x60; 或 &#x60;1080&#x60;，不传时默认是 &#x60;4k&#x60;。 | (optional) defaults to '4k'|
 | **format** | [**&#39;image&#39; | &#39;json&#39; | &#39;redirect&#39;**]**Array<&#39;image&#39; &#124; &#39;json&#39; &#124; &#39;redirect&#39;>** | 响应格式。可以传 &#x60;image&#x60;、&#x60;json&#x60; 或 &#x60;redirect&#x60;。不传时默认是 &#x60;image&#x60;。 | (optional) defaults to 'image'|
 
@@ -432,7 +435,7 @@ No authorization required
 ### HTTP request headers
 
  - **Content-Type**: multipart/form-data
- - **Accept**: image/*, application/json
+ - **Accept**: image/png, application/json
 
 
 ### HTTP response details
@@ -598,14 +601,14 @@ import {
 const configuration = new Configuration();
 const apiInstance = new ImageApi(configuration);
 
-let imageUrl: string; //图片的URL地址。如果提供此项，将优先使用该URL的图片。 (optional) (default to undefined)
-let file: File; //上传的图片文件。支持JPG、PNG、GIF等常见格式。 (optional) (default to undefined)
 let bgColor: string; //GIF的背景颜色。可选值为 \\\'white\\\', \\\'black\\\', \\\'transparent\\\'。 (optional) (default to undefined)
+let file: File; //上传的图片文件。支持JPG、PNG、GIF等常见格式。 (optional) (default to undefined)
+let imageUrl: string; //图片的URL地址。如果提供此项，将优先使用该URL的图片。 (optional) (default to undefined)
 
 const { status, data } = await apiInstance.postImageMotou(
-    imageUrl,
+    bgColor,
     file,
-    bgColor
+    imageUrl
 );
 ```
 
@@ -613,9 +616,9 @@ const { status, data } = await apiInstance.postImageMotou(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
-| **imageUrl** | [**string**] | 图片的URL地址。如果提供此项，将优先使用该URL的图片。 | (optional) defaults to undefined|
-| **file** | [**File**] | 上传的图片文件。支持JPG、PNG、GIF等常见格式。 | (optional) defaults to undefined|
 | **bgColor** | [**string**]**Array<&#39;white&#39; &#124; &#39;black&#39; &#124; &#39;transparent&#39;>** | GIF的背景颜色。可选值为 \\\&#39;white\\\&#39;, \\\&#39;black\\\&#39;, \\\&#39;transparent\\\&#39;。 | (optional) defaults to undefined|
+| **file** | [**File**] | 上传的图片文件。支持JPG、PNG、GIF等常见格式。 | (optional) defaults to undefined|
+| **imageUrl** | [**string**] | 图片的URL地址。如果提供此项，将优先使用该URL的图片。 | (optional) defaults to undefined|
 
 
 ### Return type
@@ -680,7 +683,7 @@ const { status, data } = await apiInstance.postImageNsfw(
 
 ### Authorization
 
-No authorization required
+[BearerAuth](../README.md#BearerAuth)
 
 ### HTTP request headers
 
@@ -714,22 +717,22 @@ import {
 const configuration = new Configuration();
 const apiInstance = new ImageApi(configuration);
 
+let enableCls: string; //是否开启额外的文字方向校正。请传 `true` 或 `false`，不传时默认是 `false`。 (optional) (default to 'false')
 let file: File; //待识别的图片文件。支持 JPG、JPEG、PNG、BMP、GIF、WebP 等常见格式，最大不超过 10MB。请勿与 url 或 image_base64 同时提交。 (optional) (default to undefined)
-let url: string; //公网可直接访问的图片地址。请勿与 file 或 image_base64 同时提交。 (optional) (default to undefined)
 let imageBase64: string; //图片的 Base64 字符串。可以传完整 Data URI，也可以只传纯 Base64 内容。请勿与 file 或 url 同时提交。 (optional) (default to undefined)
 let imageName: string; //自定义图片文件名。传链接或纯 Base64 时建议一起传，便于保留或推断扩展名。 (optional) (default to undefined)
 let needLocation: string; //是否返回文字坐标信息。请传 `true` 或 `false`，不传时默认是 `true`。 (optional) (default to 'true')
 let returnMarkdown: string; //是否额外返回整理后的 Markdown 文本。请传 `true` 或 `false`，不传时默认是 `false`。 (optional) (default to 'false')
-let enableCls: string; //是否开启额外的文字方向校正。请传 `true` 或 `false`，不传时默认是 `false`。 (optional) (default to 'false')
+let url: string; //公网可直接访问的图片地址。请勿与 file 或 image_base64 同时提交。 (optional) (default to undefined)
 
 const { status, data } = await apiInstance.postImageOcr(
+    enableCls,
     file,
-    url,
     imageBase64,
     imageName,
     needLocation,
     returnMarkdown,
-    enableCls
+    url
 );
 ```
 
@@ -737,13 +740,13 @@ const { status, data } = await apiInstance.postImageOcr(
 
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
+| **enableCls** | [**string**]**Array<&#39;true&#39; &#124; &#39;false&#39;>** | 是否开启额外的文字方向校正。请传 &#x60;true&#x60; 或 &#x60;false&#x60;，不传时默认是 &#x60;false&#x60;。 | (optional) defaults to 'false'|
 | **file** | [**File**] | 待识别的图片文件。支持 JPG、JPEG、PNG、BMP、GIF、WebP 等常见格式，最大不超过 10MB。请勿与 url 或 image_base64 同时提交。 | (optional) defaults to undefined|
-| **url** | [**string**] | 公网可直接访问的图片地址。请勿与 file 或 image_base64 同时提交。 | (optional) defaults to undefined|
 | **imageBase64** | [**string**] | 图片的 Base64 字符串。可以传完整 Data URI，也可以只传纯 Base64 内容。请勿与 file 或 url 同时提交。 | (optional) defaults to undefined|
 | **imageName** | [**string**] | 自定义图片文件名。传链接或纯 Base64 时建议一起传，便于保留或推断扩展名。 | (optional) defaults to undefined|
 | **needLocation** | [**string**]**Array<&#39;true&#39; &#124; &#39;false&#39;>** | 是否返回文字坐标信息。请传 &#x60;true&#x60; 或 &#x60;false&#x60;，不传时默认是 &#x60;true&#x60;。 | (optional) defaults to 'true'|
 | **returnMarkdown** | [**string**]**Array<&#39;true&#39; &#124; &#39;false&#39;>** | 是否额外返回整理后的 Markdown 文本。请传 &#x60;true&#x60; 或 &#x60;false&#x60;，不传时默认是 &#x60;false&#x60;。 | (optional) defaults to 'false'|
-| **enableCls** | [**string**]**Array<&#39;true&#39; &#124; &#39;false&#39;>** | 是否开启额外的文字方向校正。请传 &#x60;true&#x60; 或 &#x60;false&#x60;，不传时默认是 &#x60;false&#x60;。 | (optional) defaults to 'false'|
+| **url** | [**string**] | 公网可直接访问的图片地址。请勿与 file 或 image_base64 同时提交。 | (optional) defaults to undefined|
 
 
 ### Return type
@@ -879,7 +882,7 @@ No authorization required
 ### HTTP request headers
 
  - **Content-Type**: multipart/form-data
- - **Accept**: image/*, application/json
+ - **Accept**: image/png, application/json
 
 
 ### HTTP response details

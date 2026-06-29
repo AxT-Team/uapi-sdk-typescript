@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**time** | **string** | 物流更新时间 | [optional] [default to undefined]
 **context** | **string** | 物流状态描述 | [optional] [default to undefined]
+**time** | **string** | 物流更新时间 | [optional] [default to undefined]
 
 ## Example
 
@@ -14,8 +14,8 @@ Name | Type | Description | Notes
 import { GetMiscTrackingQuery200ResponseTracksInner } from 'uapi-sdk-typescript';
 
 const instance: GetMiscTrackingQuery200ResponseTracksInner = {
-    time,
     context,
+    time,
 };
 ```
 

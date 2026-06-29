@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**title** | **string** |  | [optional] [default to undefined]
 **hot_value** | **string** |  | [optional] [default to undefined]
+**title** | **string** |  | [optional] [default to undefined]
 **url** | **string** |  | [optional] [default to undefined]
 
 ## Example
@@ -15,8 +15,8 @@ Name | Type | Description | Notes
 import { GetMiscHotboard200ResponseOneOf1ResultsInner } from 'uapi-sdk-typescript';
 
 const instance: GetMiscHotboard200ResponseOneOf1ResultsInner = {
-    title,
     hot_value,
+    title,
     url,
 };
 ```

@@ -5,11 +5,11 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**result** | **string** | 转换结果 | [optional] [default to undefined]
 **from** | **string** | 源格式 | [optional] [default to undefined]
-**to** | **string** | 目标格式 | [optional] [default to undefined]
-**length** | **number** | 结果长度 | [optional] [default to undefined]
 **info** | **string** | 额外信息（如哈希不可逆提示） | [optional] [default to undefined]
+**length** | **number** | 结果长度 | [optional] [default to undefined]
+**result** | **string** | 转换结果 | [optional] [default to undefined]
+**to** | **string** | 目标格式 | [optional] [default to undefined]
 
 ## Example
 
@@ -17,11 +17,11 @@ Name | Type | Description | Notes
 import { PostTextConvert200Response } from 'uapi-sdk-typescript';
 
 const instance: PostTextConvert200Response = {
-    result,
     from,
-    to,
-    length,
     info,
+    length,
+    result,
+    to,
 };
 ```
 

@@ -5,9 +5,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**code** | **number** |  | [optional] [default to undefined]
 **error** | **string** |  | [optional] [default to undefined]
 **message** | **string** |  | [optional] [default to undefined]
-**code** | **number** |  | [optional] [default to undefined]
 
 ## Example
 
@@ -15,9 +15,9 @@ Name | Type | Description | Notes
 import { PostWebTomarkdownAsync400Response } from 'uapi-sdk-typescript';
 
 const instance: PostWebTomarkdownAsync400Response = {
+    code,
     error,
     message,
-    code,
 };
 ```
 

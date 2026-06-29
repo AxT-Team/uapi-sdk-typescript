@@ -6,8 +6,8 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **key** | **string** | 密钥，长度必须为16、24或32字节，对应AES-128/192/256。 | [default to undefined]
-**text** | **string** | Base64编码的密文。 | [default to undefined]
 **nonce** | **string** | 16字节的IV/Nonce，必须为16个字符 | [optional] [default to undefined]
+**text** | **string** | Base64编码的密文。 | [default to undefined]
 
 ## Example
 
@@ -16,8 +16,8 @@ import { PostTextAesDecryptRequest } from 'uapi-sdk-typescript';
 
 const instance: PostTextAesDecryptRequest = {
     key,
-    text,
     nonce,
+    text,
 };
 ```
 

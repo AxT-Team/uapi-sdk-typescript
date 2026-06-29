@@ -6,8 +6,8 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **code** | **number** |  | [optional] [default to undefined]
-**message** | **string** |  | [optional] [default to undefined]
 **error** | **string** |  | [optional] [default to undefined]
+**message** | **string** |  | [optional] [default to undefined]
 
 ## Example
 
@@ -16,8 +16,8 @@ import { PostAiTranslate429Response } from 'uapi-sdk-typescript';
 
 const instance: PostAiTranslate429Response = {
     code,
-    message,
     error,
+    message,
 };
 ```
 

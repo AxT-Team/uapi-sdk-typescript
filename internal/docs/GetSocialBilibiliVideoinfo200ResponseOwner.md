@@ -6,9 +6,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**face** | **string** | UP主头像的URL。 | [optional] [default to undefined]
 **mid** | **number** | UP主的UID。 | [optional] [default to undefined]
 **name** | **string** | UP主昵称。 | [optional] [default to undefined]
-**face** | **string** | UP主头像的URL。 | [optional] [default to undefined]
 
 ## Example
 
@@ -16,9 +16,9 @@ Name | Type | Description | Notes
 import { GetSocialBilibiliVideoinfo200ResponseOwner } from 'uapi-sdk-typescript';
 
 const instance: GetSocialBilibiliVideoinfo200ResponseOwner = {
+    face,
     mid,
     name,
-    face,
 };
 ```
 

@@ -5,9 +5,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**start_date** | **string** | 开始日期，支持多种格式自动识别 | [default to undefined]
 **end_date** | **string** | 结束日期，支持多种格式自动识别 | [default to undefined]
 **format** | **string** | 日期格式（可选），如DD-MM-YYYY。不指定则自动识别 | [optional] [default to undefined]
+**start_date** | **string** | 开始日期，支持多种格式自动识别 | [default to undefined]
 
 ## Example
 
@@ -15,9 +15,9 @@ Name | Type | Description | Notes
 import { PostMiscDateDiffRequest } from 'uapi-sdk-typescript';
 
 const instance: PostMiscDateDiffRequest = {
-    start_date,
     end_date,
     format,
+    start_date,
 };
 ```
 

@@ -6,8 +6,8 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **error_code** | **string** |  | [optional] [default to undefined]
-**error_message** | **string** |  | [optional] [default to undefined]
 **error_details** | **string** |  | [optional] [default to undefined]
+**error_message** | **string** |  | [optional] [default to undefined]
 
 ## Example
 
@@ -16,8 +16,8 @@ import { PostMiscDateDiff400Response } from 'uapi-sdk-typescript';
 
 const instance: PostMiscDateDiff400Response = {
     error_code,
-    error_message,
     error_details,
+    error_message,
 };
 ```
 

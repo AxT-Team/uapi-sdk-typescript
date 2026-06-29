@@ -5,9 +5,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**biz_id** | **number** | 业务 ID，被关联对象的 ID。 | [optional] [default to undefined]
 **raw_text** | **string** | 简介文本。 | [optional] [default to undefined]
 **type** | **number** | 片段类型。 | [optional] [default to undefined]
-**biz_id** | **number** | 业务 ID，被关联对象的 ID。 | [optional] [default to undefined]
 
 ## Example
 
@@ -15,9 +15,9 @@ Name | Type | Description | Notes
 import { GetSocialBilibiliVideoinfo200ResponseDescV2Inner } from 'uapi-sdk-typescript';
 
 const instance: GetSocialBilibiliVideoinfo200ResponseDescV2Inner = {
+    biz_id,
     raw_text,
     type,
-    biz_id,
 };
 ```
 

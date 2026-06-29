@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**question** | **string** |  | [optional] [default to undefined]
 **_options** | [**Array&lt;FormatJsonTriviaOptionsInner&gt;**](FormatJsonTriviaOptionsInner.md) |  | [optional] [default to undefined]
+**question** | **string** |  | [optional] [default to undefined]
 
 ## Example
 
@@ -14,8 +14,8 @@ Name | Type | Description | Notes
 import { FormatJsonTrivia } from 'uapi-sdk-typescript';
 
 const instance: FormatJsonTrivia = {
-    question,
     _options,
+    question,
 };
 ```
 

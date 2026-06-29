@@ -6,8 +6,8 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **aid** | **number** | 关联 AV 号。 | [optional] [default to undefined]
-**type** | **number** | 荣誉类型。 | [optional] [default to undefined]
 **desc** | **string** | 荣誉名称。 | [optional] [default to undefined]
+**type** | **number** | 荣誉类型。 | [optional] [default to undefined]
 **weekly_recommend_num** | **number** | 周推荐序号。 | [optional] [default to undefined]
 
 ## Example
@@ -17,8 +17,8 @@ import { GetSocialBilibiliVideoinfo200ResponseHonorReplyHonorInner } from 'uapi-
 
 const instance: GetSocialBilibiliVideoinfo200ResponseHonorReplyHonorInner = {
     aid,
-    type,
     desc,
+    type,
     weekly_recommend_num,
 };
 ```

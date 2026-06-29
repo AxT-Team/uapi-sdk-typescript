@@ -1,6 +1,6 @@
 # SocialApi
 
-All URIs are relative to *https://uapis.cn/api/v1*
+All URIs are relative to *https://uapis.cn*
 
 |Method | HTTP request | Description|
 |------------- | ------------- | -------------|
@@ -87,12 +87,18 @@ let user: string; //GitHub 用户名（必需符合 GitHub 命名规范：仅限
 let activity: boolean; //是否获取最近一年的贡献活动数据（如贡献图、时间线）。传入 true 开启，其他值均视为不开启。 (optional) (default to false)
 let activityScope: 'all' | 'organization'; //活动数据范围。可选 all 或 organization。只有开启 activity 时才有意义。 (optional) (default to 'all')
 let org: string; //组织登录名。如果传入此参数，会自动视为开启 organization 级别的贡献查询，切勿再同时传 activity_scope=all。 (optional) (default to undefined)
+let pinned: boolean; //是否附带该用户在 GitHub 主页展示的 pinned 仓库数据。传入 true 开启，其他值均视为不开启。 (optional) (default to false)
+let repos: boolean; //是否附带该用户最近活跃的公开仓库列表。传入 true 开启，其他值均视为不开启。 (optional) (default to false)
+let reposLimit: number; //公开仓库列表的返回数量。只有开启 repos 时才有意义；如果单独传入 repos_limit，也会自动视为开启 repos。 (optional) (default to 6)
 
 const { status, data } = await apiInstance.getGithubUser(
     user,
     activity,
     activityScope,
-    org
+    org,
+    pinned,
+    repos,
+    reposLimit
 );
 ```
 
@@ -104,6 +110,9 @@ const { status, data } = await apiInstance.getGithubUser(
 | **activity** | [**boolean**] | 是否获取最近一年的贡献活动数据（如贡献图、时间线）。传入 true 开启，其他值均视为不开启。 | (optional) defaults to false|
 | **activityScope** | [**&#39;all&#39; | &#39;organization&#39;**]**Array<&#39;all&#39; &#124; &#39;organization&#39;>** | 活动数据范围。可选 all 或 organization。只有开启 activity 时才有意义。 | (optional) defaults to 'all'|
 | **org** | [**string**] | 组织登录名。如果传入此参数，会自动视为开启 organization 级别的贡献查询，切勿再同时传 activity_scope&#x3D;all。 | (optional) defaults to undefined|
+| **pinned** | [**boolean**] | 是否附带该用户在 GitHub 主页展示的 pinned 仓库数据。传入 true 开启，其他值均视为不开启。 | (optional) defaults to false|
+| **repos** | [**boolean**] | 是否附带该用户最近活跃的公开仓库列表。传入 true 开启，其他值均视为不开启。 | (optional) defaults to false|
+| **reposLimit** | [**number**] | 公开仓库列表的返回数量。只有开启 repos 时才有意义；如果单独传入 repos_limit，也会自动视为开启 repos。 | (optional) defaults to 6|
 
 
 ### Return type
@@ -267,7 +276,7 @@ const configuration = new Configuration();
 const apiInstance = new SocialApi(configuration);
 
 let oid: string; //目标评论区的ID。对于视频，这通常就是它的 `aid`。 (default to undefined)
-let sort: string; //排序方式。支持 `0/time`（按时间）、`1/like`（按点赞）、`2/reply`（按回复数）、`3/hot/hottest/最热`（按最热）。默认为 `0/time`。 (optional) (default to undefined)
+let sort: 'time' | 'like' | 'reply' | 'hot'; //排序方式。支持 `0/time`（按时间）、`1/like`（按点赞）、`2/reply`（按回复数）、`3/hot/hottest/最热`（按最热）。默认为 `0/time`。 (optional) (default to undefined)
 let ps: string; //每页获取的评论数量，范围是1到20。默认为 `20`。 (optional) (default to undefined)
 let pn: string; //要获取的页码，从1开始。默认为 `1`。 (optional) (default to undefined)
 
@@ -284,7 +293,7 @@ const { status, data } = await apiInstance.getSocialBilibiliReplies(
 |Name | Type | Description  | Notes|
 |------------- | ------------- | ------------- | -------------|
 | **oid** | [**string**] | 目标评论区的ID。对于视频，这通常就是它的 &#x60;aid&#x60;。 | defaults to undefined|
-| **sort** | [**string**] | 排序方式。支持 &#x60;0/time&#x60;（按时间）、&#x60;1/like&#x60;（按点赞）、&#x60;2/reply&#x60;（按回复数）、&#x60;3/hot/hottest/最热&#x60;（按最热）。默认为 &#x60;0/time&#x60;。 | (optional) defaults to undefined|
+| **sort** | [**&#39;time&#39; | &#39;like&#39; | &#39;reply&#39; | &#39;hot&#39;**]**Array<&#39;time&#39; &#124; &#39;like&#39; &#124; &#39;reply&#39; &#124; &#39;hot&#39;>** | 排序方式。支持 &#x60;0/time&#x60;（按时间）、&#x60;1/like&#x60;（按点赞）、&#x60;2/reply&#x60;（按回复数）、&#x60;3/hot/hottest/最热&#x60;（按最热）。默认为 &#x60;0/time&#x60;。 | (optional) defaults to undefined|
 | **ps** | [**string**] | 每页获取的评论数量，范围是1到20。默认为 &#x60;20&#x60;。 | (optional) defaults to undefined|
 | **pn** | [**string**] | 要获取的页码，从1开始。默认为 &#x60;1&#x60;。 | (optional) defaults to undefined|
 
@@ -507,7 +516,7 @@ const { status, data } = await apiInstance.getSocialQqUserinfo(
 
 ### Authorization
 
-No authorization required
+[BearerAuth](../README.md#BearerAuth)
 
 ### HTTP request headers
 

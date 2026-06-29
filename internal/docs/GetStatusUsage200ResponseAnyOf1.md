@@ -6,8 +6,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**path** | **string** |  | [optional] [default to undefined]
 **count** | **number** |  | [optional] [default to undefined]
+**path** | **string** |  | [optional] [default to undefined]
 
 ## Example
 
@@ -15,8 +15,8 @@ Name | Type | Description | Notes
 import { GetStatusUsage200ResponseAnyOf1 } from 'uapi-sdk-typescript';
 
 const instance: GetStatusUsage200ResponseAnyOf1 = {
-    path,
     count,
+    path,
 };
 ```
 

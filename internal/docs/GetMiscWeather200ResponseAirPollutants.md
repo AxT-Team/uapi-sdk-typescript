@@ -6,12 +6,12 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**pm25** | **number** | PM2.5 μg/m³ | [optional] [default to undefined]
-**pm10** | **number** | PM10 μg/m³ | [optional] [default to undefined]
-**o3** | **number** | 臭氧 μg/m³ | [optional] [default to undefined]
-**no2** | **number** | 二氧化氮 μg/m³ | [optional] [default to undefined]
-**so2** | **number** | 二氧化硫 μg/m³ | [optional] [default to undefined]
 **co** | **number** | 一氧化碳 mg/m³ | [optional] [default to undefined]
+**no2** | **number** | 二氧化氮 μg/m³ | [optional] [default to undefined]
+**o3** | **number** | 臭氧 μg/m³ | [optional] [default to undefined]
+**pm10** | **number** | PM10 μg/m³ | [optional] [default to undefined]
+**pm25** | **number** | PM2.5 μg/m³ | [optional] [default to undefined]
+**so2** | **number** | 二氧化硫 μg/m³ | [optional] [default to undefined]
 
 ## Example
 
@@ -19,12 +19,12 @@ Name | Type | Description | Notes
 import { GetMiscWeather200ResponseAirPollutants } from 'uapi-sdk-typescript';
 
 const instance: GetMiscWeather200ResponseAirPollutants = {
-    pm25,
-    pm10,
-    o3,
-    no2,
-    so2,
     co,
+    no2,
+    o3,
+    pm10,
+    pm25,
+    so2,
 };
 ```
 

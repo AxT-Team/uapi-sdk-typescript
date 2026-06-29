@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**message** | **string** |  | [optional] [default to undefined]
 **data** | [**GetAiTranslateLanguages200ResponseData**](GetAiTranslateLanguages200ResponseData.md) |  | [optional] [default to undefined]
+**message** | **string** |  | [optional] [default to undefined]
 **performance** | [**GetAiTranslateLanguages200ResponsePerformance**](GetAiTranslateLanguages200ResponsePerformance.md) |  | [optional] [default to undefined]
 
 ## Example
@@ -15,8 +15,8 @@ Name | Type | Description | Notes
 import { GetAiTranslateLanguages200Response } from 'uapi-sdk-typescript';
 
 const instance: GetAiTranslateLanguages200Response = {
-    message,
     data,
+    message,
     performance,
 };
 ```

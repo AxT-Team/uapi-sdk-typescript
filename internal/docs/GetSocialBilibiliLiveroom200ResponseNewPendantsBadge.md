@@ -6,8 +6,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**name** | **string** | 徽章名称。 | [optional] [default to undefined]
 **desc** | **string** | 徽章描述。 | [optional] [default to undefined]
+**name** | **string** | 徽章名称。 | [optional] [default to undefined]
 
 ## Example
 
@@ -15,8 +15,8 @@ Name | Type | Description | Notes
 import { GetSocialBilibiliLiveroom200ResponseNewPendantsBadge } from 'uapi-sdk-typescript';
 
 const instance: GetSocialBilibiliLiveroom200ResponseNewPendantsBadge = {
-    name,
     desc,
+    name,
 };
 ```
 

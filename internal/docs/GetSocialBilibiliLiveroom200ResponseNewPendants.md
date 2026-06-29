@@ -6,8 +6,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**frame** | [**GetSocialBilibiliLiveroom200ResponseNewPendantsFrame**](GetSocialBilibiliLiveroom200ResponseNewPendantsFrame.md) |  | [optional] [default to undefined]
 **badge** | [**GetSocialBilibiliLiveroom200ResponseNewPendantsBadge**](GetSocialBilibiliLiveroom200ResponseNewPendantsBadge.md) |  | [optional] [default to undefined]
+**frame** | [**GetSocialBilibiliLiveroom200ResponseNewPendantsFrame**](GetSocialBilibiliLiveroom200ResponseNewPendantsFrame.md) |  | [optional] [default to undefined]
 
 ## Example
 
@@ -15,8 +15,8 @@ Name | Type | Description | Notes
 import { GetSocialBilibiliLiveroom200ResponseNewPendants } from 'uapi-sdk-typescript';
 
 const instance: GetSocialBilibiliLiveroom200ResponseNewPendants = {
-    frame,
     badge,
+    frame,
 };
 ```
 

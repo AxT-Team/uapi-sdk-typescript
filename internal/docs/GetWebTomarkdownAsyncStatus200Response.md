@@ -5,14 +5,14 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**task_id** | **string** |  | [optional] [default to undefined]
-**status** | **string** |  | [optional] [default to undefined]
-**url** | **string** |  | [optional] [default to undefined]
-**progress** | **number** |  | [optional] [default to undefined]
 **created_at** | **string** |  | [optional] [default to undefined]
 **message** | **string** |  | [optional] [default to undefined]
-**started_at** | **string** |  | [optional] [default to undefined]
+**progress** | **number** |  | [optional] [default to undefined]
+**status** | **string** |  | [optional] [default to undefined]
+**task_id** | **string** |  | [optional] [default to undefined]
+**url** | **string** |  | [optional] [default to undefined]
 **elapsed** | **number** |  | [optional] [default to undefined]
+**started_at** | **string** |  | [optional] [default to undefined]
 **completed_at** | **string** |  | [optional] [default to undefined]
 **duration** | **number** |  | [optional] [default to undefined]
 **result** | [**GetWebTomarkdownAsyncStatus200ResponseAnyOf2Result**](GetWebTomarkdownAsyncStatus200ResponseAnyOf2Result.md) |  | [optional] [default to undefined]
@@ -24,14 +24,14 @@ Name | Type | Description | Notes
 import { GetWebTomarkdownAsyncStatus200Response } from 'uapi-sdk-typescript';
 
 const instance: GetWebTomarkdownAsyncStatus200Response = {
-    task_id,
-    status,
-    url,
-    progress,
     created_at,
     message,
-    started_at,
+    progress,
+    status,
+    task_id,
+    url,
     elapsed,
+    started_at,
     completed_at,
     duration,
     result,

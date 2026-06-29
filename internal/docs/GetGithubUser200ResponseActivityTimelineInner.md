@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**month** | **string** | 月份，格式为 YYYY-MM。 | [optional] [default to undefined]
 **contribution_count** | **number** | 该月的贡献总数。 | [optional] [default to undefined]
+**month** | **string** | 月份，格式为 YYYY-MM。 | [optional] [default to undefined]
 
 ## Example
 
@@ -14,8 +14,8 @@ Name | Type | Description | Notes
 import { GetGithubUser200ResponseActivityTimelineInner } from 'uapi-sdk-typescript';
 
 const instance: GetGithubUser200ResponseActivityTimelineInner = {
-    month,
     contribution_count,
+    month,
 };
 ```
 

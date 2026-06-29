@@ -6,9 +6,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**face** | **string** | 作者头像链接。 | [optional] [default to undefined]
 **mid** | **number** | 作者 UID。 | [optional] [default to undefined]
 **name** | **string** | 作者昵称。 | [optional] [default to undefined]
-**face** | **string** | 作者头像链接。 | [optional] [default to undefined]
 
 ## Example
 
@@ -16,9 +16,9 @@ Name | Type | Description | Notes
 import { GetSocialBilibiliVideoinfo200ResponseSubtitleListInnerAuthor } from 'uapi-sdk-typescript';
 
 const instance: GetSocialBilibiliVideoinfo200ResponseSubtitleListInnerAuthor = {
+    face,
     mid,
     name,
-    face,
 };
 ```
 

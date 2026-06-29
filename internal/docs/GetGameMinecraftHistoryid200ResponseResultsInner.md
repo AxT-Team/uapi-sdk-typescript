@@ -5,10 +5,10 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**id** | **string** | 玩家当前的用户名。 | [optional] [default to undefined]
-**uuid** | **string** | 玩家的UUID（带连字符格式）。 | [optional] [default to undefined]
-**name_num** | **number** | 历史名称的总数。 | [optional] [default to undefined]
 **history** | [**Array&lt;GetGameMinecraftHistoryid200ResponseResultsInnerHistoryInner&gt;**](GetGameMinecraftHistoryid200ResponseResultsInnerHistoryInner.md) | 历史用户名数组。 | [optional] [default to undefined]
+**id** | **string** | 玩家当前的用户名。 | [optional] [default to undefined]
+**name_num** | **number** | 历史名称的总数。 | [optional] [default to undefined]
+**uuid** | **string** | 玩家的UUID（带连字符格式）。 | [optional] [default to undefined]
 
 ## Example
 
@@ -16,10 +16,10 @@ Name | Type | Description | Notes
 import { GetGameMinecraftHistoryid200ResponseResultsInner } from 'uapi-sdk-typescript';
 
 const instance: GetGameMinecraftHistoryid200ResponseResultsInner = {
-    id,
-    uuid,
-    name_num,
     history,
+    id,
+    name_num,
+    uuid,
 };
 ```
 

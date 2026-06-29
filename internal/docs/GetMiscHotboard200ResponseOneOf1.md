@@ -5,10 +5,10 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**type** | **string** |  | [optional] [default to undefined]
-**keyword** | **string** | 搜索关键词。 | [optional] [default to undefined]
 **count** | **number** | 匹配到的结果数量。 | [optional] [default to undefined]
+**keyword** | **string** | 搜索关键词。 | [optional] [default to undefined]
 **results** | [**Array&lt;GetMiscHotboard200ResponseOneOf1ResultsInner&gt;**](GetMiscHotboard200ResponseOneOf1ResultsInner.md) | 搜索结果数组。 | [optional] [default to undefined]
+**type** | **string** |  | [optional] [default to undefined]
 
 ## Example
 
@@ -16,10 +16,10 @@ Name | Type | Description | Notes
 import { GetMiscHotboard200ResponseOneOf1 } from 'uapi-sdk-typescript';
 
 const instance: GetMiscHotboard200ResponseOneOf1 = {
-    type,
-    keyword,
     count,
+    keyword,
     results,
+    type,
 };
 ```
 

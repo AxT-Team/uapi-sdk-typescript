@@ -6,9 +6,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**width** | **number** | 视频宽度。 | [optional] [default to undefined]
 **height** | **number** | 视频高度。 | [optional] [default to undefined]
 **rotate** | **number** | 旋转角度。 | [optional] [default to undefined]
+**width** | **number** | 视频宽度。 | [optional] [default to undefined]
 
 ## Example
 
@@ -16,9 +16,9 @@ Name | Type | Description | Notes
 import { GetSocialBilibiliVideoinfo200ResponseDimension } from 'uapi-sdk-typescript';
 
 const instance: GetSocialBilibiliVideoinfo200ResponseDimension = {
-    width,
     height,
     rotate,
+    width,
 };
 ```
 

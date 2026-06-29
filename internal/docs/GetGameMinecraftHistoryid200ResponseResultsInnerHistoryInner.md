@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**name** | **string** |  | [optional] [default to undefined]
 **changedToAt** | **string** |  | [optional] [default to undefined]
+**name** | **string** |  | [optional] [default to undefined]
 
 ## Example
 
@@ -14,8 +14,8 @@ Name | Type | Description | Notes
 import { GetGameMinecraftHistoryid200ResponseResultsInnerHistoryInner } from 'uapi-sdk-typescript';
 
 const instance: GetGameMinecraftHistoryid200ResponseResultsInnerHistoryInner = {
-    name,
     changedToAt,
+    name,
 };
 ```
 

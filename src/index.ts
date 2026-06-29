@@ -202,6 +202,60 @@ export interface PostConvertJsonArgs {
 }
 export type GetDailyNewsImageResponse =
   ArrayBuffer
+export type GetDailyWordResponse =
+  Internal.GetDailyWord200Response
+export interface GetDailyWordArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
+  /** 语种，目前支持 en，默认 en。 */
+  lang?: string;
+  /** 词库范围：all/cet4/cet6/ielts/toefl/gre，默认 all。 */
+  category?: string;
+  /** 返回数量，1-20，默认 1。 */
+  count?: number;
+  /** 日期，格式 YYYY-MM-DD，作为每日单词的种子基准。 */
+  date?: string;
+  /** 固定种子，结果可复现；不可与 date 同时使用。 */
+  seed?: number;
+  /** 是否返回例句，默认 true。 */
+  example?: boolean;
+  /** 是否返回音标，默认 true。 */
+  phonetic?: boolean;
+  /** 是否为每个单词附带详细释义（音标发音、中英释义、词形、词组、近义词、双语例句），默认 false。 */
+  define?: boolean;
+}
+export type GetDictionaryAudioResponse =
+  ArrayBuffer
+export interface GetDictionaryAudioArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
+  /** 要发音的英文单词，长度不超过 64 个字符。 */
+  word: string;
+  /** 口音偏好：uk（英式）或 us（美式），默认 uk。 */
+  accent?: string;
+}
+export type GetDictionaryLookupResponse =
+  Internal.GetDictionaryLookup200Response
+export interface GetDictionaryLookupArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
+  /** 要查询的英文单词，长度不超过 64 个字符。 */
+  word: string;
+  /** 目标语种。目前仅支持 en（默认）。 */
+  lang?: string;
+}
 export type GetGameEpicFreeResponse =
   Internal.GetGameEpicFree200Response
 export type GetGameMinecraftHistoryidResponse =
@@ -217,6 +271,26 @@ export interface GetGameMinecraftHistoryidArgs {
   name?: string;
   /** 玩家的 Minecraft UUID，支持带连字符或不带连字符格式。 */
   uuid?: string;
+}
+export type GetGameMinecraftModsResponse =
+  Internal.GetGameMinecraftMods200Response
+export interface GetGameMinecraftModsArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
+  /** 搜索关键词，也可使用别名 `q`。 */
+  query: string;
+  /** 搜索来源，默认 all。 */
+  source?: string;
+  /** 资源类型过滤，例如 mod 或 plugin。 */
+  type?: string;
+  /** 每个来源返回的最大条数，默认 10，最大 50。 */
+  limit?: number;
+  /** 是否补全下载直链与作者名，默认 true；传 false 可降低延迟。 */
+  enrich?: boolean;
 }
 export type GetGameMinecraftServerstatusResponse =
   Internal.GetGameMinecraftServerstatus200Response
@@ -241,6 +315,24 @@ export interface GetGameMinecraftUserinfoArgs {
   _t?: string | number;
   /** 玩家的 Minecraft 游戏内名称（正版ID）。 */
   username: string;
+}
+export type GetGameMinecraftVersionResponse =
+  Internal.GetGameMinecraftVersion200Response
+export type GetGameSteamServersResponse =
+  Internal.GetGameSteamServers200Response
+export interface GetGameSteamServersArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
+  /** Steam 游戏 AppID，必须是正整数。 */
+  appid: number;
+  /** 服务器名称关键词，可选，支持模糊搜索。 */
+  name?: string;
+  /** 返回数量上限，默认 20，最大 100。 */
+  limit?: number;
 }
 export type GetGameSteamSummaryResponse =
   Internal.GetGameSteamSummary200Response
@@ -295,6 +387,8 @@ export interface GetImageBingDailyArgs {
   _t?: string | number;
   /** 壁纸日期，格式是 `YYYY-MM-DD`。不传时返回当天壁纸。 */
   date?: string;
+  /** 是否每次请求随机返回一张历史壁纸。传 `true` 时生效；不能和 `date` 同时使用。不传或传 `false` 时保持默认当天/指定日期逻辑。 */
+  random?: boolean;
   /** 返回图片的目标分辨率。可以传 `4k` 或 `1080`，不传时默认是 `4k`。 */
   resolution?: string;
   /** 响应格式。可以传 `image`、`json` 或 `redirect`。不传时默认是 `image`。 */
@@ -625,15 +719,15 @@ export interface GetMiscHotboardArgs {
   _t?: string | number;
   /** 你想要查询的热榜平台。请从[支持的平台列表](#enum-list)中选择。 */
   type: string;
-  /** 时光机模式：毫秒时间戳，返回最接近该时间的热榜快照。不传则返回当前实时热榜。 */
+  /** 时光机模式：毫秒时间戳，返回该时间附近最近可展示的历史热榜快照。不传则返回当前实时热榜。 */
   time?: number;
-  /** 搜索模式：搜索关键词，在历史热榜中搜索包含该关键词的条目。需配合 time_start 和 time_end 使用。 */
+  /** 搜索模式：搜索关键词，在指定历史时间范围内搜索包含该关键词的条目。需配合 time_start 和 time_end 使用。 */
   keyword?: string;
-  /** 搜索模式必填：搜索起始时间戳（毫秒）。 */
+  /** 搜索模式必填：搜索起始时间戳（毫秒），需位于该平台历史数据覆盖范围内。 */
   timeStart?: number;
   /** Same as `timeStart`. Kept for compatibility. */
   "time_start"?: number;
-  /** 搜索模式必填：搜索结束时间戳（毫秒）。 */
+  /** 搜索模式必填：搜索结束时间戳（毫秒），需晚于 time_start 且位于该平台历史数据覆盖范围内。 */
   timeEnd?: number;
   /** Same as `timeEnd`. Kept for compatibility. */
   "time_end"?: number;
@@ -653,6 +747,28 @@ export interface GetMiscLunartimeArgs {
   ts?: string;
   /** 时区名称。支持 IANA 时区（如 Asia/Shanghai）和别名（Shanghai、Beijing）。默认 Asia/Shanghai。 */
   timezone?: string;
+}
+export type GetMiscMovieBoxOfficeResponse =
+  Internal.GetMiscMovieBoxOffice200Response
+export type GetMiscMovieRatingRankResponse =
+  Internal.GetMiscMovieRatingRank200Response
+export interface GetMiscMovieRatingRankArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
+  /** 渠道：all（全网）、tv（卫视）、web（网络平台）、cinema（院线），默认 all。 */
+  channel?: string;
+  /** 按渠道或平台关键字过滤，例如 卫视、爱奇艺。 */
+  platform?: string;
+  /** 每个渠道仅返回前 N 条。 */
+  limit?: number;
+  /** 排行周期：realtime、day、week、month，默认 realtime。 */
+  period?: string;
+  /** 历史快照日期，格式 YYYY-MM-DD；用于 day/week/month。 */
+  date?: string;
 }
 export type GetMiscPhoneinfoResponse =
   Internal.GetMiscPhoneinfo200Response
@@ -741,8 +857,6 @@ export interface GetMiscTrackingQueryArgs {
   "carrier_code"?: string;
   /** 收件人手机尾号，4位数字（可选）。部分快递公司需要验证手机尾号才能查询详细物流信息。 */
   phone?: string;
-  /** 使用这个参数可以获得完整的物流信息。但会消耗34积分/一次（不过缓存命中半价）。因为成本实在太贵了，否则非常非常亏说是 */
-  full?: boolean;
 }
 export type GetMiscWeatherResponse =
   Internal.GetMiscWeather200Response
@@ -770,6 +884,32 @@ export interface GetMiscWeatherArgs {
   /** 返回语言。`zh` 返回中文（默认），`en` 返回英文。城市名翻译覆盖 7000+ 城市。生活指数（`indices`）目前仅支持中文。 */
   lang?: string;
 }
+export type GetMiscWeatherHistoryResponse =
+  Internal.GetMiscWeatherHistory200Response
+export interface GetMiscWeatherHistoryArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
+  /** 城市名称，支持中文或英文；可选，不传 city/adcode 时会尝试 IP 自动定位。 */
+  city?: string;
+  /** 6 位行政区划代码，优先级高于 city。 */
+  adcode?: string;
+  /** 起始日期，格式 YYYY-MM-DD；与 end_date 搭配使用。 */
+  startDate?: string;
+  /** Same as `startDate`. Kept for compatibility. */
+  "start_date"?: string;
+  /** 结束日期，格式 YYYY-MM-DD，默认昨天。 */
+  endDate?: string;
+  /** Same as `endDate`. Kept for compatibility. */
+  "end_date"?: string;
+  /** 回看天数，1-366，默认 365；仅在未指定 start_date 时生效。 */
+  days?: number;
+  /** 返回语言：zh（默认）或 en。 */
+  lang?: string;
+}
 export type GetMiscWorldtimeResponse =
   Internal.GetMiscWorldtime200Response
 export interface GetMiscWorldtimeArgs {
@@ -779,7 +919,7 @@ export interface GetMiscWorldtimeArgs {
   "disable_cache"?: boolean;
   /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
   _t?: string | number;
-  /** 你需要查询的城市或地区，请使用标准的 IANA 时区数据库名称，例如 'Shanghai', 'Asia/Tokyo', 'America/New_York'。 */
+  /** 你需要查询的城市或地区。请从[支持的时区列表](#enum-list)中选择标准 IANA 时区名称，例如 'Asia/Shanghai', 'Asia/Tokyo', 'America/New_York'。 */
   city: string;
 }
 export type PostMiscDateDiffResponse =
@@ -924,6 +1064,26 @@ export interface GetNetworkWxdomainArgs {
 }
 export type GetSayingResponse =
   Internal.GetSaying200Response
+export type GetSayingRandomResponse =
+  Internal.GetSayingRandom200Response
+export interface GetSayingRandomArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
+  /** 运行模式。不传或 random 为随机一言；可选 daily、recommend、moment。 */
+  mode?: string;
+  /** 推荐场景。当 mode=recommend 时必填，例如 night、morning、work 等。请从[支持的场景列表](#enum-list)中选择。 */
+  scene?: string;
+  /** 语料来源过滤。支持重复传参，或使用逗号/分号分隔多个值。请从[支持的来源列表](#enum-list)中选择。 */
+  source?: string;
+  /** 分类过滤。支持重复传参，或使用逗号/分号分隔多个值。请从[支持的分类列表](#enum-list)中选择。 */
+  category?: string;
+  /** 标签过滤。支持重复传参，或使用逗号/分号分隔多个值。请从[支持的标签列表](#enum-list)中选择。 */
+  tag?: string;
+}
 export type GetAnswerbookAskResponse =
   Internal.GetAnswerbookAsk200Response
 export interface GetAnswerbookAskArgs {
@@ -1030,6 +1190,14 @@ export interface GetGithubUserArgs {
   "activity_scope"?: string;
   /** 组织登录名。如果传入此参数，会自动视为开启 organization 级别的贡献查询，切勿再同时传 activity_scope=all。 */
   org?: string;
+  /** 是否附带该用户在 GitHub 主页展示的 pinned 仓库数据。传入 true 开启，其他值均视为不开启。 */
+  pinned?: boolean;
+  /** 是否附带该用户最近活跃的公开仓库列表。传入 true 开启，其他值均视为不开启。 */
+  repos?: boolean;
+  /** 公开仓库列表的返回数量。只有开启 repos 时才有意义；如果单独传入 repos_limit，也会自动视为开启 repos。 */
+  reposLimit?: number;
+  /** Same as `reposLimit`. Kept for compatibility. */
+  "repos_limit"?: number;
 }
 export type GetSocialBilibiliArchivesResponse =
   Internal.GetSocialBilibiliArchives200Response
@@ -1545,6 +1713,166 @@ export interface PostSearchAggregateArgs {
   /** Same as `timeRange`. Kept for compatibility. */
   "time_range"?: string;
 }
+export type PostWatermarkDecodeResponse =
+  Internal.PostWatermarkDecode200Response
+export interface PostWatermarkDecodeArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
+  /** 纠错强度，必须和嵌入时填的一致，否则无法正确提取。[查看各档位](#enum-list) */
+  ecc?: string;
+  /** 要提取水印的图片文件，支持 PNG、JPEG、WebP。 */
+  file?: NodeUpload;
+  /** 图片的 Base64 编码，可携带或省略 data: 前缀。 */
+  imageBase64?: string;
+  /** Same as `imageBase64`. Kept for compatibility. */
+  "image_base64"?: string;
+  /** 水印档位，必须和嵌入时用的一致，否则无法正确提取。[查看各档位](#enum-list) */
+  modelType?: string;
+  /** Same as `modelType`. Kept for compatibility. */
+  "model_type"?: string;
+  /** 图片链接，需确保公网可直接访问。 */
+  url?: string;
+}
+export type PostWatermarkEmbedResponse =
+  Internal.PostWatermarkEmbed200Response
+export interface PostWatermarkEmbedArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
+  /** 纠错强度，决定水印能抗多少损坏、最多能嵌入多少字符：纠错越强，图片被压缩、裁剪后越容易读回，但能嵌入的字符越少。不填默认 `BCH_4`。[查看各档位](#enum-list) */
+  ecc?: string;
+  /** 要加水印的图片文件，支持 PNG、JPEG、WebP。 */
+  file?: NodeUpload;
+  /** 图片的 Base64 编码，可携带或省略 data: 前缀。 */
+  imageBase64?: string;
+  /** Same as `imageBase64`. Kept for compatibility. */
+  "image_base64"?: string;
+  /** 输出 JPEG 时的图像质量，范围 1 到 100。 */
+  jpegQuality?: number;
+  /** Same as `jpegQuality`. Kept for compatibility. */
+  "jpeg_quality"?: number;
+  /** 水印档位，在稳健性和画质之间取舍。不填默认 `B`。[查看各档位](#enum-list) */
+  modelType?: string;
+  /** Same as `modelType`. Kept for compatibility. */
+  "model_type"?: string;
+  /** 输出的图片格式。不填则默认保持与原图一致。 */
+  outFormat?: string;
+  /** Same as `outFormat`. Kept for compatibility. */
+  "out_format"?: string;
+  /** 需要嵌入图片的隐形标识内容。 */
+  payload: string;
+  /** 水印写入强度，默认 `1.0`。调高更不容易被压缩、转发破坏，但更可能被肉眼看出；调低更隐蔽，但抗损坏能力下降。 */
+  strength?: number;
+  /** 图片链接，需确保公网可直接访问。 */
+  url?: string;
+}
+export type PostWatermarkLabelResponse =
+  Internal.PostWatermarkLabel200Response
+export interface PostWatermarkLabelArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
+  /** 必需：生成此图片的服务提供者编码（27 位）。 */
+  contentProducer: string;
+  /** Same as `contentProducer`. Kept for compatibility. */
+  "content_producer"?: string;
+  /** 负责内容传播的服务提供者编码（27 位，可选）。 */
+  contentPropagator?: string;
+  /** Same as `contentPropagator`. Kept for compatibility. */
+  "content_propagator"?: string;
+  /** 是否额外注入抗压缩的隐形水印。默认不开启。 */
+  embedWatermark?: boolean;
+  /** Same as `embedWatermark`. Kept for compatibility. */
+  "embed_watermark"?: boolean;
+  /** 角标文字高度占画面短边的比例。低于 0.05 会自动补偿至国标下限要求。 */
+  explicitHeightRatio?: number;
+  /** Same as `explicitHeightRatio`. Kept for compatibility. */
+  "explicit_height_ratio"?: number;
+  /** 是否叠加可见的角标文字标识。默认不开启。 */
+  explicitLabel?: boolean;
+  /** Same as `explicitLabel`. Kept for compatibility. */
+  "explicit_label"?: boolean;
+  /** 角标所处的相对位置，默认为右下角。 */
+  explicitPosition?: string;
+  /** Same as `explicitPosition`. Kept for compatibility. */
+  "explicit_position"?: string;
+  /** 角标显示的具体文案，默认为“AI 生成”。 */
+  explicitText?: string;
+  /** Same as `explicitText`. Kept for compatibility. */
+  "explicit_text"?: string;
+  /** 待处理的图片文件，支持 PNG、JPEG、WebP。 */
+  file?: NodeUpload;
+  /** 图片的 Base64 编码，可携带或省略 data: 前缀。 */
+  imageBase64?: string;
+  /** Same as `imageBase64`. Kept for compatibility. */
+  "image_base64"?: string;
+  /** 输出 JPEG 时的图像质量，范围 1 到 100。 */
+  jpegQuality?: number;
+  /** Same as `jpegQuality`. Kept for compatibility. */
+  "jpeg_quality"?: number;
+  /** 生成场景分类：1 代表 AI 生成合成，2 代表人机协同，3 代表其他情况。默认取值为 1。 */
+  label?: string;
+  /** 输出的图片格式。不填则默认保持与原图一致。 */
+  outFormat?: string;
+  /** Same as `outFormat`. Kept for compatibility. */
+  "out_format"?: string;
+  /** 服务侧内部生成的内容编号（可选）。 */
+  produceId?: string;
+  /** Same as `produceId`. Kept for compatibility. */
+  "produce_id"?: string;
+  /** 传播方侧的内容编号（可选）。 */
+  propagateId?: string;
+  /** Same as `propagateId`. Kept for compatibility. */
+  "propagate_id"?: string;
+  /** 是否跳过写入元数据标识。若设置为 true，则必须开启另外两项中的至少一项。 */
+  skipMetadata?: boolean;
+  /** Same as `skipMetadata`. Kept for compatibility. */
+  "skip_metadata"?: boolean;
+  /** 图片链接，需确保公网可直接访问。 */
+  url?: string;
+  /** 隐形水印中所记载的标识内容。 */
+  watermarkPayload?: string;
+  /** Same as `watermarkPayload`. Kept for compatibility. */
+  "watermark_payload"?: string;
+}
+export type PostWatermarkProducerCodeResponse =
+  Internal.PostWatermarkProducerCode200Response
+export interface PostWatermarkProducerCodeArgs {
+  /** 为 true 时会自动附加 `_t` 时间戳，绕过服务端缓存。 */
+  disableCache?: boolean;
+  /** Same as `disableCache`. Kept for compatibility. */
+  "disable_cache"?: boolean;
+  /** 手动指定缓存穿透时间戳。传入后会原样带到查询参数中。 */
+  _t?: string | number;
+  /** 主体绑定的证件类型。组织需使用统一社会信用代码；个人可选身份证、手机号、护照或网号。 */
+  binding?: string;
+  /** 待校验的 27 位现成编码。填写后接口将直接执行合法性校验。 */
+  code?: string;
+  /** 证件号实际内容。长度需匹配选择的类型（如统一社会信用代码 18 位、手机号 11 位）。 */
+  identifier?: string;
+  /** 4 位自定义模型或应用码（可选）。未提供时扩展段将默认填充 00000。 */
+  modelCode?: string;
+  /** Same as `modelCode`. Kept for compatibility. */
+  "model_code"?: string;
+  /** 服务角色类型（仅在提供模型应用码时一同生效）。 */
+  serviceType?: string;
+  /** Same as `serviceType`. Kept for compatibility. */
+  "service_type"?: string;
+  /** 主体类型是组织还是个人。 */
+  subjectType?: string;
+  /** Same as `subjectType`. Kept for compatibility. */
+  "subject_type"?: string;
+}
 
 // Facade per tag.
 export class UapiClient {
@@ -1555,6 +1883,8 @@ export class UapiClient {
   readonly "Convert": ConvertApi
   readonly daily: DailyApi
   readonly "Daily": DailyApi
+  readonly dictionary: DictionaryApi
+  readonly "Dictionary": DictionaryApi
   readonly game: GameApi
   readonly "Game": GameApi
   readonly image: ImageApi
@@ -1581,6 +1911,8 @@ export class UapiClient {
   readonly "敏感词识别": MinGanCiShiBieApi
   readonly zhiNengSouSuo: ZhiNengSouSuoApi
   readonly "智能搜索": ZhiNengSouSuoApi
+  readonly shuiYinYuAigcBiaoShi: ShuiYinYuAigcBiaoShiApi
+  readonly "水印与 AIGC 标识": ShuiYinYuAigcBiaoShiApi
 
   constructor(baseURL: string, tokenOrOptions?: string | UapiClientOptions, maybeOptions: UapiClientOptions = {}) {
     const token = typeof tokenOrOptions === 'string' ? tokenOrOptions : undefined
@@ -1595,6 +1927,9 @@ export class UapiClient {
     const daily = new DailyApi(this.http)
     this.daily = daily
     this["Daily"] = daily
+    const dictionary = new DictionaryApi(this.http)
+    this.dictionary = dictionary
+    this["Dictionary"] = dictionary
     const game = new GameApi(this.http)
     this.game = game
     this["Game"] = game
@@ -1634,6 +1969,9 @@ export class UapiClient {
     const zhiNengSouSuo = new ZhiNengSouSuoApi(this.http)
     this.zhiNengSouSuo = zhiNengSouSuo
     this["智能搜索"] = zhiNengSouSuo
+    const shuiYinYuAigcBiaoShi = new ShuiYinYuAigcBiaoShiApi(this.http)
+    this.shuiYinYuAigcBiaoShi = shuiYinYuAigcBiaoShi
+    this["水印与 AIGC 标识"] = shuiYinYuAigcBiaoShi
   }
 
   get lastResponseMeta(): ResponseMeta | undefined {
@@ -1803,6 +2141,102 @@ export class DailyApi {
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetDailyNewsImageResponse
   }
+
+  /** 每日单词 */
+  async getDailyWord(args: GetDailyWordArgs = {} as GetDailyWordArgs
+  ): Promise<GetDailyWordResponse> {
+    const query: Record<string, unknown> = {}
+    const headers: Record<string, string> = {}
+    const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
+    const argLang = args.lang
+    if (argLang !== undefined) query["lang"] = argLang
+    const argCategory = args.category
+    if (argCategory !== undefined) query["category"] = argCategory
+    const argCount = args.count
+    if (argCount !== undefined) query["count"] = argCount
+    const argDate = args.date
+    if (argDate !== undefined) query["date"] = argDate
+    const argSeed = args.seed
+    if (argSeed !== undefined) query["seed"] = argSeed
+    const argExample = args.example
+    if (argExample !== undefined) query["example"] = argExample
+    const argPhonetic = args.phonetic
+    if (argPhonetic !== undefined) query["phonetic"] = argPhonetic
+    const argDefine = args.define
+    if (argDefine !== undefined) query["define"] = argDefine
+    let requestPath = '/api/v1/daily/word'
+    const responseKind = 'json'
+    return await this.http.request(
+      'GET',
+      requestPath,
+      Object.keys(query).length > 0 ? query : undefined,
+      Object.keys(body).length > 0 ? body : undefined,
+      Object.keys(headers).length > 0 ? headers : undefined,
+      responseKind,
+      disableCache !== undefined ? { disableCache } : undefined,
+    ) as GetDailyWordResponse
+  }
+}
+export class DictionaryApi {
+  constructor(private http: HTTP) {}
+
+  /** 单词发音 */
+  async getDictionaryAudio(args: GetDictionaryAudioArgs
+  ): Promise<GetDictionaryAudioResponse> {
+    const query: Record<string, unknown> = {}
+    const headers: Record<string, string> = {}
+    const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
+    const argWord = args.word
+    if (argWord !== undefined) query["word"] = argWord
+    const argAccent = args.accent
+    if (argAccent !== undefined) query["accent"] = argAccent
+    let requestPath = '/api/v1/dictionary/audio'
+    const responseKind = 'arrayBuffer'
+    return await this.http.request(
+      'GET',
+      requestPath,
+      Object.keys(query).length > 0 ? query : undefined,
+      Object.keys(body).length > 0 ? body : undefined,
+      Object.keys(headers).length > 0 ? headers : undefined,
+      responseKind,
+      disableCache !== undefined ? { disableCache } : undefined,
+    ) as GetDictionaryAudioResponse
+  }
+
+  /** 单词查询 */
+  async getDictionaryLookup(args: GetDictionaryLookupArgs
+  ): Promise<GetDictionaryLookupResponse> {
+    const query: Record<string, unknown> = {}
+    const headers: Record<string, string> = {}
+    const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
+    const argWord = args.word
+    if (argWord !== undefined) query["word"] = argWord
+    const argLang = args.lang
+    if (argLang !== undefined) query["lang"] = argLang
+    let requestPath = '/api/v1/dictionary/lookup'
+    const responseKind = 'json'
+    return await this.http.request(
+      'GET',
+      requestPath,
+      Object.keys(query).length > 0 ? query : undefined,
+      Object.keys(body).length > 0 ? body : undefined,
+      Object.keys(headers).length > 0 ? headers : undefined,
+      responseKind,
+      disableCache !== undefined ? { disableCache } : undefined,
+    ) as GetDictionaryLookupResponse
+  }
 }
 export class GameApi {
   constructor(private http: HTTP) {}
@@ -1854,6 +2288,39 @@ export class GameApi {
     ) as GetGameMinecraftHistoryidResponse
   }
 
+  /** 搜索 MC Mod/插件 */
+  async getGameMinecraftMods(args: GetGameMinecraftModsArgs
+  ): Promise<GetGameMinecraftModsResponse> {
+    const query: Record<string, unknown> = {}
+    const headers: Record<string, string> = {}
+    const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
+    const argQuery = args.query
+    if (argQuery !== undefined) query["query"] = argQuery
+    const argSource = args.source
+    if (argSource !== undefined) query["source"] = argSource
+    const argType = args.type
+    if (argType !== undefined) query["type"] = argType
+    const argLimit = args.limit
+    if (argLimit !== undefined) query["limit"] = argLimit
+    const argEnrich = args.enrich
+    if (argEnrich !== undefined) query["enrich"] = argEnrich
+    let requestPath = '/api/v1/game/minecraft/mods'
+    const responseKind = 'json'
+    return await this.http.request(
+      'GET',
+      requestPath,
+      Object.keys(query).length > 0 ? query : undefined,
+      Object.keys(body).length > 0 ? body : undefined,
+      Object.keys(headers).length > 0 ? headers : undefined,
+      responseKind,
+      disableCache !== undefined ? { disableCache } : undefined,
+    ) as GetGameMinecraftModsResponse
+  }
+
   /** 查询 MC 服务器 */
   async getGameMinecraftServerstatus(args: GetGameMinecraftServerstatusArgs
   ): Promise<GetGameMinecraftServerstatusResponse> {
@@ -1902,6 +2369,55 @@ export class GameApi {
       responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetGameMinecraftUserinfoResponse
+  }
+
+  /** Minecraft 最新版本 */
+  async getGameMinecraftVersion(
+  ): Promise<GetGameMinecraftVersionResponse> {
+    const query: Record<string, unknown> = {}
+    const headers: Record<string, string> = {}
+    const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    let requestPath = '/api/v1/game/minecraft/version'
+    const responseKind = 'json'
+    return await this.http.request(
+      'GET',
+      requestPath,
+      Object.keys(query).length > 0 ? query : undefined,
+      Object.keys(body).length > 0 ? body : undefined,
+      Object.keys(headers).length > 0 ? headers : undefined,
+      responseKind,
+      disableCache !== undefined ? { disableCache } : undefined,
+    ) as GetGameMinecraftVersionResponse
+  }
+
+  /** 查询 Steam 游戏服务器 */
+  async getGameSteamServers(args: GetGameSteamServersArgs
+  ): Promise<GetGameSteamServersResponse> {
+    const query: Record<string, unknown> = {}
+    const headers: Record<string, string> = {}
+    const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
+    const argAppid = args.appid
+    if (argAppid !== undefined) query["appid"] = argAppid
+    const argName = args.name
+    if (argName !== undefined) query["name"] = argName
+    const argLimit = args.limit
+    if (argLimit !== undefined) query["limit"] = argLimit
+    let requestPath = '/api/v1/game/steam/servers'
+    const responseKind = 'json'
+    return await this.http.request(
+      'GET',
+      requestPath,
+      Object.keys(query).length > 0 ? query : undefined,
+      Object.keys(body).length > 0 ? body : undefined,
+      Object.keys(headers).length > 0 ? headers : undefined,
+      responseKind,
+      disableCache !== undefined ? { disableCache } : undefined,
+    ) as GetGameSteamServersResponse
   }
 
   /** 查询 Steam 用户 */
@@ -1983,6 +2499,8 @@ export class ImageApi {
     if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
     const argDate = args.date
     if (argDate !== undefined) query["date"] = argDate
+    const argRandom = args.random
+    if (argRandom !== undefined) query["random"] = argRandom
     const argResolution = args.resolution
     if (argResolution !== undefined) query["resolution"] = argResolution
     const argFormat = args.format
@@ -2600,6 +3118,59 @@ export class MiscApi {
     ) as GetMiscLunartimeResponse
   }
 
+  /** 查询电影票房 */
+  async getMiscMovieBoxOffice(
+  ): Promise<GetMiscMovieBoxOfficeResponse> {
+    const query: Record<string, unknown> = {}
+    const headers: Record<string, string> = {}
+    const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    let requestPath = '/api/v1/misc/movie-box-office'
+    const responseKind = 'json'
+    return await this.http.request(
+      'GET',
+      requestPath,
+      Object.keys(query).length > 0 ? query : undefined,
+      Object.keys(body).length > 0 ? body : undefined,
+      Object.keys(headers).length > 0 ? headers : undefined,
+      responseKind,
+      disableCache !== undefined ? { disableCache } : undefined,
+    ) as GetMiscMovieBoxOfficeResponse
+  }
+
+  /** 电影收视排行查询 */
+  async getMiscMovieRatingRank(args: GetMiscMovieRatingRankArgs = {} as GetMiscMovieRatingRankArgs
+  ): Promise<GetMiscMovieRatingRankResponse> {
+    const query: Record<string, unknown> = {}
+    const headers: Record<string, string> = {}
+    const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
+    const argChannel = args.channel
+    if (argChannel !== undefined) query["channel"] = argChannel
+    const argPlatform = args.platform
+    if (argPlatform !== undefined) query["platform"] = argPlatform
+    const argLimit = args.limit
+    if (argLimit !== undefined) query["limit"] = argLimit
+    const argPeriod = args.period
+    if (argPeriod !== undefined) query["period"] = argPeriod
+    const argDate = args.date
+    if (argDate !== undefined) query["date"] = argDate
+    let requestPath = '/api/v1/misc/movie-rating-rank'
+    const responseKind = 'json'
+    return await this.http.request(
+      'GET',
+      requestPath,
+      Object.keys(query).length > 0 ? query : undefined,
+      Object.keys(body).length > 0 ? body : undefined,
+      Object.keys(headers).length > 0 ? headers : undefined,
+      responseKind,
+      disableCache !== undefined ? { disableCache } : undefined,
+    ) as GetMiscMovieRatingRankResponse
+  }
+
   /** 查询手机归属地 */
   async getMiscPhoneinfo(args: GetMiscPhoneinfoArgs
   ): Promise<GetMiscPhoneinfoResponse> {
@@ -2746,8 +3317,6 @@ export class MiscApi {
     if (argCarrierCode !== undefined) query["carrier_code"] = argCarrierCode
     const argPhone = args.phone
     if (argPhone !== undefined) query["phone"] = argPhone
-    const argFull = args.full
-    if (argFull !== undefined) query["full"] = argFull
     let requestPath = '/api/v1/misc/tracking/query'
     const responseKind = 'json'
     return await this.http.request(
@@ -2798,6 +3367,41 @@ export class MiscApi {
       responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetMiscWeatherResponse
+  }
+
+  /** 查询历史天气 */
+  async getMiscWeatherHistory(args: GetMiscWeatherHistoryArgs = {} as GetMiscWeatherHistoryArgs
+  ): Promise<GetMiscWeatherHistoryResponse> {
+    const query: Record<string, unknown> = {}
+    const headers: Record<string, string> = {}
+    const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
+    const argCity = args.city
+    if (argCity !== undefined) query["city"] = argCity
+    const argAdcode = args.adcode
+    if (argAdcode !== undefined) query["adcode"] = argAdcode
+    const argStartDate = args.startDate ?? args["start_date"]
+    if (argStartDate !== undefined) query["start_date"] = argStartDate
+    const argEndDate = args.endDate ?? args["end_date"]
+    if (argEndDate !== undefined) query["end_date"] = argEndDate
+    const argDays = args.days
+    if (argDays !== undefined) query["days"] = argDays
+    const argLang = args.lang
+    if (argLang !== undefined) query["lang"] = argLang
+    let requestPath = '/api/v1/misc/weather/history'
+    const responseKind = 'json'
+    return await this.http.request(
+      'GET',
+      requestPath,
+      Object.keys(query).length > 0 ? query : undefined,
+      Object.keys(body).length > 0 ? body : undefined,
+      Object.keys(headers).length > 0 ? headers : undefined,
+      responseKind,
+      disableCache !== undefined ? { disableCache } : undefined,
+    ) as GetMiscWeatherHistoryResponse
   }
 
   /** 查询世界时间 */
@@ -3140,6 +3744,39 @@ export class PoemApi {
       disableCache !== undefined ? { disableCache } : undefined,
     ) as GetSayingResponse
   }
+
+  /** 一言（随机/每日/场景/此刻） */
+  async getSayingRandom(args: GetSayingRandomArgs = {} as GetSayingRandomArgs
+  ): Promise<GetSayingRandomResponse> {
+    const query: Record<string, unknown> = {}
+    const headers: Record<string, string> = {}
+    const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
+    const argMode = args.mode
+    if (argMode !== undefined) query["mode"] = argMode
+    const argScene = args.scene
+    if (argScene !== undefined) query["scene"] = argScene
+    const argSource = args.source
+    if (argSource !== undefined) query["source"] = argSource
+    const argCategory = args.category
+    if (argCategory !== undefined) query["category"] = argCategory
+    const argTag = args.tag
+    if (argTag !== undefined) query["tag"] = argTag
+    let requestPath = '/api/v1/saying/random'
+    const responseKind = 'json'
+    return await this.http.request(
+      'GET',
+      requestPath,
+      Object.keys(query).length > 0 ? query : undefined,
+      Object.keys(body).length > 0 ? body : undefined,
+      Object.keys(headers).length > 0 ? headers : undefined,
+      responseKind,
+      disableCache !== undefined ? { disableCache } : undefined,
+    ) as GetSayingRandomResponse
+  }
 }
 export class RandomApi {
   constructor(private http: HTTP) {}
@@ -3296,6 +3933,12 @@ export class SocialApi {
     if (argActivityScope !== undefined) query["activity_scope"] = argActivityScope
     const argOrg = args.org
     if (argOrg !== undefined) query["org"] = argOrg
+    const argPinned = args.pinned
+    if (argPinned !== undefined) query["pinned"] = argPinned
+    const argRepos = args.repos
+    if (argRepos !== undefined) query["repos"] = argRepos
+    const argReposLimit = args.reposLimit ?? args["repos_limit"]
+    if (argReposLimit !== undefined) query["repos_limit"] = argReposLimit
     let requestPath = '/api/v1/github/user'
     const responseKind = 'json'
     return await this.http.request(
@@ -4376,5 +5019,251 @@ export class ZhiNengSouSuoApi {
       responseKind,
       disableCache !== undefined ? { disableCache } : undefined,
     ) as PostSearchAggregateResponse
+  }
+}
+export class ShuiYinYuAigcBiaoShiApi {
+  constructor(private http: HTTP) {}
+
+  /** 提取图片隐水印 */
+  async postWatermarkDecode(args: PostWatermarkDecodeArgs
+  ): Promise<PostWatermarkDecodeResponse> {
+    const query: Record<string, unknown> = {}
+    const headers: Record<string, string> = {}
+    const body = new FormData()
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
+    const argEcc = args.ecc
+    if (argEcc !== undefined) {
+      body.append("ecc", toMultipartText(argEcc))
+    }
+    const argFile = args.file
+    if (argFile !== undefined) {
+      const multipartPartFile = await toNodeFilePart(argFile)
+      body.append("file", multipartPartFile.value, multipartPartFile.fileName)
+    }
+    const argImageBase64 = args.imageBase64 ?? args["image_base64"]
+    if (argImageBase64 !== undefined) {
+      body.append("image_base64", toMultipartText(argImageBase64))
+    }
+    const argModelType = args.modelType ?? args["model_type"]
+    if (argModelType !== undefined) {
+      body.append("model_type", toMultipartText(argModelType))
+    }
+    const argUrl = args.url
+    if (argUrl !== undefined) {
+      body.append("url", toMultipartText(argUrl))
+    }
+    let requestPath = '/api/v1/watermark/decode'
+    const responseKind = 'json'
+    return await this.http.request(
+      'POST',
+      requestPath,
+      Object.keys(query).length > 0 ? query : undefined,
+      body,
+      Object.keys(headers).length > 0 ? headers : undefined,
+      responseKind,
+      disableCache !== undefined ? { disableCache } : undefined,
+    ) as PostWatermarkDecodeResponse
+  }
+
+  /** 添加图片隐水印 */
+  async postWatermarkEmbed(args: PostWatermarkEmbedArgs
+  ): Promise<PostWatermarkEmbedResponse> {
+    const query: Record<string, unknown> = {}
+    const headers: Record<string, string> = {}
+    const body = new FormData()
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
+    const argEcc = args.ecc
+    if (argEcc !== undefined) {
+      body.append("ecc", toMultipartText(argEcc))
+    }
+    const argFile = args.file
+    if (argFile !== undefined) {
+      const multipartPartFile = await toNodeFilePart(argFile)
+      body.append("file", multipartPartFile.value, multipartPartFile.fileName)
+    }
+    const argImageBase64 = args.imageBase64 ?? args["image_base64"]
+    if (argImageBase64 !== undefined) {
+      body.append("image_base64", toMultipartText(argImageBase64))
+    }
+    const argJpegQuality = args.jpegQuality ?? args["jpeg_quality"]
+    if (argJpegQuality !== undefined) {
+      body.append("jpeg_quality", toMultipartText(argJpegQuality))
+    }
+    const argModelType = args.modelType ?? args["model_type"]
+    if (argModelType !== undefined) {
+      body.append("model_type", toMultipartText(argModelType))
+    }
+    const argOutFormat = args.outFormat ?? args["out_format"]
+    if (argOutFormat !== undefined) {
+      body.append("out_format", toMultipartText(argOutFormat))
+    }
+    const argPayload = args.payload
+    if (argPayload !== undefined) {
+      body.append("payload", toMultipartText(argPayload))
+    }
+    const argStrength = args.strength
+    if (argStrength !== undefined) {
+      body.append("strength", toMultipartText(argStrength))
+    }
+    const argUrl = args.url
+    if (argUrl !== undefined) {
+      body.append("url", toMultipartText(argUrl))
+    }
+    let requestPath = '/api/v1/watermark/embed'
+    const responseKind = 'json'
+    return await this.http.request(
+      'POST',
+      requestPath,
+      Object.keys(query).length > 0 ? query : undefined,
+      body,
+      Object.keys(headers).length > 0 ? headers : undefined,
+      responseKind,
+      disableCache !== undefined ? { disableCache } : undefined,
+    ) as PostWatermarkEmbedResponse
+  }
+
+  /** 添加 AI 生成内容标识 */
+  async postWatermarkLabel(args: PostWatermarkLabelArgs
+  ): Promise<PostWatermarkLabelResponse> {
+    const query: Record<string, unknown> = {}
+    const headers: Record<string, string> = {}
+    const body = new FormData()
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
+    const argContentProducer = args.contentProducer ?? args["content_producer"]
+    if (argContentProducer !== undefined) {
+      body.append("content_producer", toMultipartText(argContentProducer))
+    }
+    const argContentPropagator = args.contentPropagator ?? args["content_propagator"]
+    if (argContentPropagator !== undefined) {
+      body.append("content_propagator", toMultipartText(argContentPropagator))
+    }
+    const argEmbedWatermark = args.embedWatermark ?? args["embed_watermark"]
+    if (argEmbedWatermark !== undefined) {
+      body.append("embed_watermark", toMultipartText(argEmbedWatermark))
+    }
+    const argExplicitHeightRatio = args.explicitHeightRatio ?? args["explicit_height_ratio"]
+    if (argExplicitHeightRatio !== undefined) {
+      body.append("explicit_height_ratio", toMultipartText(argExplicitHeightRatio))
+    }
+    const argExplicitLabel = args.explicitLabel ?? args["explicit_label"]
+    if (argExplicitLabel !== undefined) {
+      body.append("explicit_label", toMultipartText(argExplicitLabel))
+    }
+    const argExplicitPosition = args.explicitPosition ?? args["explicit_position"]
+    if (argExplicitPosition !== undefined) {
+      body.append("explicit_position", toMultipartText(argExplicitPosition))
+    }
+    const argExplicitText = args.explicitText ?? args["explicit_text"]
+    if (argExplicitText !== undefined) {
+      body.append("explicit_text", toMultipartText(argExplicitText))
+    }
+    const argFile = args.file
+    if (argFile !== undefined) {
+      const multipartPartFile = await toNodeFilePart(argFile)
+      body.append("file", multipartPartFile.value, multipartPartFile.fileName)
+    }
+    const argImageBase64 = args.imageBase64 ?? args["image_base64"]
+    if (argImageBase64 !== undefined) {
+      body.append("image_base64", toMultipartText(argImageBase64))
+    }
+    const argJpegQuality = args.jpegQuality ?? args["jpeg_quality"]
+    if (argJpegQuality !== undefined) {
+      body.append("jpeg_quality", toMultipartText(argJpegQuality))
+    }
+    const argLabel = args.label
+    if (argLabel !== undefined) {
+      body.append("label", toMultipartText(argLabel))
+    }
+    const argOutFormat = args.outFormat ?? args["out_format"]
+    if (argOutFormat !== undefined) {
+      body.append("out_format", toMultipartText(argOutFormat))
+    }
+    const argProduceId = args.produceId ?? args["produce_id"]
+    if (argProduceId !== undefined) {
+      body.append("produce_id", toMultipartText(argProduceId))
+    }
+    const argPropagateId = args.propagateId ?? args["propagate_id"]
+    if (argPropagateId !== undefined) {
+      body.append("propagate_id", toMultipartText(argPropagateId))
+    }
+    const argSkipMetadata = args.skipMetadata ?? args["skip_metadata"]
+    if (argSkipMetadata !== undefined) {
+      body.append("skip_metadata", toMultipartText(argSkipMetadata))
+    }
+    const argUrl = args.url
+    if (argUrl !== undefined) {
+      body.append("url", toMultipartText(argUrl))
+    }
+    const argWatermarkPayload = args.watermarkPayload ?? args["watermark_payload"]
+    if (argWatermarkPayload !== undefined) {
+      body.append("watermark_payload", toMultipartText(argWatermarkPayload))
+    }
+    let requestPath = '/api/v1/watermark/label'
+    const responseKind = 'json'
+    return await this.http.request(
+      'POST',
+      requestPath,
+      Object.keys(query).length > 0 ? query : undefined,
+      body,
+      Object.keys(headers).length > 0 ? headers : undefined,
+      responseKind,
+      disableCache !== undefined ? { disableCache } : undefined,
+    ) as PostWatermarkLabelResponse
+  }
+
+  /** 生成 AIGC 服务提供者编码 */
+  async postWatermarkProducerCode(args: PostWatermarkProducerCodeArgs
+  ): Promise<PostWatermarkProducerCodeResponse> {
+    const query: Record<string, unknown> = {}
+    const headers: Record<string, string> = {}
+    const body: Record<string, unknown> = {}
+    let disableCache: boolean | undefined
+    disableCache = args.disableCache ?? args["disable_cache"]
+    const argCacheBuster = args._t
+    if (argCacheBuster !== undefined) query["_t"] = argCacheBuster
+    const argBinding = args.binding
+    if (argBinding !== undefined) {
+      body["binding"] = argBinding
+    }
+    const argCode = args.code
+    if (argCode !== undefined) {
+      body["code"] = argCode
+    }
+    const argIdentifier = args.identifier
+    if (argIdentifier !== undefined) {
+      body["identifier"] = argIdentifier
+    }
+    const argModelCode = args.modelCode ?? args["model_code"]
+    if (argModelCode !== undefined) {
+      body["model_code"] = argModelCode
+    }
+    const argServiceType = args.serviceType ?? args["service_type"]
+    if (argServiceType !== undefined) {
+      body["service_type"] = argServiceType
+    }
+    const argSubjectType = args.subjectType ?? args["subject_type"]
+    if (argSubjectType !== undefined) {
+      body["subject_type"] = argSubjectType
+    }
+    let requestPath = '/api/v1/watermark/producer-code'
+    const responseKind = 'json'
+    return await this.http.request(
+      'POST',
+      requestPath,
+      Object.keys(query).length > 0 ? query : undefined,
+      Object.keys(body).length > 0 ? body : undefined,
+      Object.keys(headers).length > 0 ? headers : undefined,
+      responseKind,
+      disableCache !== undefined ? { disableCache } : undefined,
+    ) as PostWatermarkProducerCodeResponse
   }
 }

@@ -6,9 +6,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**width** | **number** | 宽度。 | [optional] [default to undefined]
 **height** | **number** | 高度。 | [optional] [default to undefined]
 **rotate** | **number** | 旋转角度。 | [optional] [default to undefined]
+**width** | **number** | 宽度。 | [optional] [default to undefined]
 
 ## Example
 
@@ -16,9 +16,9 @@ Name | Type | Description | Notes
 import { GetSocialBilibiliVideoinfo200ResponsePagesInnerDimension } from 'uapi-sdk-typescript';
 
 const instance: GetSocialBilibiliVideoinfo200ResponsePagesInnerDimension = {
-    width,
     height,
     rotate,
+    width,
 };
 ```
 

@@ -5,13 +5,13 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**year** | **number** |  | [optional] [default to undefined]
-**title** | **string** |  | [optional] [default to undefined]
-**description** | **string** |  | [optional] [default to undefined]
 **category** | **string** |  | [optional] [default to undefined]
+**description** | **string** |  | [optional] [default to undefined]
 **importance** | **number** |  | [optional] [default to undefined]
 **relevance_score** | **number** |  | [optional] [default to undefined]
+**title** | **string** |  | [optional] [default to undefined]
 **url** | **string** |  | [optional] [default to undefined]
+**year** | **number** |  | [optional] [default to undefined]
 
 ## Example
 
@@ -19,13 +19,13 @@ Name | Type | Description | Notes
 import { GetHistoryProgrammer200ResponseEventsInner } from 'uapi-sdk-typescript';
 
 const instance: GetHistoryProgrammer200ResponseEventsInner = {
-    year,
-    title,
-    description,
     category,
+    description,
     importance,
     relevance_score,
+    title,
     url,
+    year,
 };
 ```
 

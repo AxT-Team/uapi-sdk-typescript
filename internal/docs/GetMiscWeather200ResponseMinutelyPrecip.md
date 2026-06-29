@@ -6,9 +6,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**data** | [**Array&lt;GetMiscWeather200ResponseMinutelyPrecipDataInner&gt;**](GetMiscWeather200ResponseMinutelyPrecipDataInner.md) | 精确到2分钟的数据点 | [optional] [default to undefined]
 **summary** | **string** | 降水描述 | [optional] [default to undefined]
 **update_time** | **string** | 更新时间 | [optional] [default to undefined]
-**data** | [**Array&lt;GetMiscWeather200ResponseMinutelyPrecipDataInner&gt;**](GetMiscWeather200ResponseMinutelyPrecipDataInner.md) | 精确到2分钟的数据点 | [optional] [default to undefined]
 
 ## Example
 
@@ -16,9 +16,9 @@ Name | Type | Description | Notes
 import { GetMiscWeather200ResponseMinutelyPrecip } from 'uapi-sdk-typescript';
 
 const instance: GetMiscWeather200ResponseMinutelyPrecip = {
+    data,
     summary,
     update_time,
-    data,
 };
 ```
 

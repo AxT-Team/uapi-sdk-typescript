@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**time** | **string** | 预报时间 ISO8601 | [optional] [default to undefined]
 **precip** | **number** | 该时间点的降水量 mm | [optional] [default to undefined]
+**time** | **string** | 预报时间 ISO8601 | [optional] [default to undefined]
 **type** | **string** | 降水类型：rain / snow | [optional] [default to undefined]
 
 ## Example
@@ -15,8 +15,8 @@ Name | Type | Description | Notes
 import { GetMiscWeather200ResponseMinutelyPrecipDataInner } from 'uapi-sdk-typescript';
 
 const instance: GetMiscWeather200ResponseMinutelyPrecipDataInner = {
-    time,
     precip,
+    time,
     type,
 };
 ```

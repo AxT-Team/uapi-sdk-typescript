@@ -5,9 +5,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**email** | **string** | 公开邮箱。 | [optional] [default to undefined]
 **login** | **string** | GitHub 登录名。 | [optional] [default to undefined]
 **name** | **string** | 显示名称。 | [optional] [default to undefined]
-**email** | **string** | 公开邮箱。 | [optional] [default to undefined]
 **url** | **string** | GitHub 主页链接。 | [optional] [default to undefined]
 
 ## Example
@@ -16,9 +16,9 @@ Name | Type | Description | Notes
 import { GetGithubRepo200ResponseCollaboratorsInner } from 'uapi-sdk-typescript';
 
 const instance: GetGithubRepo200ResponseCollaboratorsInner = {
+    email,
     login,
     name,
-    email,
     url,
 };
 ```

@@ -5,9 +5,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**resolution** | **string** |  | [optional] [default to undefined]
 **items** | [**Array&lt;GetImageBingDailyHistory200ResponseItemsInner&gt;**](GetImageBingDailyHistory200ResponseItemsInner.md) |  | [optional] [default to undefined]
 **pagination** | [**GetImageBingDailyHistory200ResponsePagination**](GetImageBingDailyHistory200ResponsePagination.md) |  | [optional] [default to undefined]
+**resolution** | **string** |  | [optional] [default to undefined]
 
 ## Example
 
@@ -15,9 +15,9 @@ Name | Type | Description | Notes
 import { GetImageBingDailyHistory200Response } from 'uapi-sdk-typescript';
 
 const instance: GetImageBingDailyHistory200Response = {
-    resolution,
     items,
     pagination,
+    resolution,
 };
 ```
 

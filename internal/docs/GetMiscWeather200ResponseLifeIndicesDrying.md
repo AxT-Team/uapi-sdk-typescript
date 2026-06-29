@@ -6,9 +6,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**level** | **string** |  | [optional] [default to undefined]
-**brief** | **string** |  | [optional] [default to undefined]
 **advice** | **string** |  | [optional] [default to undefined]
+**brief** | **string** |  | [optional] [default to undefined]
+**level** | **string** |  | [optional] [default to undefined]
 
 ## Example
 
@@ -16,9 +16,9 @@ Name | Type | Description | Notes
 import { GetMiscWeather200ResponseLifeIndicesDrying } from 'uapi-sdk-typescript';
 
 const instance: GetMiscWeather200ResponseLifeIndicesDrying = {
-    level,
-    brief,
     advice,
+    brief,
+    level,
 };
 ```
 

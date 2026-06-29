@@ -6,9 +6,9 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **date** | **string** | 事件日期。 | [optional] [default to undefined]
+**is_workday** | **boolean** | 仅调休上班事件返回。 | [optional] [default to undefined]
 **name** | **string** | 事件名称。 | [optional] [default to undefined]
 **type** | **string** | 事件类型。 | [optional] [default to undefined]
-**is_workday** | **boolean** | 仅调休上班事件返回。 | [optional] [default to undefined]
 
 ## Example
 
@@ -17,9 +17,9 @@ import { GetMiscHolidayCalendar200ResponseNearbyNextInnerEventsInner } from 'uap
 
 const instance: GetMiscHolidayCalendar200ResponseNearbyNextInnerEventsInner = {
     date,
+    is_workday,
     name,
     type,
-    is_workday,
 };
 ```
 

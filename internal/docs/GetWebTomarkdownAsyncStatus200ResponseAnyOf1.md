@@ -5,14 +5,14 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**task_id** | **string** |  | [optional] [default to undefined]
-**status** | **string** |  | [optional] [default to undefined]
-**url** | **string** |  | [optional] [default to undefined]
-**progress** | **number** |  | [optional] [default to undefined]
 **created_at** | **string** |  | [optional] [default to undefined]
-**started_at** | **string** |  | [optional] [default to undefined]
 **elapsed** | **number** |  | [optional] [default to undefined]
 **message** | **string** |  | [optional] [default to undefined]
+**progress** | **number** |  | [optional] [default to undefined]
+**started_at** | **string** |  | [optional] [default to undefined]
+**status** | **string** |  | [optional] [default to undefined]
+**task_id** | **string** |  | [optional] [default to undefined]
+**url** | **string** |  | [optional] [default to undefined]
 
 ## Example
 
@@ -20,14 +20,14 @@ Name | Type | Description | Notes
 import { GetWebTomarkdownAsyncStatus200ResponseAnyOf1 } from 'uapi-sdk-typescript';
 
 const instance: GetWebTomarkdownAsyncStatus200ResponseAnyOf1 = {
-    task_id,
-    status,
-    url,
-    progress,
     created_at,
-    started_at,
     elapsed,
     message,
+    progress,
+    started_at,
+    status,
+    task_id,
+    url,
 };
 ```
 

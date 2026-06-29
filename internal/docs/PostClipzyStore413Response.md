@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**error** | **string** |  | [optional] [default to undefined]
 **details** | **string** |  | [optional] [default to undefined]
+**error** | **string** |  | [optional] [default to undefined]
 
 ## Example
 
@@ -14,8 +14,8 @@ Name | Type | Description | Notes
 import { PostClipzyStore413Response } from 'uapi-sdk-typescript';
 
 const instance: PostClipzyStore413Response = {
-    error,
     details,
+    error,
 };
 ```
 

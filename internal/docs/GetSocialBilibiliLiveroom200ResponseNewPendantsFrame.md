@@ -6,9 +6,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**desc** | **string** | 头像框描述。 | [optional] [default to undefined]
 **name** | **string** | 头像框名称。 | [optional] [default to undefined]
 **value** | **string** | 头像框值。 | [optional] [default to undefined]
-**desc** | **string** | 头像框描述。 | [optional] [default to undefined]
 
 ## Example
 
@@ -16,9 +16,9 @@ Name | Type | Description | Notes
 import { GetSocialBilibiliLiveroom200ResponseNewPendantsFrame } from 'uapi-sdk-typescript';
 
 const instance: GetSocialBilibiliLiveroom200ResponseNewPendantsFrame = {
+    desc,
     name,
     value,
-    desc,
 };
 ```
 
